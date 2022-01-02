@@ -11,7 +11,7 @@ namespace Vortex
             StartWhenReady(() => { ConPlay_Local(); });
             void ConPlay_Local()
             {
-                FAnimationState defaultConState = GetStateForController(defaultController);
+                FAnimationState defaultConState = this.GetState(defaultController);
                 if (defaultConState == null) { return; }
                 if (CurrentState == null)
                 {
@@ -79,7 +79,7 @@ namespace Vortex
             void Play_Local()
             {
                 FAnimationState state = null;
-                var newlyCreated = this.AddIfReq(clip, ref state);
+                var newlyCreated = this.AddAnimationToSystemIfNotPresent(clip, ref state);
                 PlayInternal(ref state);
             }
         }
@@ -93,7 +93,7 @@ namespace Vortex
             void Play_Local()
             {
                 FAnimationState state = null;
-                var newlyCreated = this.AddIfReq(controller, ref state);
+                var newlyCreated = this.AddControllerToSystemIfNotPresent(controller, ref state);
                 PlayInternal(ref state);
             }
         }
@@ -106,16 +106,16 @@ namespace Vortex
             StartWhenReady(() => { Play_Local(); });
             void Play_Local()
             {
-                FAnimationClip fClip = GetFClipForUnityClip(clip);
+                FAnimationClip fClip = this.GetFClipIfExistOnSystem(clip);
                 if (fClip == null)
                 {
-                    fClip = FAnimationClip.GetRuntimeFClip(clip, isLooping, speed);
+                    fClip = this.CreateFClip(clip, isLooping, speed);
                 }
                 fClip.mode = isLooping ? FAnimationClipMode.Loop : FAnimationClipMode.OneTime;
                 fClip.speed = speed;
 
                 FAnimationState state = null;
-                var newlyCreated = this.AddIfReq(fClip, ref state);
+                var newlyCreated = this.AddAnimationToSystemIfNotPresent(fClip, ref state);
                 PlayInternal(ref state);
             }
         }
@@ -206,7 +206,7 @@ namespace Vortex
                     if (clip == null || clip.Clip == null || clip.Clip.Clip == null) { continue; }
                     FAnimationState state = null;
                     FAnimationClip fclip = clip.Clip;
-                    this.AddIfReq(fclip, ref state);
+                    this.AddAnimationToSystemIfNotPresent(fclip, ref state);
 
                     var cb = state.OnComplete;
                     state.OnComplete = null;
@@ -230,7 +230,7 @@ namespace Vortex
                     if (con == null || con.Controller == null) { continue; }
                     FAnimationState state = null;
                     RuntimeAnimatorController fCon = con.Controller;
-                    this.AddIfReq(fCon, ref state);
+                    this.AddControllerToSystemIfNotPresent(fCon, ref state);
 
                     var cb = state.OnComplete;
                     state.OnComplete = null;

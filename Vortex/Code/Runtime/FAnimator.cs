@@ -39,7 +39,8 @@ namespace Vortex
         FAnimatorWorkDesc desc;
         bool isPlaying;
 
-        internal List<FAnimationState> states { get { return _states.Data; } private set { _states.Data = value; } }
+        internal PlayableGraph PlayGraph { get { return Graph; } }
+        internal List<FAnimationState> states { get { return _states.Data; } set { _states.Data = value; } }
         internal AnimationMixerPlayable Mixer { get; private set; }
         internal AnimationPlaylistRunner Runner { get { return runner; } }
         internal bool IsRunning { get { return isPlaying; } }

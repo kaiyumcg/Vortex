@@ -17,33 +17,39 @@ namespace Vortex
 
         public void MixWithCurrent(float startInSeconds = 0.3f, OnDoAnything OnComplete = null, params MixableAnimationClip[] clips)
         {
-            var u_clips = GetFMixableAnimationClip(clips);
+            this.AddAnimationsToSystemIfNotPresent(clips);
+            var u_clips = this.GetFMixableAnimationClip(clips);
             _MixAnimationData(startInSeconds, true, OnComplete, u_clips);
         }
 
         public void MixAndPlay(float startInSeconds = 0.3f, OnDoAnything OnComplete = null, params MixableAnimationClip[] clips)
         {
-            var u_clips = GetFMixableAnimationClip(clips);
+            this.AddAnimationsToSystemIfNotPresent(clips);
+            var u_clips = this.GetFMixableAnimationClip(clips);
             _MixAnimationData(startInSeconds, false, OnComplete, u_clips);
         }
 
         public void MixWithCurrent(float startInSeconds = 0.3f, OnDoAnything OnComplete = null, params FMixableAnimationClip[] clips)
         {
+            this.AddAnimationsToSystemIfNotPresent(clips);
             _MixAnimationData(startInSeconds, true, OnComplete, clips);
         }
 
         public void MixAndPlay(float startInSeconds = 0.3f, OnDoAnything OnComplete = null, params FMixableAnimationClip[] clips)
         {
+            this.AddAnimationsToSystemIfNotPresent(clips);
             _MixAnimationData(startInSeconds, false, OnComplete, clips);
         }
 
         public void MixWithCurrent(float startInSeconds = 0.3f, OnDoAnything OnComplete = null, params FMixableController[] controllers)
         {
+            this.AddControllersToSystemIfNotPresent(controllers);
             _MixAnimationData(startInSeconds, true, OnComplete, controllers);
         }
 
         public void MixAndPlay(float startInSeconds = 0.3f, OnDoAnything OnComplete = null, params FMixableController[] controllers)
         {
+            this.AddControllersToSystemIfNotPresent(controllers);
             _MixAnimationData(startInSeconds, false, OnComplete, controllers);
         }
 

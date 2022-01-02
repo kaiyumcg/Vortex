@@ -2,8 +2,8 @@
     "name": "Vortex",
     "rootNamespace": "",
     "references": [
-        "GUID:d8e7b33ba1e4a89fc8a64b6b1e97a6ac",
-        "GUID:73106583b323919458c1e05166706ce3"
+        "GUID:73106583b323919458c1e05166706ce3",
+        "GUID:d8e7b33ba1e4a89fc8a64b6b1e97a6ac"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

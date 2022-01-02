@@ -6,7 +6,7 @@ namespace Vortex
     [System.Serializable]
     public class FAnimationClip
     {
-        [SerializeField] AnimationClip clip;
+        [SerializeField] internal AnimationClip clip;
         public float speed = 1f;
         public FAnimationClipMode mode = FAnimationClipMode.Loop;
         public int repeatation = 1;
@@ -24,18 +24,7 @@ namespace Vortex
             loopingAnimationTime = 2.5f;
         }
 
-        public static FAnimationClip GetRuntimeFClip(AnimationClip clip, bool isLooping, float speed = 1f)
-        {
-            var fClip = new FAnimationClip
-            {
-                clip = clip,
-                mode = isLooping ? FAnimationClipMode.Loop : FAnimationClipMode.OneTime,
-                speed = speed
-            };
-            return fClip;
-        }
-
-        public FAnimationClip(AnimationClip clip, float speed, FAnimationClipMode mode,
+        internal FAnimationClip(AnimationClip clip, float speed, FAnimationClipMode mode,
             int repeatation, float totalTimeInLoopMode,
             FAnimationEvent onStartEvent, FAnimationEvent onEndEvent,
             List<FAnimationMiddleEvent> customEvents)

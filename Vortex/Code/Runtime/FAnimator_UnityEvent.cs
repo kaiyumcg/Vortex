@@ -25,9 +25,9 @@ namespace Vortex
         {
             desc = new FAnimatorWorkDesc();
             isReady = false;
-            var rootObj = GetRoot();
+            var rootObj = transform.GetRoot();
             var rootName = rootObj == null ? "" : rootObj.name;
-            var ObjectName = "FAnimator_" + gameObject.name + "_" + rootName + "_" + this.GetHashCode();
+            var ObjectName = "FAnimator_" + gameObject.name + "_" + rootName + "_hash" + this.GetHashCode();
             isPlayingSequence = false;
             animTimeScale = 1.0f;
             runner = GetComponent<AnimationPlaylistRunner>();
@@ -49,12 +49,12 @@ namespace Vortex
 
             FAnimationState state = null;
             CurrentState = null;
-            if (AddIfReq(defaultClip, ref state))
+            if (this.AddAnimationToSystemIfNotPresent(defaultClip, ref state))
             {
                 CurrentState = state;
             }
 
-            if (AddIfReq(defaultController, ref state))
+            if (this.AddControllerToSystemIfNotPresent(defaultController, ref state))
             {
                 if (CurrentState == null)
                 {
@@ -68,7 +68,7 @@ namespace Vortex
                 {
                     var clip = preloadClips[i];
                     if (clip == null || clip.Clip == null) { continue; }
-                    AddIfReq(clip, ref state);
+                    this.AddAnimationToSystemIfNotPresent(clip, ref state);
                 }
             }
 
@@ -78,7 +78,7 @@ namespace Vortex
                 {
                     var con = preloadController[i];
                     if (con == null) { continue; }
-                    AddIfReq(con, ref state);
+                    this.AddControllerToSystemIfNotPresent(con, ref state);
                 }
             }
 
