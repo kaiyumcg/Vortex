@@ -103,21 +103,6 @@ namespace Vortex
         {
             Mixer.SetInputWeight(PlayableIDOnMixer, 1.0f);
         }
-
-        public void SetWeight(float weight)
-        {
-            Mixer.SetInputWeight(PlayableIDOnMixer, weight);
-        }
-
-        public bool IsClip(AnimationClip clip)
-        {
-            bool isIt = false;
-            if (this.Clip != null && this.Clip.Clip == clip)
-            {
-                isIt = true;
-            }
-            return isIt;
-        }
         
         internal void UpdateState(float deltaTime, float timeScale)
         {

@@ -126,6 +126,7 @@ namespace Vortex
             {
                 runner.StopAllCoroutines();
             }
+
             if (CurrentState != null && CurrentState != state)
             {
                 CurrentState.flag = TransitionFlag.LoweringWeight;

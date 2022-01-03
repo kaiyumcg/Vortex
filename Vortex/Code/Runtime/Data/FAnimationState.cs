@@ -56,10 +56,5 @@ namespace Vortex
             inMixedMode = false;
             firstTimeOffset = false;
         }
-
-        void DoIt()
-        {
-            
-        }
     }
 }
