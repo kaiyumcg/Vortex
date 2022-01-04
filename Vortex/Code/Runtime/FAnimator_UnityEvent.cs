@@ -28,14 +28,7 @@ namespace Vortex
             var rootObj = transform.GetRoot();
             var rootName = rootObj == null ? "" : rootObj.name;
             var ObjectName = "FAnimator_" + gameObject.name + "_" + rootName + "_hash" + this.GetHashCode();
-            isPlayingSequence = false;
             animTimeScale = 1.0f;
-            runner = GetComponent<AnimationPlaylistRunner>();
-            if (runner == null)
-            {
-                runner = gameObject.AddComponent<AnimationPlaylistRunner>();
-            }
-            runner.hideFlags = HideFlags.HideInInspector;
             _states = new StateList();
             anim = GetComponent<Animator>();
             isVisible = true;

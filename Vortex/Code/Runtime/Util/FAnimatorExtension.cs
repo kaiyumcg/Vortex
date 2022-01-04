@@ -190,14 +190,6 @@ namespace Vortex
                 anim.Mixer.AddInput(playable, 0, 0.0f);
                 state = FAnimationState.CreateWith(clip, anim);
                 state.ClipPlayable = playable;
-                state.isClipType = true;
-                state.ControllerPlayable = default;
-                state.PlayableIDOnMixer = anim.Mixer.GetInputCount() - 1;
-                state.Mixer = anim.Mixer;
-                state.Clip = clip;
-                state.animationStateName = clip != null && clip.Clip != null ? clip.Clip.name : "No clip!";
-                state.Controller = null;
-                state.ControllerPlayable = default;
                 anim.states.Add(state);
             }
             return !exist;
@@ -214,14 +206,6 @@ namespace Vortex
                 anim.Mixer.AddInput(playable, 0, 0.0f);
                 var state = FAnimationState.CreateWith(clip, anim);
                 state.ClipPlayable = playable;
-                state.isClipType = true;
-                state.ControllerPlayable = default;
-                state.PlayableIDOnMixer = anim.Mixer.GetInputCount() - 1;
-                state.Mixer = anim.Mixer;
-                state.Clip = clip;
-                state.animationStateName = clip != null && clip.Clip != null ? clip.Clip.name : "No clip!";
-                state.Controller = null;
-                state.ControllerPlayable = default;
                 anim.states.Add(state);
             }
             return !exist;
@@ -243,14 +227,6 @@ namespace Vortex
                 anim.Mixer.AddInput(playable, 0, 0.0f);
                 state = FAnimationState.CreateWith(fClip, anim);
                 state.ClipPlayable = playable;
-                state.isClipType = true;
-                state.ControllerPlayable = default;
-                state.PlayableIDOnMixer = anim.Mixer.GetInputCount() - 1;
-                state.Mixer = anim.Mixer;
-                state.Clip = fClip;
-                state.animationStateName = fClip != null && fClip.Clip != null ? fClip.Clip.name : "No clip!";
-                state.Controller = null;
-                state.ControllerPlayable = default;
                 anim.states.Add(state);
             }
             return !exist;
@@ -272,14 +248,6 @@ namespace Vortex
                 anim.Mixer.AddInput(playable, 0, 0.0f);
                 state = FAnimationState.CreateWith(fClip, anim);
                 state.ClipPlayable = playable;
-                state.isClipType = true;
-                state.ControllerPlayable = default;
-                state.PlayableIDOnMixer = anim.Mixer.GetInputCount() - 1;
-                state.Mixer = anim.Mixer;
-                state.Clip = fClip;
-                state.animationStateName = fClip != null && fClip.Clip != null ? fClip.Clip.name : "No clip!";
-                state.Controller = null;
-                state.ControllerPlayable = default;
                 anim.states.Add(state);
             }
             return !exist;
@@ -347,15 +315,7 @@ namespace Vortex
                 var playable = AnimatorControllerPlayable.Create(anim.PlayGraph, controller);
                 anim.Mixer.AddInput(playable, 0, 0.0f);
                 state = FAnimationState.CreateWith(controller, anim);
-                state.ClipPlayable = default;
-                state.isClipType = false;
                 state.ControllerPlayable = playable;
-                state.PlayableIDOnMixer = anim.Mixer.GetInputCount() - 1;
-                state.Mixer = anim.Mixer;
-                state.Controller = controller;
-                state.animationStateName = controller != null ? controller.name : "No Controller!";
-                state.Clip = null;
-                state.ClipPlayable = default;
                 anim.states.Add(state);
             }
             return !exist;
@@ -370,15 +330,7 @@ namespace Vortex
                 var playable = AnimatorControllerPlayable.Create(anim.PlayGraph, controller);
                 anim.Mixer.AddInput(playable, 0, 0.0f);
                 var state = FAnimationState.CreateWith(controller, anim);
-                state.ClipPlayable = default;
-                state.isClipType = false;
                 state.ControllerPlayable = playable;
-                state.PlayableIDOnMixer = anim.Mixer.GetInputCount() - 1;
-                state.Mixer = anim.Mixer;
-                state.Controller = controller;
-                state.animationStateName = controller != null ? controller.name : "No Controller!";
-                state.Clip = null;
-                state.ClipPlayable = default;
                 anim.states.Add(state);
             }
             return !exist;
@@ -570,9 +522,7 @@ namespace Vortex
             return fClip;
         }
         #endregion
-
-
-
+        
         #region ControllerAPI
         static AnimatorControllerPlayable GetCtrlPlayable(FAnimator anim, RuntimeAnimatorController controller)
         {

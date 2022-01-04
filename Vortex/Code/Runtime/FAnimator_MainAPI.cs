@@ -10,11 +10,6 @@ namespace Vortex
             desc.freshPlay = true;
         }
 
-        public void AbortSequenceIfAny()
-        {
-            ResetSequence();
-        }
-
         public void MixWithCurrent(float startInSeconds = 0.3f, OnDoAnything OnComplete = null, params MixableAnimationClip[] clips)
         {
             this.AddAnimationsToSystemIfNotPresent(clips);
@@ -113,19 +108,6 @@ namespace Vortex
         public void RunAnimationTask(IAnimationTask task, OnDoAnything OnComplete)
         {
             StartWhenReady(() => { task.RunAnimTask(this, OnComplete); });
-        }
-
-        public void SetAllRunningAnimationToBindPose()
-        {
-            if (states != null && states.Count > 0)
-            {
-                for (int i = 0; i < states.Count; i++)
-                {
-                    var st = states[i];
-                    if (st == null) { continue; }
-                    st.InitializeStateForcefully();
-                }
-            }
         }
     }
 }

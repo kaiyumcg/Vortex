@@ -20,9 +20,17 @@ namespace Vortex
             }
         }
 
+        internal void SignalTimeScaleChange(float timeScale)
+        {
+            for (int i = 0; i < anim.states.Count; i++)
+            {
+                anim.states[i].SignalTimeScaleChange(timeScale);
+            }
+        }
+
         public override void PrepareFrame(Playable playable, FrameData info)
         {
-            if (!tickAnimation || anim.IsReady == false) { return; }
+            if (!tickAnimation || anim.IsReady == false || anim.IsRunning == false) { return; }
             base.PrepareFrame(playable, info);
             for (int i = 0; i < anim.states.Count; i++)
             {

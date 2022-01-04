@@ -33,8 +33,6 @@ namespace Vortex
         FAnimatorPlayable playable_script;
         bool isVisible = true;
         RuntimeAnimatorController defaultController;
-        AnimationPlaylistRunner runner;
-        bool isPlayingSequence;
         PlayableGraph Graph;
         FAnimatorWorkDesc desc;
         bool isPlaying;
@@ -42,9 +40,24 @@ namespace Vortex
         internal PlayableGraph PlayGraph { get { return Graph; } }
         internal List<FAnimationState> states { get { return _states.Data; } set { _states.Data = value; } }
         internal AnimationMixerPlayable Mixer { get; private set; }
-        internal AnimationPlaylistRunner Runner { get { return runner; } }
         internal bool IsRunning { get { return isPlaying; } }
-        public float TimeScale { get { return animTimeScale; } set { animTimeScale = value; } }
+        public float TimeScale 
+        { 
+            get 
+            { 
+                return animTimeScale; 
+            } 
+
+            set 
+            { 
+                animTimeScale = value;
+                if (playable_script != null && isReady)
+                {
+                    playable_script.SignalTimeScaleChange(value);
+                }
+            } 
+        }
+
         public FAnimationState CurrentState { get { return _CurrentState; } private set { _CurrentState = value; } }
         public DirectorUpdateMode Mode
         {
@@ -58,9 +71,8 @@ namespace Vortex
                 if (Graph.IsValid() && isReady) { Graph.SetTimeUpdateMode(timeMode); }
             }
         }
-        public Animator Animator { get { return anim; } }
-        public bool IsReady { get { return isReady; } }
 
-        
+        public Animator Animator { get { return anim; } }
+        public bool IsReady { get { return isReady; } internal set { isReady = value; } }
     }
 }

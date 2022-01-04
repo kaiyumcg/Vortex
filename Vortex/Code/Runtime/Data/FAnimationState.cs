@@ -6,7 +6,7 @@ namespace Vortex
     [System.Serializable]
     public sealed partial class FAnimationState
     {
-        public string animationStateName;
+        public string animationStateName { get; private set; }
         public float AnimationTime { get; private set; }
         public float NormalizedAnimationTime { get; private set; }
         public float Duration { get { return Clip.Duration; } }
@@ -27,23 +27,18 @@ namespace Vortex
         internal float offSetValue;
         internal bool IsPlaying { get { return isPlaying; } }
 
-        [SerializeField] [DebugView] float _AnimationTime;
-        [SerializeField] [DebugView] float _NormalizedAnimationTime;
         [SerializeField] [DebugView] FAnimationClip _Clip;
         [SerializeField] [DebugView] RuntimeAnimatorController _Controller;
-        [SerializeField] [DebugView] float _transitionTime;
         [SerializeField] [DebugView] TransitionFlag _flag;
         [SerializeField] [DebugView] bool _isClipType;
         [SerializeField] [DebugView] float _targetWeight;
         [SerializeField] [DebugView] bool _inMixedMode;
-        [SerializeField] [DebugView] bool completedEvents, firedSignalToEndAutomatically;
+        [SerializeField] [DebugView] bool completedEvents;
         [SerializeField] [DebugView] bool isPlaying;
         
         [SerializeField] [DebugView] float timer;
         [SerializeField] [DebugView] int playCount;
         [SerializeField] [DebugView] float weight;
-
-        FAnimator anim;
 
         private FAnimationState()
         {

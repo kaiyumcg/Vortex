@@ -39,18 +39,6 @@ namespace Vortex
             }
         }
 
-        internal void SetSequence()
-        {
-            isPlayingSequence = true;
-            runner.StopAllCoroutines();
-        }
-
-        internal void ResetSequence()
-        {
-            isPlayingSequence = false;
-            runner.StopAllCoroutines();
-        }
-
         internal void EnableTransition()
         {
             desc.freshPlay = false;
@@ -122,11 +110,6 @@ namespace Vortex
 
         void PlayInternal(ref FAnimationState state)
         {
-            if (isPlayingSequence == false)
-            {
-                runner.StopAllCoroutines();
-            }
-
             if (CurrentState != null && CurrentState != state)
             {
                 CurrentState.flag = TransitionFlag.LoweringWeight;
@@ -247,10 +230,6 @@ namespace Vortex
         void MixedInternalCore(ref FAnimationState state, float targetWeight)
         {
             var willMixWithCurrent = desc.willMixWithCurrent;
-            if (isPlayingSequence == false)
-            {
-                runner.StopAllCoroutines();
-            }
             if (CurrentState != null)
             {
                 CurrentState.inMixedMode = willMixWithCurrent;
