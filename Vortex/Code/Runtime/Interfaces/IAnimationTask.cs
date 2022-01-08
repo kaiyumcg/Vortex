@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Vortex
 {
     public interface IAnimationTask

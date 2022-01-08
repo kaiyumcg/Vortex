@@ -1,49 +1,49 @@
 using UnityEngine;
 using UnityEngine.Animations;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace Vortex
 {
     [System.Serializable]
     public sealed partial class FAnimationState
     {
-        public string animationStateName { get; private set; }
-        public float AnimationTime { get; private set; }
-        public float NormalizedAnimationTime { get; private set; }
-        public float Duration { get { return Clip.Duration; } }
-        public FAnimationClip Clip { get { return _Clip; } internal set { _Clip = value; } }
-        public RuntimeAnimatorController Controller { get { return _Controller; } internal set { _Controller = value; } }
+        public string AnimationStateName { get { return _AnimationStateName; } }
+        public float AnimationTime { get { return _AnimationTime; } }
+        public float NormalizedAnimationTime { get { return _NormalizedAnimationTime; } }
+        public float Duration { get { return _Clip.Duration; } }
+        public FAnimationClip Clip { get { return _Clip; } }
+        public RuntimeAnimatorController Controller { get { return _Controller; } }
+        public bool IsPlaying { get { return isPlaying; } }
 
-        internal AnimatorControllerPlayable ControllerPlayable { get; set; }
-        internal float transitionTime { get; set; }
-        internal TransitionFlag flag { get { return _flag; } set { _flag = value; } }
-        internal AnimationClipPlayable ClipPlayable { get; set; }
-        internal AnimationMixerPlayable Mixer { get; set; }
-        internal int PlayableIDOnMixer { get; set; }
-        internal OnDoAnything OnComplete { get; set; }
-        internal bool isClipType { get { return _isClipType; } set { _isClipType = value; } }
-        internal float targetWeight { get { return _targetWeight; } set { _targetWeight = value; } }
-        internal bool inMixedMode { get { return _inMixedMode; } set { _inMixedMode = value; } }
-        internal bool firstTimeOffset = false;
-        internal float offSetValue;
-        internal bool IsPlaying { get { return isPlaying; } }
+        [SerializeField, DebugView] string _AnimationStateName;
+        [SerializeField, DebugView] float _AnimationTime;
+        [SerializeField, DebugView] float _NormalizedAnimationTime;
+        [SerializeField, DebugView] internal float transitionTime;
+        [SerializeField, DebugView] internal TransitionFlag flag;
+        [SerializeField, DebugView] internal int PlayableIDOnMixer;
+        [SerializeField, DebugView] internal bool isClipType = true;
+        [SerializeField, DebugView] internal float targetWeight = 1.0f;
+        [SerializeField, DebugView] internal bool inMixedMode = false;
+        [SerializeField, DebugView] internal bool firstTimeOffset = false;
+        [SerializeField, DebugView] internal float offSetValue;
+        [SerializeField, DebugView] RuntimeAnimatorController _Controller;
+        [SerializeField, DebugView] bool completedEvents;
+        [SerializeField, DebugView] bool isPlaying;
+        [SerializeField, DebugView] float timer;
+        [SerializeField, DebugView] int playCount;
+        [SerializeField, DebugView] float weight;
 
-        [SerializeField] [DebugView] FAnimationClip _Clip;
-        [SerializeField] [DebugView] RuntimeAnimatorController _Controller;
-        [SerializeField] [DebugView] TransitionFlag _flag;
-        [SerializeField] [DebugView] bool _isClipType;
-        [SerializeField] [DebugView] float _targetWeight;
-        [SerializeField] [DebugView] bool _inMixedMode;
-        [SerializeField] [DebugView] bool completedEvents;
-        [SerializeField] [DebugView] bool isPlaying;
-        
-        [SerializeField] [DebugView] float timer;
-        [SerializeField] [DebugView] int playCount;
-        [SerializeField] [DebugView] float weight;
+        FAnimationClip _Clip;
+        [HideInInspector] internal AnimatorControllerPlayable ControllerPlayable;
+        [HideInInspector] internal AnimationClipPlayable ClipPlayable;
+        [HideInInspector] internal AnimationMixerPlayable Mixer;
+        [HideInInspector] internal List<OnDoAnything> OnCompleteCallbacks;
 
         private FAnimationState()
         {
-            AnimationTime = 0f;
-            NormalizedAnimationTime = 0f;
+            _AnimationTime = 0f;
+            _NormalizedAnimationTime = 0f;
             transitionTime = 0f;
             flag = TransitionFlag.Done;
             isPlaying = false;

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Playables;
+using System.Collections.Generic;
 
 namespace Vortex
 {
@@ -11,15 +12,16 @@ namespace Vortex
             {
                 throw new System.InvalidOperationException("Clip or FClip can not be null!");
             }
-            FAnimationState state = new FAnimationState { Clip = clip, Controller = null };
+            FAnimationState state = new FAnimationState { _Clip = clip, _Controller = null };
             state.isClipType = true;
             state.ControllerPlayable = default;
-            state.PlayableIDOnMixer = anim.Mixer.GetInputCount() - 1;
+            
             state.Mixer = anim.Mixer;
-            state.Clip = clip;
-            state.animationStateName = clip.Clip.name;
-            state.Controller = null;
+            state._Clip = clip;
+            state._AnimationStateName = clip.Clip.name;
+            state._Controller = null;
             state.ControllerPlayable = default;
+            anim.UpdateMixerIDOfAllStates();
             return state;
         }
 
@@ -29,29 +31,29 @@ namespace Vortex
             {
                 throw new System.InvalidOperationException("Controller can not be null!");
             }
-            FAnimationState state = new FAnimationState { Clip = null, Controller = controller };
+            FAnimationState state = new FAnimationState { _Clip = null, _Controller = controller };
             state.ClipPlayable = default;
             state.isClipType = false;
-            state.PlayableIDOnMixer = anim.Mixer.GetInputCount() - 1;
             state.Mixer = anim.Mixer;
-            state.Controller = controller;
-            state.animationStateName = controller.name;
-            state.Clip = null;
+            state._Controller = controller;
+            state._AnimationStateName = controller.name;
+            state._Clip = null;
             state.ClipPlayable = default;
+            anim.UpdateMixerIDOfAllStates();
             return state;
         }
 
         void RefreshEvents()
         {
-            if (Clip != null)
+            if (_Clip != null)
             {
-                if (Clip.onStartEvent != null) { Clip.onStartEvent.RefreshEvent(); }
-                if (Clip.onEndEvent != null) { Clip.onEndEvent.RefreshEvent(); }
-                if (Clip.customEvents != null && Clip.customEvents.Count > 0)
+                if (_Clip.onStartEvent != null) { _Clip.onStartEvent.RefreshEvent(); }
+                if (_Clip.onEndEvent != null) { _Clip.onEndEvent.RefreshEvent(); }
+                if (_Clip.customEvents != null && _Clip.customEvents.Count > 0)
                 {
-                    for (int i = 0; i < Clip.customEvents.Count; i++)
+                    for (int i = 0; i < _Clip.customEvents.Count; i++)
                     {
-                        var ev = Clip.customEvents[i];
+                        var ev = _Clip.customEvents[i];
                         if (ev == null) { continue; }
                         ev.RefreshEvent();
                     }
@@ -62,11 +64,11 @@ namespace Vortex
         internal void Start()
         {
             RefreshEvents();
-            if (Clip != null)
+            if (_Clip != null)
             {
-                if (Clip.onStartEvent != null)
+                if (_Clip.onStartEvent != null)
                 {
-                    Clip.onStartEvent.TryFireEvent();
+                    _Clip.onStartEvent.TryFireEvent();
                 }
             }
             isPlaying = true;
@@ -89,27 +91,38 @@ namespace Vortex
 
         void CompleteEvents()
         {
-            if (Clip != null)
+            if (_Clip != null)
             {
-                if (Clip.onEndEvent != null)
+                if (_Clip.onEndEvent != null)
                 {
-                    Clip.onEndEvent.TryFireEvent();
+                    _Clip.onEndEvent.TryFireEvent();
                 }
             }
             RefreshEvents();
-
-            var cb = OnComplete;
-            OnComplete = null;
-            cb?.Invoke();
-
+            var cList = new List<OnDoAnything>();
+            if (OnCompleteCallbacks != null && OnCompleteCallbacks.Count > 0)
+            {
+                for (int i = 0; i < OnCompleteCallbacks.Count; i++)
+                {
+                    var cb = OnCompleteCallbacks[i];
+                    if (cb == null) { continue; }
+                    cList.Add(cb);
+                }
+            }
+            OnCompleteCallbacks = new List<OnDoAnything>();
             completedEvents = true;
+            for (int i = 0; i < cList.Count; i++)
+            {
+                var cb = cList[i];
+                cb.Invoke();
+            }
         }
 
         internal void SignalTimeScaleChange(float timeScale)
         {
             if (isClipType)
             {
-                ClipPlayable.SetSpeed(Clip.speed * timeScale);
+                ClipPlayable.SetSpeed(_Clip.speed * timeScale);
             }
         }
         
@@ -183,29 +196,29 @@ namespace Vortex
             if (!isClipType || completedEvents) { return; }
             var weightedDelta = weight * delta;
             timer += weightedDelta;
-            AnimationTime += weightedDelta;
+            _AnimationTime += weightedDelta;
             if (timer > Duration)
             {
                 timer = 0.0f;
                 playCount++;
-                if (Clip.customEvents != null && Clip.customEvents.Count > 0)
+                if (_Clip.customEvents != null && _Clip.customEvents.Count > 0)
                 {
-                    for (int i = 0; i < Clip.customEvents.Count; i++)
+                    for (int i = 0; i < _Clip.customEvents.Count; i++)
                     {
-                        var ev = Clip.customEvents[i];
+                        var ev = _Clip.customEvents[i];
                         if (ev == null) { continue; }
                         ev.RefreshEvent();
                     }
                 }
 
-                if (Clip.mode == FAnimationClipMode.OneTime)
+                if (_Clip.mode == FAnimationClipMode.OneTime)
                 {
                     CompleteEvents();
                     flag = TransitionFlag.LoweringWeight;
                 }
-                else if (Clip.mode == FAnimationClipMode.PlayNTimes)
+                else if (_Clip.mode == FAnimationClipMode.PlayNTimes)
                 {
-                    if (playCount >= Clip.repeatation)
+                    if (playCount >= _Clip.repeatation)
                     {
                         CompleteEvents();
                         flag = TransitionFlag.LoweringWeight;
@@ -213,23 +226,23 @@ namespace Vortex
                 }
             }
             if (completedEvents) { return; }
-            NormalizedAnimationTime = timer / Duration;
+            _NormalizedAnimationTime = timer / Duration;
 
-            var evs = Clip.customEvents;
+            var evs = _Clip.customEvents;
             if (evs != null && evs.Count > 0)
             {
                 for (int i = 0; i < evs.Count; i++)
                 {
                     var ev = evs[i];
                     if (ev == null) { continue; }
-                    if (NormalizedAnimationTime > ev.FireTime)
+                    if (_NormalizedAnimationTime > ev.FireTime)
                     {
                         ev.TryFireEvent();
                     }
                 }
             }
 
-            if (Clip.mode == FAnimationClipMode.LoopEndWithTime && AnimationTime > Clip.loopingAnimationTime)
+            if (_Clip.mode == FAnimationClipMode.LoopEndWithTime && _AnimationTime > _Clip.loopingAnimationTime)
             {
                 CompleteEvents();
                 flag = TransitionFlag.LoweringWeight;

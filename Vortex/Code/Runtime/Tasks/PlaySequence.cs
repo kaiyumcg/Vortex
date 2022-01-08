@@ -14,13 +14,12 @@ namespace Vortex
         void IAnimationTask.RunAnimTask(FAnimator animator, OnDoAnything OnComplete)
         {
             this.anim = animator;
-            anim.SetSequence();
-
             var cb = this.OnComplete;
             cb?.Invoke();
             this.OnComplete = null;
             this.OnComplete = OnComplete;
-            anim.Runner.StartCoroutine(Sequencer());
+            anim.StopCurrentlyRunningAnimationTasks();
+            anim.taskRunner.StartCoroutine(Sequencer());
         }
 
         IEnumerator Sequencer()
@@ -47,7 +46,6 @@ namespace Vortex
             var cb = this.OnComplete;
             cb?.Invoke();
             this.OnComplete = null;
-            anim.ResetSequence();
         }
     }
 }

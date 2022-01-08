@@ -17,27 +17,6 @@ namespace Vortex
         }
     }
 
-    internal class FAnimatorWorkDesc
-    {
-        internal bool freshPlay;
-        internal float normalizedStartIn, startInTime;
-        internal OnDoAnything OnCompleteCB;
-        internal MixableAnimationClip[] clips;
-        internal FMixableAnimationClip[] f_clips;
-        internal FMixableController[] controllers;
-        internal bool willMixWithCurrent;
-
-        internal void Reset()
-        {
-            normalizedStartIn = startInTime = 0f;
-            OnCompleteCB = null;
-            clips = null;
-            f_clips = null;
-            controllers = null;
-            willMixWithCurrent = false;
-        }
-    }
-
     [System.Serializable]
     public class FMixableController
     {

@@ -15,18 +15,13 @@ namespace Vortex
 
         void IAnimationTask.RunAnimTask(FAnimator animator, OnDoAnything OnComplete)
         {
-            if (freshPlayEveryTime)
-            {
-                animator.DisableTransition();
-            }
-
             if (useFixedTime)
             {
-                animator.Play(clip, startTimeAfterFixed, OnComplete, isLooped, speed);
+                animator.Play(clip, startTimeAfterFixed, OnComplete, freshPlayEveryTime, isLooped, speed);
             }
             else
             {
-                animator.PlayNormalized(clip, normalizedStartTimeAfter, OnComplete, isLooped, speed);
+                animator.PlayNormalized(clip, normalizedStartTimeAfter, OnComplete,freshPlayEveryTime, isLooped, speed);
             }
         }
     }

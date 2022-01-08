@@ -11,11 +11,7 @@ namespace Vortex
         [SerializeField] bool freshPlayEverytime = false;
         void IAnimationTask.RunAnimTask(FAnimator animator, OnDoAnything OnComplete)
         {
-            if (freshPlayEverytime)
-            {
-                animator.DisableTransition();
-            }
-            animator.Play(controller, startTime, OnComplete);
+            animator.Play(controller, startTime, OnComplete, freshPlayEverytime);
         }
     }
 }

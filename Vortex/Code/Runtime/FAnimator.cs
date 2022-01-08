@@ -7,6 +7,7 @@ namespace Vortex
 {
     [RequireComponent(typeof(Animator))]
     [DisallowMultipleComponent]
+    [DefaultExecutionOrder(-100)]
     public sealed partial class FAnimator : MonoBehaviour
     {
         [SerializeField] bool playAutomatically;
@@ -18,7 +19,7 @@ namespace Vortex
         [SerializeField] float controllerStartTimeOffset = 1.5f;
         [SerializeField] DirectorUpdateMode timeMode = DirectorUpdateMode.GameTime;
         [SerializeField] bool debugGraph = false;
-
+        [SerializeField] bool debugMessage = false;
         [Header("Preloaded animation and controllers")]
         [SerializeField] List<FAnimationClip> preloadClips;
         [SerializeField] List<RuntimeAnimatorController> preloadController;
@@ -29,14 +30,15 @@ namespace Vortex
         [DebugView] [SerializeField] FAnimationState _CurrentState;
 
         Animator anim;
-        bool isReady = false;
+        [SerializeField, DebugView] internal bool isReady = false;
         FAnimatorPlayable playable_script;
         bool isVisible = true;
         RuntimeAnimatorController defaultController;
         PlayableGraph Graph;
-        FAnimatorWorkDesc desc;
         bool isPlaying;
 
+        internal FAnimationTaskRunner taskRunner;
+        internal bool DebugMessage { get { return debugMessage; } }
         internal PlayableGraph PlayGraph { get { return Graph; } }
         internal List<FAnimationState> states { get { return _states.Data; } set { _states.Data = value; } }
         internal AnimationMixerPlayable Mixer { get; private set; }
@@ -74,5 +76,179 @@ namespace Vortex
 
         public Animator Animator { get { return anim; } }
         public bool IsReady { get { return isReady; } internal set { isReady = value; } }
+
+        public void PauseAnimation()
+        {
+            StartWhenReady(() => { Pause(); });
+            void Pause()
+            {
+                if (Graph.IsValid())
+                {
+                    Graph.Stop();
+                }
+                isPlaying = false;
+            }
+        }
+
+        public void ResumeAnimation()
+        {
+            StartWhenReady(() => { Resume(); });
+            void Resume()
+            {
+                if (Graph.IsValid())
+                {
+                    Graph.Play();
+                }
+                isPlaying = true;
+            }
+        }
+
+        public void RunAnimationTask(IAnimationTask task, OnDoAnything OnComplete)
+        {
+            StartWhenReady(() => { task.RunAnimTask(this, OnComplete); });
+        }
+
+        private void OnBecameVisible()
+        {
+            isVisible = true;
+            UpdateAnimationsForVisibility();
+        }
+
+        private void OnBecameInvisible()
+        {
+            isVisible = false;
+            UpdateAnimationsForVisibility();
+        }
+
+        private void Awake()
+        {
+            initWorkDone = false;
+            isReady = false;
+            var rootObj = transform.GetRoot();
+            var rootName = rootObj == null ? "" : rootObj.name;
+            var ObjectName = "FAnimator_" + gameObject.name + "_" + rootName + "_hash" + this.GetHashCode();
+            animTimeScale = 1.0f;
+            _states = new StateList();
+            anim = GetComponent<Animator>();
+            isVisible = true;
+            if (states == null) { states = new List<FAnimationState>(); }
+            if (Graph.IsValid()) { Graph.Destroy(); }
+            Graph = PlayableGraph.Create(ObjectName);
+            Graph.SetTimeUpdateMode(timeMode);
+            Mixer = AnimationMixerPlayable.Create(Graph);
+            taskRunner = gameObject.AddComponent<FAnimationTaskRunner>();
+            taskRunner.hideFlags = HideFlags.HideInInspector;
+
+            defaultController = anim.runtimeAnimatorController;
+
+            FAnimationState state = null;
+            CurrentState = null;
+            if (this.AddAnimationToSystemIfNotPresent(defaultClip, ref state))
+            {
+                CurrentState = state;
+            }
+
+            if (this.AddControllerToSystemIfNotPresent(defaultController, ref state))
+            {
+                if (CurrentState == null)
+                {
+                    CurrentState = state;
+                }
+            }
+
+            if (preloadClips != null && preloadClips.Count > 0)
+            {
+                for (int i = 0; i < preloadClips.Count; i++)
+                {
+                    var clip = preloadClips[i];
+                    if (clip == null || clip.Clip == null) { continue; }
+                    this.AddAnimationToSystemIfNotPresent(clip, ref state);
+                }
+            }
+
+            if (preloadController != null && preloadController.Count > 0)
+            {
+                for (int i = 0; i < preloadController.Count; i++)
+                {
+                    var con = preloadController[i];
+                    if (con == null) { continue; }
+                    this.AddControllerToSystemIfNotPresent(con, ref state);
+                }
+            }
+
+            var customPlayable = ScriptPlayable<FAnimatorPlayable>.Create(Graph);
+            customPlayable.SetInputCount(1);
+            Graph.Connect(Mixer, 0, customPlayable, 0);
+            customPlayable.SetInputWeight(0, 1);
+
+            playable_script = customPlayable.GetBehaviour();
+            playable_script.tickAnimation = false;
+            playable_script.Init(this);
+
+            var playableOutput = AnimationPlayableOutput.Create(Graph, ObjectName, anim);
+            playableOutput.SetSourcePlayable(customPlayable);
+            playable_script.ResetWeights();
+
+            if (CurrentState == null)
+            {
+                if (states != null && states.Count > 0)
+                {
+                    foreach (var st in states)
+                    {
+                        if (st == null) { continue; }
+                        CurrentState = st;
+                        break;
+                    }
+                }
+            }
+
+            if (CurrentState != null)
+            {
+                var isValid = (CurrentState.isClipType && CurrentState.ClipPlayable.IsValid()) ||
+                    (CurrentState.isClipType == false && CurrentState.ControllerPlayable.IsValid());
+                if (isValid)
+                {
+                    if (offsetStart)
+                    {
+                        float offsetAmount = 0f;
+                        if (CurrentState.isClipType)
+                        {
+                            offsetAmount = CurrentState.Clip.Duration * clipStartTimeOffset;
+                        }
+                        else
+                        {
+                            offsetAmount = controllerStartTimeOffset;
+                        }
+                        CurrentState.offSetValue = offsetAmount;
+                        CurrentState.firstTimeOffset = true;
+                    }
+                    CurrentState.flag = TransitionFlag.Done;
+                    CurrentState.Start();
+                    this.SetWeightOneExclusively(CurrentState);
+                }
+            }
+            playable_script.tickAnimation = true;
+            initWorkDone = true;
+            isReady = true;
+            isPlaying = true;
+            Graph.Play();
+        }
+
+        internal bool initWorkDone = false;
+        private void OnDestroy()
+        {
+            if (Graph.IsValid())
+            {
+                Graph.Destroy();
+            }
+        }
+
+        private void Update()
+        {
+            if (isReady && debugGraph && Graph.IsValid())
+            {
+                GraphVisualizerClient.Show(Graph);
+            }
+        }
     }
 }

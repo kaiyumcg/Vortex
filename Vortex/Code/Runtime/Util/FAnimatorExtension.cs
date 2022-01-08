@@ -8,6 +8,31 @@ namespace Vortex
     public static class FAnimatorExtension
     {
         #region MISC
+        public static void StopCurrentlyRunningAnimationTasks(this FAnimator anim)
+        {
+            anim.taskRunner.StopAllCoroutines();
+        }
+
+        internal static void SetWeightOneExclusively(this FAnimator anim, FAnimationState state)
+        {
+            var sts = anim.states;
+            if (sts != null && sts.Count > 0)
+            {
+                for (int i = 0; i < sts.Count; i++)
+                {
+                    var st = sts[i];
+                    if (st == state)
+                    {
+                        st.Mixer.SetInputWeight(st.PlayableIDOnMixer, 1.0f);
+                    }
+                    else
+                    {
+                        st.Mixer.SetInputWeight(st.PlayableIDOnMixer, 0.0f);
+                    }
+                }
+            }
+        }
+
         public static void ResetAllTrigger(this Animator anim, params int[] stateHashes)
         {
             if (stateHashes != null && stateHashes.Length > 0)
@@ -253,56 +278,68 @@ namespace Vortex
             return !exist;
         }
 
-        public static void AddAnimationsToSystemIfNotPresent(this FAnimator anim, AnimationClip[] clips)
+        public static bool AddAnimationsToSystemIfNotPresent(this FAnimator anim, AnimationClip[] clips)
         {
+            bool addedToSystem = false;
             if (clips != null && clips.Length > 0)
             {
                 for (int i = 0; i < clips.Length; i++)
                 {
                     var clip = clips[i];
                     if (clip == null) { continue; }
-                    anim.AddAnimationToSystemIfNotPresent(clip);
+                    var yesAdded = anim.AddAnimationToSystemIfNotPresent(clip);
+                    if (addedToSystem == false && yesAdded) { addedToSystem = true; }
                 }
             }
+            return addedToSystem;
         }
 
-        public static void AddAnimationsToSystemIfNotPresent(this FAnimator anim, FAnimationClip[] clips)
+        public static bool AddAnimationsToSystemIfNotPresent(this FAnimator anim, FAnimationClip[] clips)
         {
+            bool addedToSystem = false;
             if (clips != null && clips.Length > 0)
             {
                 for (int i = 0; i < clips.Length; i++)
                 {
                     var clip = clips[i];
                     if (clip == null) { continue; }
-                    anim.AddAnimationToSystemIfNotPresent(clip);
+                    var yesAdded = anim.AddAnimationToSystemIfNotPresent(clip);
+                    if (addedToSystem == false && yesAdded) { addedToSystem = true; }
                 }
             }
+            return addedToSystem;
         }
 
-        public static void AddAnimationsToSystemIfNotPresent(this FAnimator anim, FMixableAnimationClip[] clips)
+        public static bool AddAnimationsToSystemIfNotPresent(this FAnimator anim, FMixableAnimationClip[] clips)
         {
+            bool addedToSystem = false;
             if (clips != null && clips.Length > 0)
             {
                 for (int i = 0; i < clips.Length; i++)
                 {
                     var clip = clips[i];
                     if (clip == null || clip.Clip == null) { continue; }
-                    anim.AddAnimationToSystemIfNotPresent(clip.Clip);
+                    var yesAdded = anim.AddAnimationToSystemIfNotPresent(clip.Clip);
+                    if (addedToSystem == false && yesAdded) { addedToSystem = true; }
                 }
             }
+            return addedToSystem;
         }
 
-        public static void AddAnimationsToSystemIfNotPresent(this FAnimator anim, MixableAnimationClip[] clips)
+        public static bool AddAnimationsToSystemIfNotPresent(this FAnimator anim, MixableAnimationClip[] clips)
         {
+            bool addedToSystem = false;
             if (clips != null && clips.Length > 0)
             {
                 for (int i = 0; i < clips.Length; i++)
                 {
                     var clip = clips[i];
                     if (clip == null || clip.Clip == null) { continue; }
-                    anim.AddAnimationToSystemIfNotPresent(clip.Clip);
+                    var yesAdded = anim.AddAnimationToSystemIfNotPresent(clip.Clip);
+                    if (addedToSystem == false && yesAdded) { addedToSystem = true; }
                 }
             }
+            return addedToSystem;
         }
 
         public static bool AddControllerToSystemIfNotPresent(this FAnimator anim, RuntimeAnimatorController controller, ref FAnimationState state)
@@ -336,35 +373,52 @@ namespace Vortex
             return !exist;
         }
 
-        public static void AddControllersToSystemIfNotPresent(this FAnimator anim, RuntimeAnimatorController[] controllers)
+        public static bool AddControllersToSystemIfNotPresent(this FAnimator anim, RuntimeAnimatorController[] controllers)
         {
+            bool addedToSystem = false;
             if (controllers != null && controllers.Length > 0)
             {
                 for (int i = 0; i < controllers.Length; i++)
                 {
                     var con = controllers[i];
                     if (con == null) { continue; }
-                    anim.AddControllerToSystemIfNotPresent(con);
+                    var yesAdded = anim.AddControllerToSystemIfNotPresent(con);
+                    if (addedToSystem == false && yesAdded) { addedToSystem = true; }
                 }
             }
+            return addedToSystem;
         }
 
-        public static void AddControllersToSystemIfNotPresent(this FAnimator anim, FMixableController[] controllers)
+        public static bool AddControllersToSystemIfNotPresent(this FAnimator anim, FMixableController[] controllers)
         {
+            bool addedToSystem = false;
             if (controllers != null && controllers.Length > 0)
             {
                 for (int i = 0; i < controllers.Length; i++)
                 {
                     var con = controllers[i];
                     if (con == null || con.Controller == null) { continue; }
-                    anim.AddControllerToSystemIfNotPresent(con.Controller);
+                    var yesAdded = anim.AddControllerToSystemIfNotPresent(con.Controller);
+                    if (addedToSystem == false && yesAdded) { addedToSystem = true; }
                 }
             }
+            return addedToSystem;
         }
         #endregion
 
-        #region Remove from system(will break if you use it TODO fix)
-        //we need to experiment to see what happens to the IDOnMixer of other states after a disconnect of certain state!
+        #region Remove from system
+        internal static void UpdateMixerIDOfAllStates(this FAnimator anim)
+        {
+            var sts = anim.states;
+            if (sts != null && sts.Count > 0)
+            {
+                for (int i = 0; i < sts.Count; i++)
+                {
+                    sts[i].PlayableIDOnMixer = i;
+                }
+            }
+        }
+
         public static bool RemoveAnimationFromSystemIfPresent(this FAnimator anim, FAnimationClip clip)
         {
             if (anim.states == null || clip == null || clip.Clip == null) { return false; }
@@ -373,8 +427,14 @@ namespace Vortex
             bool exist = anim.IsInSystem(unityClip, ref state);
             if (exist)
             {
+                var curReadyState = anim.isReady;
+                anim.isReady = false;
                 anim.states.Remove(state);
                 anim.Mixer.DisconnectInput(state.PlayableIDOnMixer);
+
+                anim.UpdateMixerIDOfAllStates();
+                anim.isReady = curReadyState;
+                if (anim.initWorkDone) { anim.isReady = true; }
             }
             return exist;
         }
@@ -386,8 +446,15 @@ namespace Vortex
             bool exist = anim.IsInSystem(controller, ref state);
             if (exist)
             {
+                var curReadyState = anim.isReady;
+                anim.isReady = false;
+
                 anim.states.Remove(state);
                 anim.Mixer.DisconnectInput(state.PlayableIDOnMixer);
+
+                anim.UpdateMixerIDOfAllStates();
+                anim.isReady = curReadyState;
+                if (anim.initWorkDone) { anim.isReady = true; }
             }
             return exist;
         }
@@ -399,12 +466,19 @@ namespace Vortex
             bool exist = anim.IsInSystem(controller, ref state);
             if (exist)
             {
+                var curReadyState = anim.isReady;
+                anim.isReady = false;
+
                 anim.states = new List<FAnimationState>();
                 var count = anim.Mixer.GetInputCount();
                 for (int i = 0; i < count; i++)
                 {
                     anim.Mixer.DisconnectInput(i);
                 }
+
+                anim.UpdateMixerIDOfAllStates();
+                anim.isReady = curReadyState;
+                if (anim.initWorkDone) { anim.isReady = true; }
             }
             return exist;
         }
@@ -522,7 +596,7 @@ namespace Vortex
             return fClip;
         }
         #endregion
-        
+
         #region ControllerAPI
         static AnimatorControllerPlayable GetCtrlPlayable(FAnimator anim, RuntimeAnimatorController controller)
         {
@@ -1257,6 +1331,219 @@ namespace Vortex
             operationSuccess = false;
             var playable = GetCtrlPlayable(anim, controller);
             if (playable.IsValid()) { operationSuccess = true; playable.SetLayerWeight(layerIndex, layerWeight); }
+        }
+        #endregion
+
+        #region Play Animation State API
+        static FAnimationClip GetDefaultFClipFor(FAnimator anim, AnimationClip clip, bool isLooping, float speed)
+        {
+            FAnimationClip fClip = GetFClipIfExistOnSystem(anim, clip);
+            if (fClip == null)
+            {
+                fClip = anim.CreateFClip(clip, isLooping, speed);
+            }
+            fClip.mode = isLooping ? FAnimationClipMode.Loop : FAnimationClipMode.OneTime;
+            fClip.speed = speed;
+            return fClip;
+        }
+
+        static void PrintRebindWarningIfReq(FAnimator anim, bool dataAddedToSystem)
+        {
+            if (dataAddedToSystem && anim.DebugMessage)
+            {
+                Debug.LogWarning("Animation Data(Clip or Controller) has been dynamically added to the playable graph. " +
+                    "This will cause rebind operation under the hood(by design from unity). " +
+                    "Thus if you use 'animation rigging package' in your project, all your rig values will be reset after this point. " +
+                    "If this is not what you want, consider adding animation data(preloaded controller or clip field) prior to using them in the inspector. " +
+                    "If you wish to ignore Vortex warning such as this, turn off debug message option in the FAnimator component.");
+            }
+        }
+
+        public static void Play(this FAnimator anim, AnimationClip clip, float startInSeconds = 0.1f, OnDoAnything OnComplete = null,
+            bool freshPlay = false, bool isLooping = false, float speed = 1f)
+        {
+            if (clip == null) { return; }
+            anim.StartWhenReady(() => { Play_Local(); });
+            void Play_Local()
+            {
+                var fClip = GetDefaultFClipFor(anim, clip, isLooping, speed);
+                var print = anim.AddAnimationToSystemIfNotPresent(fClip);
+                PrintRebindWarningIfReq(anim, print);
+                FAnimationState state = anim.GetState(fClip);
+                anim.PlayAnimationState(state, startInSeconds, freshPlay, OnComplete);
+            }
+        }
+
+        public static void PlayNormalized(this FAnimator anim, AnimationClip clip, float normalizedFadeInAmount, OnDoAnything OnComplete = null, 
+            bool freshPlay = false, bool isLooping = false, float speed = 1f)
+        {
+            if (clip == null) { return; }
+            var startInSeconds = (clip.length / speed) * normalizedFadeInAmount;
+            anim.StartWhenReady(() => { Play_Local(); });
+            void Play_Local()
+            {
+                var fClip = GetDefaultFClipFor(anim, clip, isLooping, speed);
+                var print = anim.AddAnimationToSystemIfNotPresent(fClip);
+                PrintRebindWarningIfReq(anim, print);
+                FAnimationState state = anim.GetState(fClip);
+                anim.PlayAnimationState(state, startInSeconds, freshPlay, OnComplete);
+            }
+        }
+
+        public static void Play(this FAnimator anim, FAnimationClip clip, float startInSeconds = 0.3f, OnDoAnything OnComplete = null, bool freshPlay = false)
+        {
+            anim.StartWhenReady(() => { Play_Local(); });
+            void Play_Local()
+            {
+                var print = anim.AddAnimationToSystemIfNotPresent(clip);
+                PrintRebindWarningIfReq(anim, print);
+                FAnimationState state = anim.GetState(clip);
+                anim.PlayAnimationState(state, startInSeconds, freshPlay, OnComplete);
+            }
+        }
+
+        public static void PlayNormalized(this FAnimator anim, FAnimationClip clip, float normalizedFadeAmount = 0.3f, OnDoAnything OnComplete = null, bool freshPlay = false)
+        {
+            if (clip == null || clip.Clip == null) { return; }
+            var startInSeconds = clip.Duration * normalizedFadeAmount;
+            anim.StartWhenReady(() => { Play_Local(); });
+            void Play_Local()
+            {
+                var print = anim.AddAnimationToSystemIfNotPresent(clip);
+                PrintRebindWarningIfReq(anim, print);
+                FAnimationState state = anim.GetState(clip);
+                anim.PlayAnimationState(state, startInSeconds, freshPlay, OnComplete);
+            }
+        }
+
+        public static void Play(this FAnimator anim, RuntimeAnimatorController controller, float startInSeconds = 0.3f, OnDoAnything OnComplete = null, bool freshPlay = false)
+        {
+            anim.StartWhenReady(() => { Play_Local(); });
+            void Play_Local()
+            {
+                var print = anim.AddControllerToSystemIfNotPresent(controller);
+                PrintRebindWarningIfReq(anim, print);
+                FAnimationState state = anim.GetState(controller);
+                anim.PlayAnimationState(state, startInSeconds, freshPlay, OnComplete);
+            }
+        }
+        #endregion
+
+        #region Mix Animation Data API
+        public static void MixWithCurrent(this FAnimator anim, float startInSeconds = 0.3f, bool freshPlay = false, params MixableAnimationClip[] clips)
+        {
+            anim.StartWhenReady(() => { Play_Local(); });
+            void Play_Local()
+            {
+                var print = anim.AddAnimationsToSystemIfNotPresent(clips);
+                PrintRebindWarningIfReq(anim, print);
+                if (clips != null && clips.Length > 0)
+                {
+                    for (int i = 0; i < clips.Length; i++)
+                    {
+                        var clip = clips[i];
+                        var state = anim.GetState(clip.Clip);
+                        anim.MixAnimationState(state, clip.Mixing, willMixWithCurrent: true, freshPlay, startInSeconds);
+                    }
+                }
+            }
+        }
+
+        public static void MixAndPlay(this FAnimator anim, float startInSeconds = 0.3f, bool freshPlay = false, OnDoAnything OnComplete = null, params MixableAnimationClip[] clips)
+        {
+            anim.StartWhenReady(() => { Play_Local(); });
+            void Play_Local()
+            {
+                var print = anim.AddAnimationsToSystemIfNotPresent(clips);
+                PrintRebindWarningIfReq(anim, print);
+                if (clips != null && clips.Length > 0)
+                {
+                    for (int i = 0; i < clips.Length; i++)
+                    {
+                        var clip = clips[i];
+                        var state = anim.GetState(clip.Clip);
+                        if (i == 0) { anim.MixAnimationState(state, clip.Mixing, willMixWithCurrent: false, freshPlay, startInSeconds, OnComplete); }
+                        else { anim.MixAnimationState(state, clip.Mixing, willMixWithCurrent: false, freshPlay, startInSeconds); }
+                    }
+                }
+            }
+        }
+
+        public static void MixWithCurrent(this FAnimator anim, float startInSeconds = 0.3f, bool freshPlay = false, params FMixableAnimationClip[] clips)
+        {
+            anim.StartWhenReady(() => { Play_Local(); });
+            void Play_Local()
+            {
+                var print = anim.AddAnimationsToSystemIfNotPresent(clips);
+                PrintRebindWarningIfReq(anim, print);
+                if (clips != null && clips.Length > 0)
+                {
+                    for (int i = 0; i < clips.Length; i++)
+                    {
+                        var clip = clips[i];
+                        var state = anim.GetState(clip.Clip);
+                        anim.MixAnimationState(state, clip.Mixing, willMixWithCurrent: true, freshPlay, startInSeconds);
+                    }
+                }
+            }
+        }
+
+        public static void MixAndPlay(this FAnimator anim, float startInSeconds = 0.3f, bool freshPlay = false, OnDoAnything OnComplete = null, params FMixableAnimationClip[] clips)
+        {
+            anim.StartWhenReady(() => { Play_Local(); });
+            void Play_Local()
+            {
+                var print = anim.AddAnimationsToSystemIfNotPresent(clips);
+                PrintRebindWarningIfReq(anim, print);
+                if (clips != null && clips.Length > 0)
+                {
+                    for (int i = 0; i < clips.Length; i++)
+                    {
+                        var clip = clips[i];
+                        var state = anim.GetState(clip.Clip);
+                        if (i == 0) { anim.MixAnimationState(state, clip.Mixing, willMixWithCurrent: false, freshPlay, startInSeconds, OnComplete); }
+                        else { anim.MixAnimationState(state, clip.Mixing, willMixWithCurrent: false, freshPlay, startInSeconds); }
+                    }
+                }
+            }
+        }
+
+        public static void MixWithCurrent(this FAnimator anim, float startInSeconds = 0.3f, bool freshPlay = false, params FMixableController[] controllers)
+        {
+            anim.StartWhenReady(() => { Play_Local(); });
+            void Play_Local()
+            {
+                var print = anim.AddControllersToSystemIfNotPresent(controllers);
+                PrintRebindWarningIfReq(anim, print);
+                if (controllers != null && controllers.Length > 0)
+                {
+                    for (int i = 0; i < controllers.Length; i++)
+                    {
+                        var controller = controllers[i];
+                        var state = anim.GetState(controller.Controller);
+                        anim.MixAnimationState(state, controller.Mixing, willMixWithCurrent: true, freshPlay, startInSeconds);
+                    }
+                }
+            }
+        }
+
+        public static void MixAndPlay(this FAnimator anim, float startInSeconds = 0.3f, bool freshPlay = false, params FMixableController[] controllers)
+        {
+            anim.StartWhenReady(() => { Play_Local(); });
+            void Play_Local()
+            {
+                var print = anim.AddControllersToSystemIfNotPresent(controllers);
+                PrintRebindWarningIfReq(anim, print);
+                if (controllers != null && controllers.Length > 0)
+                {
+                    for (int i = 0; i < controllers.Length; i++)
+                    {
+                        var controller = controllers[i];
+                        var state = anim.GetState(controller.Controller);
+                        anim.MixAnimationState(state, controller.Mixing, willMixWithCurrent: false, freshPlay, startInSeconds);
+                    }
+                }
+            }
         }
         #endregion
     }

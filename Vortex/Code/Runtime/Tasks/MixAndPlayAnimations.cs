@@ -13,17 +13,14 @@ namespace Vortex
 
         void IAnimationTask.RunAnimTask(FAnimator animator, OnDoAnything OnComplete)
         {
-            if (freshPlayEveryTime)
-            {
-                animator.DisableTransition();
-            }
             if (mixWithCurrent)
             {
-                animator.MixWithCurrent(startTime, OnComplete, clips);
+                animator.MixWithCurrent(startTime, freshPlayEveryTime, clips);
+                OnComplete?.Invoke();
             }
             else
             {
-                animator.MixAndPlay(startTime, OnComplete, clips);
+                animator.MixAndPlay(startTime, freshPlayEveryTime, OnComplete, clips);
             }
         }
     }
