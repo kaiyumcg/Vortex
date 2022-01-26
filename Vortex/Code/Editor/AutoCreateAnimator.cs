@@ -13,7 +13,7 @@ namespace VortexEditor
         Dictionary<string, GameObject> prefabData;
 
         // Add menu named "My Window" to the Window menu
-        [MenuItem("Vortex/Create Animator Controller Asset with existing animation clip fbx")]
+        [MenuItem("Tool/Vortex/Create Animator Controller Asset with existing animation clip fbx")]
         static void Init()
         {
             // Get existing open window or if none, make a new one:
