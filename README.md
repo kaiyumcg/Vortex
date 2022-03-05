@@ -3,18 +3,28 @@ Animation library for unity engine built on top of Playable API.
 
 ## About
 
-Vortex is an animation library for unity engine built on top of playable API. FAnimator mono behaviour script is the heart of Vortex. It is the equivalent of the Animator component of unity engine. It plays animations, mixes animations and then plays.
+Vortex is an animation library for unity engine built on top of Playable API.
+FAnimator mono behaviour script is the heart of Vortex. It is the equivalent of
+the Animator component of unity engine. It plays animations, mixes animations
+and then plays.
 
 ## Why Vortex
 
-You can play or mix animation clips or controllers anytime without using animator controllers. You can use animator controllers too if you wish.
+You can play or mix animation clips or controllers anytime without using
+animator controllers. You can use animator controllers too if you wish.
 
 ## Example Usage
 
-Play non loop clip A ---> start playing controller A and wait 40 seconds --->
-play non loop Clip B --> mix clip C and D and continue to play for 2
-minute--->start playing controller B. With vortex it is simply calling a set of
-methods chained with callbacks; all in a single script, in event single method!
+Let's say you need a sequence of animations, like this -
+
+1. Play non loop clip A.
+2. Start playing controller A and wait 40 seconds.
+4. Play non loop Clip B.
+5. Mix clip C and D and continue to play for 2 minute.
+6. Start playing controller B.
+
+With vortex it is simply calling a set of methods chained with callbacks; all in
+a single script, in event single method!
 
 ![Example Usage](/docs/images/example_usage.png)
 
@@ -30,27 +40,27 @@ And you are done!
 
 ## FAnimator settings
 
-- `Play Automatically`: Is ticked then default clip will be played. If the
+- *Play Automatically*: Is ticked then default clip will be played. If the
   default clip is not set then the default controller will be played. If it too
   is not assigned then model will be in T-Pose since no animation will play.
-- `Update mode`: ”Always” to update always. “Only Gameobject Active” to update
-  only when gameobject is active. “Gameobject active and Camera visible” to
+- *Update mode*: `Always` to update always. `Only Gameobject Active` to update
+  only when gameobject is active. `Gameobject active and Camera visible` to
   update only when the model gameobject is active and it is being viewed by the
   camera(inside the camera frustrum).
-- `Default Clip`: Default FAnimationClip
-- `Default transition time`: In second, it is the default transition time Offset
-start--When ticked, the model will start animating after a certain portion of
-animation specified by “Clip start time offset” normalized(of default clip)
-amount.
-- `Time Mode`: How animation will update with respect to clock.
-- `Debug Graph`: If ticked then the animation graph will be shown in the
-  animation debugger located at `Window > Analysis > PlayableGraph Visualizer` .
-- `Preloaded FAnimation Clips`: If you can preload FAnimation clips here for
+- *Default Clip*: Default FAnimationClip.
+- *Default transition time*: In second, it is the default transition time
+- *Offset start*: When ticked, the model will start animating after a certain
+portion of animation specified by `Clip start time offset` normalized(of default
+clip) amount.
+- *Time Mode*: How animation will update with respect to clock.
+- *Debug Graph*: If ticked then the animation graph will be shown in the
+  animation debugger located at `Window > Analysis > PlayableGraph Visualizer`.
+- *Preloaded FAnimation Clips*: If you can preload FAnimation clips here for
   optimization. You can also do it for events. If an animation is added here and
   then if you play Unity Animation clip from script then the FAnimationClip
   setting you specified here will be used when playing animation.
-- `Preloaded controllers`: Preload controllers for optimization.
-- `Debug section`: to debug all animation state and current animation state.
+- *Preloaded controllers*: Preload controllers for optimization.
+- *Debug section*: to debug all animation state and current animation state.
 
 Animations comes in three forms:
 
@@ -58,7 +68,7 @@ Animations comes in three forms:
 2. FAnimation clip
 3. Animator controller
 
-FAnimator can play or `mixes and play` all three forms of animation data.
+FAnimator can play or *Mixes and play* all three forms of animation data.
 
 
 ## FAnimationClip
@@ -146,15 +156,15 @@ gameobject named “anim”.
 
 ![Builtin Animations Tasks 1](/docs/images/builtin_animation_task_1.png)
 
-- Clip: Animation clip
-- Mode: ”Play” for normally playing with normalized start time. If duration is
+- *Clip*: Animation clip
+- *Mode*: ”Play” for normally playing with normalized start time. If duration is
   10 seconds then 0.1 value for “Animation Start Time” means animation will
   start playing within 1 seconds. “Play In Fixed Time” is the same as “Play” but
   it starts within “Animation Start Time Fixed” rather than normalized time.
   CrossFade and CrossFadeWithFixedTime are the counterpart of “Play” vs “Play In
   Fixed Time”, except cross fade employs an smoothing.
-- Layer: The layer on the Animator controller where the animation resides.
-- Use Simple: If ticked then the animation will simply play rather than using
+- *Layer*: The layer on the Animator controller where the animation resides.
+- *Use Simple*: If ticked then the animation will simply play rather than using
   layer, crossfade, start time etc setting. Equivalent of calling
   Animator.Play(hash of the clip)
 
@@ -164,15 +174,15 @@ Plays a FAnimation clip.
 
 ![Builtin Animations Tasks 2](/docs/images/builtin_animation_task_2.png)
 
-- Clip: Animation clip from FBX or from unity dopesheet
-- Normalized start time after: If animation’s duration(with respect to speed) is
+- *Clip*: Animation clip from FBX or from unity dopesheet
+- *Normalized start time after*: If animation’s duration(with respect to speed) is
   10seconds then 0.1 value will make model start fastRun animation within 1
   seconds.
-- Start time after fixed: Same as previous but does not consider normalization
+- *Start time after fixed*: Same as previous but does not consider normalization
   but fixed seconds value
-- Is Looped: Should animation be looped or not.
-- Speed: Animation speed
-- Fresh Play Every time: If ticked then animation will start without any smoothing or blending.
+- *Is Looped*: Should animation be looped or not.
+- *Speed*: Animation speed
+- *Fresh Play Every time*: If ticked then animation will start without any smoothing or blending.
 
 
 ### Play Controller
@@ -181,9 +191,9 @@ Plays an animator controller.
 
 ![Builtin Animations Tasks 3](/docs/images/builtin_animation_task_3.png)
 
-- Controller: Plays a controller
-- Start time: Start within 1.5 seconds as shown in the figure
-- Fresh play everytime:
+- *Controller*: Plays a controller
+- *Start time*: Start within 1.5 seconds as shown in the figure
+- *Fresh play everytime*:
 
 ### Mix and Play Animations
 
