@@ -1,5 +1,5 @@
 # Vortex
-Animation library for unity engine built on top of Playable API. Documentation: https://docs.google.com/document/d/15QC-oTmOJpxgeujEV0PaSlGGf4xAbiUHVAFTOEj038M/edit
+Animation library for unity engine built on top of Playable API.
 
 ## About
 
@@ -13,6 +13,8 @@ You can play or mix animation clips or controllers anytime without using animato
 
 Play non loop clip A ---> start playing controller A and wait 40 seconds ---> play non loop Clip B --> mix clip C and D and continue to play for 2 minute--->start playing controller B.
 With vortex it is simply calling a set of methods chained with callbacks; all in a single script, in event single method!
+
+![Example Usage](/docs/images/example_usage.png)
 
 And many more to follow!
 
