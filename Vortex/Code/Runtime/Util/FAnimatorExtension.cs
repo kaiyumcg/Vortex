@@ -427,14 +427,13 @@ namespace Vortex
             bool exist = anim.IsInSystem(unityClip, ref state);
             if (exist)
             {
-                var curReadyState = anim.isReady;
-                anim.isReady = false;
+                var curReadyState = anim.IsReady;
+                anim.SetDity();
                 anim.states.Remove(state);
                 anim.Mixer.DisconnectInput(state.PlayableIDOnMixer);
 
                 anim.UpdateMixerIDOfAllStates();
-                anim.isReady = curReadyState;
-                if (anim.initWorkDone) { anim.isReady = true; }
+                anim.ResetDirty(curReadyState);
             }
             return exist;
         }
@@ -446,15 +445,14 @@ namespace Vortex
             bool exist = anim.IsInSystem(controller, ref state);
             if (exist)
             {
-                var curReadyState = anim.isReady;
-                anim.isReady = false;
+                var curReadyState = anim.IsReady;
+                anim.SetDity();
 
                 anim.states.Remove(state);
                 anim.Mixer.DisconnectInput(state.PlayableIDOnMixer);
 
                 anim.UpdateMixerIDOfAllStates();
-                anim.isReady = curReadyState;
-                if (anim.initWorkDone) { anim.isReady = true; }
+                anim.ResetDirty(curReadyState);
             }
             return exist;
         }
@@ -466,8 +464,8 @@ namespace Vortex
             bool exist = anim.IsInSystem(controller, ref state);
             if (exist)
             {
-                var curReadyState = anim.isReady;
-                anim.isReady = false;
+                var curReadyState = anim.IsReady;
+                anim.SetDity();
 
                 anim.states = new List<FAnimationState>();
                 var count = anim.Mixer.GetInputCount();
@@ -477,8 +475,7 @@ namespace Vortex
                 }
 
                 anim.UpdateMixerIDOfAllStates();
-                anim.isReady = curReadyState;
-                if (anim.initWorkDone) { anim.isReady = true; }
+                anim.ResetDirty(curReadyState);
             }
             return exist;
         }

@@ -30,12 +30,14 @@ namespace Vortex
         [DebugView] [SerializeField] FAnimationState _CurrentState;
 
         Animator anim;
-        [SerializeField, DebugView] internal bool isReady = false;
+        [SerializeField, DebugView] bool isReady = false;
         FAnimatorPlayable playable_script;
         bool isVisible = true;
         RuntimeAnimatorController defaultController;
         PlayableGraph Graph;
         bool isPlaying;
+        internal void SetDity() { isReady = false; }
+        internal void ResetDirty(bool originalReadyState) { isReady = originalReadyState; }
 
         internal FAnimationTaskRunner taskRunner;
         internal bool DebugMessage { get { return debugMessage; } }
@@ -75,7 +77,7 @@ namespace Vortex
         }
 
         public Animator Animator { get { return anim; } }
-        public bool IsReady { get { return isReady; } internal set { isReady = value; } }
+        public bool IsReady { get { return isReady; } }
 
         public void PauseAnimation()
         {
@@ -122,7 +124,6 @@ namespace Vortex
 
         private void Awake()
         {
-            initWorkDone = false;
             isReady = false;
             var rootObj = transform.GetRoot();
             var rootName = rootObj == null ? "" : rootObj.name;
@@ -228,13 +229,10 @@ namespace Vortex
                 }
             }
             playable_script.tickAnimation = true;
-            initWorkDone = true;
             isReady = true;
             isPlaying = true;
             Graph.Play();
         }
-
-        internal bool initWorkDone = false;
         private void OnDestroy()
         {
             if (Graph.IsValid())
@@ -242,7 +240,6 @@ namespace Vortex
                 Graph.Destroy();
             }
         }
-
         private void Update()
         {
             if (isReady && debugGraph && Graph.IsValid())
