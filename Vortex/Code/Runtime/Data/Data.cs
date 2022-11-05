@@ -3,8 +3,6 @@ using UnityEngine;
 
 namespace Vortex
 {
-    public delegate void OnDoAnything();
-
     [System.Serializable]
     internal class StateList
     {

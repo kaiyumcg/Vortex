@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
+using UnityExt;
 
 namespace Vortex
 {
@@ -137,6 +138,15 @@ namespace Vortex
             Graph = PlayableGraph.Create(ObjectName);
             Graph.SetTimeUpdateMode(timeMode);
             Mixer = AnimationMixerPlayable.Create(Graph);
+            //var sd = AnimationLayerMixerPlayable.Create(Graph);
+            //var mask = new AvatarMask();
+            //mask.AddTransformPath()
+            //var con = AnimatorControllerPlayable.Create(Graph, null);
+            //var clippl = AnimationClipPlayable.Create(Graph, null);
+            //var mixerTest = AnimationMixerPlayable.Create(Graph);
+            //var layerMixerTest = AnimationLayerMixerPlayable.Create(Graph);
+
+
             taskRunner = gameObject.AddComponent<FAnimationTaskRunner>();
             taskRunner.hideFlags = HideFlags.HideInInspector;
 
@@ -180,6 +190,7 @@ namespace Vortex
             var customPlayable = ScriptPlayable<FAnimatorPlayable>.Create(Graph);
             customPlayable.SetInputCount(1);
             Graph.Connect(Mixer, 0, customPlayable, 0);
+
             customPlayable.SetInputWeight(0, 1);
 
             playable_script = customPlayable.GetBehaviour();

@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
+using UnityExt;
 
 namespace Vortex
 {

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Playables;
 using System.Collections.Generic;
+using UnityExt;
 
 namespace Vortex
 {
@@ -194,7 +195,10 @@ namespace Vortex
 
             if (Mathf.Approximately(weight, 0.0f)) { isPlaying = false; return; }
             if (!isClipType || completedEvents) { return; }
-            var weightedDelta = weight * delta;
+            var weightedDelta = weight * delta;//TODO wrong logic, events depend upon anim time. 30% weighted animation's event should not be listened 1/3 speed
+            //Because it will actually play visually at normal speed but due to here being multiplied by weight, events will not be synced
+
+            //TODO Play N times mode is riddiculus, it will be removed. IsLoop instead of those enums
             timer += weightedDelta;
             _AnimationTime += weightedDelta;
             if (timer > Duration)
