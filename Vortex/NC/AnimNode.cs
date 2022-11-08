@@ -33,9 +33,9 @@ internal class AnimNode
         //todo finally dirty flag ta tule dite hobe
     }
     //set speed and other method
-    internal void SignalTimeScaleChange(float timeScale)
+    internal void OnUpdateTimeScale(float timeScale)
     {
-        animStates.ExForEach_NoCheck((i) => { i.SignalTimeScaleChange(timeScale); });
+        animStates.ExForEach_NoCheck((i) => { i.OnUpdateTimeScale(timeScale); });
     }
     internal void Pause()
     {
