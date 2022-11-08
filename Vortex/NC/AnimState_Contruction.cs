@@ -10,38 +10,36 @@ public partial class AnimState
 {
     [SerializeField, CanNotEdit] string stateName = "INVALID";
     [SerializeField, CanNotEdit] bool isLooping = false;
-    [SerializeField, CanNotEdit] float totalRunningTime = 0.0f;
-    [SerializeField, CanNotEdit] float NormalizedAnimationTime = 0.0f;
+    [SerializeField, CanNotEdit] float totalRunningTime = 0.0f, cycleTime = 0.0f;
+    [SerializeField, CanNotEdit] float normalizedAnimationTime = 0.0f;
     [SerializeField, CanNotEdit] float speed = 1.0f;
     [SerializeField, CanNotEdit] float duration = 0.0f;
     [SerializeField, CanNotEdit] int playableIDOnMixer = -1;
-    [SerializeField, CanNotEdit] uint layer = 0;
     [SerializeField, CanNotEdit] bool isController = true, hasEvents = false, isTicking = false;
     [SerializeField, CanNotEdit] RuntimeAnimatorController Controller = null;
     [SerializeField, CanNotEdit] AnimationClip clip = null;
     [SerializeField, CanNotEdit] AvatarMask mask = null;
-    [SerializeField, CanNotEdit] float timeScale = 1.0f;
 
     [HideInInspector] AnimatorControllerPlayable ControllerPlayable = default;
     [HideInInspector] AnimationClipPlayable ClipPlayable = default;
     [HideInInspector] AnimNode node = null;
     [HideInInspector] FAnimationEvent onStartEvent = null, onEndEvent = null;
     [HideInInspector] List<FAnimationMiddleEvent> customEvents = null;
+    
     private AnimState() { }
     void SetClipData(AnimationClip clip, AnimNode node)
     {
         this.stateName = clip.name;
         this.isLooping = clip.isLooping;
         this.totalRunningTime = 0.0f;
-        this.NormalizedAnimationTime = 0.0f;
+        this.cycleTime = 0.0f;
+        this.normalizedAnimationTime = 0.0f;
         this.speed = 1.0f;
         this.duration = clip.length / this.speed;
-        this.layer = node.Layer;
         this.isController = this.hasEvents = this.isTicking = false;
         this.Controller = null;
         this.clip = clip;
         this.mask = null;
-        this.timeScale = node.TimeScale;
         this.ControllerPlayable = default;
         this.ClipPlayable = AnimationClipPlayable.Create(node.Graph, clip);
         this.node = node;
@@ -56,16 +54,15 @@ public partial class AnimState
         this.stateName = controller.name;
         this.isLooping = false;
         this.totalRunningTime = -1.0f;
-        this.NormalizedAnimationTime = -1.0f;
+        this.cycleTime = 0.0f;
+        this.normalizedAnimationTime = -1.0f;
         this.speed = 1.0f;
         this.duration = -1.0f;
-        this.layer = node.Layer;
         this.hasEvents = this.isTicking = false;
         this.isController = true;
         this.Controller = controller;
         this.clip = null;
         this.mask = null;
-        this.timeScale = node.TimeScale;
         this.ControllerPlayable = AnimatorControllerPlayable.Create(node.Graph, controller);
         this.ClipPlayable = default;
         this.node = node;

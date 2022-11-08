@@ -22,9 +22,6 @@ public class AnimClip
     internal AnimClip()
     {
         speed = 1f;
-        mode = FAnimationClipMode.Loop;
-        repeatation = 1;
-        loopingAnimationTime = 2.5f;
     }
 
     internal AnimClip(AnimationClip clip, float speed, FAnimationClipMode mode,
@@ -34,9 +31,6 @@ public class AnimClip
     {
         this.clip = clip;
         this.speed = speed;
-        this.mode = mode;
-        this.repeatation = repeatation;
-        this.loopingAnimationTime = totalTimeInLoopMode;
         this.onStartEvent = onStartEvent;
         this.onEndEvent = onEndEvent;
         this.customEvents = customEvents;

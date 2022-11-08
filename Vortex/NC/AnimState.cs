@@ -7,36 +7,44 @@ using AttributeExt;
 using UnityEngine.Playables;
 
 internal enum AdditiveAnimationMode { Additive = 0, Override = 1 }
-internal enum StartMode { Lerp = 0, Sharp = 1 }
 internal enum WeightUpdateMode { ToZero = 0, ToOne = 1, ToValue = 2 }
 public partial class AnimState
 {
     bool paused = false;
     double pauseTime = 0.0;
     float targetWeight = -1.0f;
+    bool targetWeightRaise = false;
     bool isWeightUpdating = false;
-    WeightUpdateMode wMode;
-    float weightUpdateTimer = 0.0f;
+    WeightUpdateMode weightUpdateMode;
     float transitionTime = 0.0f;
+    public float NormalizedAnimationTime { get { return cycleTime / duration; } }
+    public float TotalRunningTime { get { return totalRunningTime; } }
+    public float CycleTime { get { return cycleTime; } }
     internal void SetSpeed(float speed) 
     {
         this.speed = speed;
         if (!isController)
         {
             this.duration = clip.length / speed;
+            var pl = GetPlayable();
+            pl.SetDuration(this.duration);
         }
         ApplySpeedToAnimation();
+    }
+    internal void OnUpdateTimeScale()
+    {
+        ApplySpeedToAnimation();
+    }
+    void ApplySpeedToAnimation()
+    {
+        var pl = GetPlayable();
+        pl.SetSpeed(speed * node.TimeScale);
     }
     internal void SetLoop(bool isLooping) 
     {
         if (!isController) { this.isLooping = isLooping; }
     }
     internal void SetID(int id) { this.playableIDOnMixer = id; }
-    internal void OnUpdateTimeScale(float timeScale)
-    {
-        this.timeScale = timeScale;
-        ApplySpeedToAnimation();
-    }
     Playable GetPlayable()
     {
         if (isController)
@@ -48,74 +56,94 @@ public partial class AnimState
             return ClipPlayable;
         }
     }
-    void ApplySpeedToAnimation()
-    {
-        var pl = GetPlayable();
-        pl.SetSpeed(speed * timeScale);
-    }
     void InitState()
     {
         paused = false;
         pauseTime = 0.0;
         isWeightUpdating = false;
         targetWeight = -1.0f;
-        weightUpdateTimer = 0.0f;
+        targetWeightRaise = false;
         transitionTime = 0.0f;
     }
-    internal void StartState(StartMode mode, WeightUpdateMode wMode, float transitionTime, float targetWeight = -1.0f)
+    internal void StartSmoothly(WeightUpdateMode weightUpdateMode, float transitionTime, float targetWeight = -1.0f)
     {
-        this.wMode = wMode;
-        this.targetWeight = targetWeight;
         this.isTicking = true;
         this.paused = false;
         this.pauseTime = 0.0;
-        this.transitionTime = transitionTime;
+        ApplySpeedToAnimation();
         var pl = GetPlayable();
         pl.SetTime(0.0);
-        if (mode == StartMode.Sharp)
-        {
-            if (wMode == WeightUpdateMode.ToValue)
-            {
-                node.Mixer.SetInputWeight(playableIDOnMixer, targetWeight);
-            }
-            else
-            {
-                node.Mixer.SetInputWeight(playableIDOnMixer, 1.0f);
-            }
-            isWeightUpdating = false;
-        }
-        else
-        {
-            isWeightUpdating = true;
-        }
-        ApplySpeedToAnimation();
+        pl.SetDuration(this.duration);
         pl.Play();
-        weightUpdateTimer = 0.0f;
-    }
-    internal void StopState(StartMode mode, float transitionTime)
-    {
-        var pl = GetPlayable();
-        if (mode == StartMode.Sharp)
+        //start events TODO
+        this.isWeightUpdating = true;
+        this.cycleTime = 0.0f;
+        this.totalRunningTime = 0.0f;
+        this.normalizedAnimationTime = 0.0f;
+
+        if (weightUpdateMode == WeightUpdateMode.ToValue)
         {
-            pl.SetTime(0.0);
-            node.Mixer.SetInputWeight(playableIDOnMixer, 0.0f);
-            pl.Pause();
-            isTicking = false;
-            paused = false;
-            pauseTime = 0.0;
-            isWeightUpdating = false;
+            var curValue = node.Mixer.GetInputWeight(playableIDOnMixer);
+            this.targetWeightRaise = curValue <= targetWeight;
+        }
+
+        this.weightUpdateMode = weightUpdateMode;
+        this.targetWeight = targetWeight;
+        this.transitionTime = transitionTime;
+    }
+    internal void StartAtOnce(WeightUpdateMode weightUpdateMode, float targetWeight = -1.0f)
+    {
+        this.isTicking = true;
+        this.paused = false;
+        this.pauseTime = 0.0;
+        ApplySpeedToAnimation();
+        var pl = GetPlayable();
+        pl.SetTime(0.0);
+        pl.SetDuration(this.duration);
+        pl.Play();
+        //start events TODO
+        this.isWeightUpdating = false;
+        this.cycleTime = 0.0f;
+        this.totalRunningTime = 0.0f;
+        this.normalizedAnimationTime = 0.0f;
+
+        if (weightUpdateMode == WeightUpdateMode.ToValue)
+        {
+            node.Mixer.SetInputWeight(playableIDOnMixer, targetWeight);
         }
         else
         {
-            if (paused)
-            {
-                isTicking = true;
-            }
-            wMode = WeightUpdateMode.ToZero;
-            isWeightUpdating = true;
-        }
+            node.Mixer.SetInputWeight(playableIDOnMixer, 1.0f);
+        }   
+    }
+    internal void StopSmoothly(float transitionTime)
+    {
+        this.cycleTime = 0.0f;
+        this.totalRunningTime = 0.0f;
+        this.normalizedAnimationTime = 0.0f;
+        this.isWeightUpdating = true;
         this.transitionTime = transitionTime;
-        weightUpdateTimer = 0.0f;
+        if (paused)
+        {
+            isTicking = true;
+        }
+
+        this.weightUpdateMode = WeightUpdateMode.ToZero;
+    }
+    internal void StopAtOnce()
+    {
+        this.cycleTime = 0.0f;
+        this.totalRunningTime = 0.0f;
+        this.normalizedAnimationTime = 0.0f;
+        this.isWeightUpdating = false;
+        this.transitionTime = -1.0f;
+        this.isTicking = false;
+
+        var pl = GetPlayable();
+        node.Mixer.SetInputWeight(playableIDOnMixer, 0.0f);
+        pl.Pause();
+        this.paused = false;
+        this.pauseTime = 0.0;
     }
     internal void PauseState()
     {
@@ -137,41 +165,88 @@ public partial class AnimState
         pl.Play();
         isWeightUpdating = true;
     }
-
-    
-    //Set animation frame or time TODO
-    //Negative playback speed TODO
     internal void TickState(float delta)
     {
-        ////etao korte hoibe
-        //pl.SetDuration(duration);
-        ////force loop
-        //if (pl.IsDone()) { pl.SetTime(0.0f); pl.Play(); }
-        //todo delta time and time scale ki sob jaygay consider kora hoise?
-        //hasCompleted flag for additive state karon amader completed gulo list e rakhar dorkar nai
-        //Also StartState with callback completion so that can do things in caller contex , ekhon kono callback nai
-
-        //todo various purpose e weight zero te or predefined kono value to or one e lerp kora lagte pare
-        //todo config er upore depends kore lerp na kore snap o hote pare
-        //todo event gulo check hote thakte pare on every animation frame
-        //todo esob kisui hobe na jodi animation tar kono vumika i na thake mixer e in that case tick i hobe na
         if (!isTicking || node.IsDirty) { return; }
+        var dt = delta * node.TimeScale;
+        totalRunningTime += dt;
+
+        if (!isController)
+        {
+            cycleTime += dt;
+            if (cycleTime >= duration)
+            {
+                cycleTime = 0.0f;
+                var pl = GetPlayable();
+                if (isLooping)
+                {
+                    pl.SetTime(0.0);
+                    pl.Play();
+                }
+                else
+                {
+                    pl.Pause();
+                    isTicking = false;
+                }
+                //end events TODO
+            }
+            else
+            {
+                //TODO custom events processing
+            }
+        }
 
         if (isWeightUpdating)
         {
-            //ei timer er value er modde i target weight e or zero te or one e weight niye jete hobe
-
-            weightUpdateTimer += delta * timeScale;
-            if (weightUpdateTimer > transitionTime)
+            var curWeight = node.Mixer.GetInputWeight(playableIDOnMixer);
+            if (weightUpdateMode == WeightUpdateMode.ToOne)
             {
-                weightUpdateTimer = 0.0f;
-                isWeightUpdating = false;
+                curWeight += dt * (1 / transitionTime);
+                if (curWeight >= 1.0f)
+                {
+                    isWeightUpdating = false;
+                    curWeight = 1.0f;
+                }
             }
+            else if (weightUpdateMode == WeightUpdateMode.ToZero)
+            {
+                curWeight -= dt * (1 / transitionTime);
+                if (curWeight <= 0.0f)
+                {
+                    isWeightUpdating = false;
+                    curWeight = 0.0f;
+                    StopAtOnce();
+                }
+            }
+            else if (weightUpdateMode == WeightUpdateMode.ToValue)
+            {
+                curWeight = curWeight + dt * (1 / transitionTime) * (targetWeightRaise ? 1.0f : -1.0f);
+                if (targetWeightRaise)
+                {
+                    if (curWeight >= targetWeight)
+                    {
+                        isWeightUpdating = false;
+                        curWeight = targetWeight;
+                    }
+                }
+                else
+                {
+                    if (curWeight <= targetWeight)
+                    {
+                        isWeightUpdating = false;
+                        curWeight = targetWeight;
+                    }
+                }
+            }
+            node.Mixer.SetInputWeight(playableIDOnMixer, curWeight);
         }
-        
 
-        //weight jevabe update hosse, similarly playable o loop setting er against e update korte hobe
-        //event gulo o similarly update korte hobe
-        //last e negative speed consider
+        //Callback apart from notifies
+        //AnimNotify, AnimNotifyState, Builtin Notify list such as Particle and Sound
+        //todo animation events
+        //todo check for negative speed
+        //Set to certain animation frame or time(in relation to pose asset?)--ekhon kintu time 0.0 te suru hoy-offset?
+        //todo delta time and time scale ki sob jaygay consider kora hoise?
+        //TODO weight jodi 0.5 er kom thake then events gulo execute hobe na
     }
 }

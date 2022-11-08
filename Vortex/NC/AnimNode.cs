@@ -35,7 +35,7 @@ internal class AnimNode
     //set speed and other method
     internal void OnUpdateTimeScale(float timeScale)
     {
-        animStates.ExForEach_NoCheck((i) => { i.OnUpdateTimeScale(timeScale); });
+        animStates.ExForEach_NoCheck((i) => { i.OnUpdateTimeScale(); });
     }
     internal void Pause()
     {
