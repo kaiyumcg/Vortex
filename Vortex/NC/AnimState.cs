@@ -241,6 +241,7 @@ public partial class AnimState
             node.Mixer.SetInputWeight(playableIDOnMixer, curWeight);
         }
 
+        //FootIK and other IK related settings
         //Callback apart from notifies
         //AnimNotify, AnimNotifyState, Builtin Notify list such as Particle and Sound
         //todo animation events
