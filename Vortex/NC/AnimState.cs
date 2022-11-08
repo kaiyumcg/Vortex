@@ -3,43 +3,109 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
 using Vortex;
-using UnityExt;
+using AttributeExt;
+using UnityEngine.Playables;
 
-public class AnimState
+internal enum AdditiveAnimationMode { Additive = 0, Override = 1 }
+internal enum StartMode { Lerp = 0, Sharp = 1}
+
+public partial class AnimState
 {
-    [SerializeField, DebugView] string _AnimationStateName;
-    [SerializeField, DebugView] float _AnimationTime;
-    [SerializeField, DebugView] float _NormalizedAnimationTime;
-    [SerializeField, DebugView] internal float transitionTime;
-    [SerializeField, DebugView] internal TransitionFlag flag;
-    [SerializeField, DebugView] internal int PlayableIDOnMixer;
-    [SerializeField, DebugView] internal bool isClipType = true;
-    [SerializeField, DebugView] internal float targetWeight = 1.0f;
-    [SerializeField, DebugView] internal bool inMixedMode = false;
-    [SerializeField, DebugView] internal bool firstTimeOffset = false;
-    [SerializeField, DebugView] internal float offSetValue;
-    [SerializeField, DebugView] RuntimeAnimatorController _Controller;
-    [SerializeField, DebugView] bool completedEvents;
-    [SerializeField, DebugView] bool isPlaying;
-    [SerializeField, DebugView] float timer;
-    [SerializeField, DebugView] int playCount;
-    [SerializeField, DebugView] float weight;
-
-    FAnimationClip _Clip;
-    [HideInInspector] internal AnimatorControllerPlayable ControllerPlayable;
-    [HideInInspector] internal AnimationClipPlayable ClipPlayable;
-    [HideInInspector] internal AnimationMixerPlayable Mixer;
-    [HideInInspector] internal List<OnDoAnything> OnCompleteCallbacks;
-
-    private AnimState()
+    internal void SetSpeed(float speed) 
     {
-        _AnimationTime = 0f;
-        _NormalizedAnimationTime = 0f;
-        transitionTime = 0f;
-        flag = TransitionFlag.Done;
-        isPlaying = false;
-        targetWeight = 0.0f;
-        inMixedMode = false;
-        firstTimeOffset = false;
+        this.speed = speed;
+        if (!isController)
+        {
+            this.duration = clip.length / speed;
+        }
+        ApplySpeedToAnimation();
+    }
+    internal void SetLoop(bool isLooping) 
+    {
+        if (!isController) { this.isLooping = isLooping; }
+    }
+    internal void SetID(int id) { this.playableIDOnMixer = id; }
+    internal void SignalTimeScaleChange(float timeScale)
+    {
+        this.timeScale = timeScale;
+        ApplySpeedToAnimation();
+    }
+    Playable GetPlayable()
+    {
+        if (isController)
+        {
+            return ControllerPlayable;
+        }
+        else
+        {
+            return ClipPlayable;
+        }
+    }
+    void ApplySpeedToAnimation()
+    {
+        var pl = GetPlayable();
+        pl.SetSpeed(speed * timeScale);
+    }
+    void InitState()
+    {
+        paused = false;
+        pauseTime = 0.0;
+    }
+
+    internal void StartState(StartMode mode)
+    {
+        isTicking = true;
+        var pl = GetPlayable();
+        pl.SetTime(0.0f);
+        if (mode == StartMode.Sharp)
+        {
+            node.Mixer.SetInputWeight(playableIDOnMixer, 1.0f);
+        }
+        pl.Play();
+    }
+    internal void StopState(StartMode mode)
+    {
+        //todo impl
+    }
+    //todo delta time and time scale ki sob jaygay consider kora hoise?
+    //hasCOmpleted flag for additive state karon amader completed gulo list e rakhar dorkar nai
+    //Also StartState with callback completion so that can do things in caller contex , ekhon kono callback nai
+    bool paused = false;
+    double pauseTime;
+    internal void PauseState()
+    {
+        if (!isTicking) { return; }
+        paused = true;
+        isTicking = false;
+        var pl = GetPlayable();
+        pauseTime = pl.GetTime();
+        pl.Pause();
+    }
+    internal void ResumeState()
+    {
+        if (!paused) { return; }
+        paused = false;
+        isTicking = true;
+        var pl = GetPlayable();
+        pl.SetTime(pauseTime);
+        pl.Play();
+
+
+        ////etao korte hoibe
+        //pl.SetDuration(duration);
+        ////force loop
+        //if (pl.IsDone()) { pl.SetTime(0.0f); pl.Play(); }
+    }
+
+    //Set animation frame or time TODO
+    //Negative playback speed TODO
+    internal void TickState(float delta)
+    {
+        //todo various purpose e weight zero te or predefined kono value to or one e lerp kora lagte pare
+        //todo config er upore depends kore lerp na kore snap o hote pare
+        //todo event gulo check hote thakte pare on every animation frame
+        //todo esob kisui hobe na jodi animation tar kono vumika i na thake mixer e in that case tick i hobe na
+        if (!isTicking || node.IsDirty) { return; }
+
     }
 }

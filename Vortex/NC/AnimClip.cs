@@ -13,6 +13,7 @@ public class AnimClip
     public FAnimationEvent onStartEvent = new FAnimationEvent(), onEndEvent = new FAnimationEvent();
     public List<FAnimationMiddleEvent> customEvents = new List<FAnimationMiddleEvent>();
     public AnimationClip Clip { get { return clip; } }
+    internal float Speed { get { return speed; } }
     internal float Duration { get { return clip.length / speed; } }
     internal bool IsLoop { get { return isLoop; } }
     //TODO better event description--on scriptable object? or UE like editor at notify style?

@@ -4,7 +4,8 @@
     "references": [
         "Textus.SerializeReferenceUI",
         "Unity.PlayableGraphVisualizer",
-        "UnityExt"
+        "UnityExt",
+        "AttributeExt"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
