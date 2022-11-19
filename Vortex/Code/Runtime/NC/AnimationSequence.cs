@@ -8,57 +8,15 @@ using UnityExt;
 [CreateAssetMenu(fileName = "Animation Sequence", menuName = "Kaiyum/Vortex/Create a new animation sequence", order = 1)]
 public class AnimationSequence : ScriptableObject
 {
-    [System.Serializable]
-    internal class SkeletalNotify : Notify
-    {
-        [Dropdown(typeof(AnimationSequence), nameof(GetSkeletalNotifyNames))]
-        [SerializeField] string notifyName;
-        internal override string NotifyName => notifyName;
-    }
-    [System.Serializable]
-    internal class TimedSkeletalNotify : NotifyState
-    {
-        [Dropdown(typeof(AnimationSequence), nameof(GetSkeletalNotifyStateNames))]
-        [SerializeField] string notifyName;
-        internal override string NotifyName => notifyName;
-    }
     
-    public static string[] GetSkeletalNotifyNames()
-    {
-        var assets = Resources.LoadAll<AnimNotifyDefine>("");
-        var fNames = new List<string>();
-        assets.ExForEach((i) =>
-        {
-            if (i != null && i.SkeletalNotifies.ExIsValid())
-            {
-                fNames.ExAddRangeUniquely(i.SkeletalNotifies);
-            }
-        });
-        return fNames.ToArray();
-    }
-    public static string[] GetSkeletalNotifyStateNames()
-    {
-        var assets = Resources.LoadAll<AnimNotifyDefine>("");
-        var fNames = new List<string>();
-        assets.ExForEach((i) =>
-        {
-            if (i != null && i.SkeletalNotifyStates.ExIsValid()) 
-            {
-                fNames.ExAddRangeUniquely(i.SkeletalNotifyStates);
-            }
-        });
-        return fNames.ToArray();
-    }
+    
+    
 
     [SerializeField] AnimationClip clip;
     [SerializeField] float speed = 1f;
     [SerializeField] bool isLoop = false;
-    [SerializeField] List<SkeletalNotify> skeletalNotifies = new List<SkeletalNotify>();
-    [SerializeField] List<TimedSkeletalNotify> skeletalNotifyStates = new List<TimedSkeletalNotify>();
-    [SerializeField] List<SoundNotify> soundNotifies = new List<SoundNotify>();
-    [SerializeField] List<TimedSoundNotify> timedSoundNotifies = new List<TimedSoundNotify>();
-    [SerializeField] List<EffectNotify> effectNotifies = new List<EffectNotify>();
-    [SerializeField] List<TimedEffectNotify> timedEffectNotifies = new List<TimedEffectNotify>();
+    [SerializeReference, SerializeReferenceButton] List<INotify> notifies = new List<INotify>();
+    [SerializeReference, SerializeReferenceButton] List<INotifyState> notifyStates = new List<INotifyState>();
 
     public AnimationClip Clip { get { return clip; } }
     internal float Speed { get { return speed; } }

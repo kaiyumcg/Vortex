@@ -12,33 +12,89 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44c094923ef5cfd429a4dc8510149ebc, type: 3}
   m_Name: Animation Sequence
   m_EditorClassIdentifier: 
-  clip: {fileID: 1892068297169081763, guid: 019bfaab88fbf69419a127acdf89f5e7, type: 3}
+  clip: {fileID: 0}
   speed: 1
   isLoop: 0
-  skeletalNotifies:
-  - time: 0
-    chance: 1
-    useLOD: 0
-    LOD: 
-    notifyName: OnAttack2
-  - time: 0
-    chance: 1
-    useLOD: 0
-    LOD: 
-    notifyName: OnAttack2
-  - time: 0
-    chance: 1
-    useLOD: 0
-    LOD: 
-    notifyName: OnAttack2
-  skeletalNotifyStates:
-  - canTick: 0
-    notifyRange: {x: 0.36, y: 0.59}
-    chance: 1
-    useLOD: 0
-    LOD: 
-    notifyName: OnCombo1
-  soundNotifies: []
-  timedSoundNotifies: []
-  effectNotifies: []
-  timedEffectNotifies: []
+  notifies:
+  - id: 0
+  - id: 1
+  - id: 2
+  notifyStates:
+  - id: 3
+  - id: 4
+  - id: 5
+  references:
+    version: 1
+    00000000:
+      type: {class: EffectNotify, ns: , asm: Vortex}
+      data:
+        setting:
+          time: 0
+          chance: 1
+          useLOD: 0
+          LOD: 
+        effectPrefab: {fileID: 0}
+        socketName: 
+        positionOffset: {x: 0, y: 0, z: 0}
+        rotationOffset: {x: 0, y: 0, z: 0}
+        scale: {x: 1, y: 1, z: 1}
+        attached: 0
+    00000001:
+      type: {class: SkeletalNotify, ns: , asm: Vortex}
+      data:
+        notifyName: OnAttack1
+        setting:
+          time: 0
+          chance: 1
+          useLOD: 0
+          LOD: 
+    00000002:
+      type: {class: SoundNotify, ns: , asm: Vortex}
+      data:
+        setting:
+          time: 0
+          chance: 1
+          useLOD: 0
+          LOD: 
+        soundClip: {fileID: 0}
+        volumeMultiplier: 1
+        pitchMultiplier: 1
+    00000003:
+      type: {class: TimedEffectNotify, ns: , asm: Vortex}
+      data:
+        setting:
+          canTick: 0
+          notifyRange: {x: 0.55, y: 0.95}
+          chance: 1
+          useLOD: 0
+          LOD: 
+        effectPrefab: {fileID: 0}
+        cycleTime: 1
+        socketName: 
+        positionOffset: {x: 0, y: 0, z: 0}
+        rotationOffset: {x: 0, y: 0, z: 0}
+        scale: {x: 1, y: 1, z: 1}
+        attached: 0
+    00000004:
+      type: {class: TimedSkeletalNotify, ns: , asm: Vortex}
+      data:
+        notifyName: OnCombo1
+        setting:
+          canTick: 0
+          notifyRange: {x: 0.48, y: 0.81}
+          chance: 1
+          useLOD: 0
+          LOD: 
+    00000005:
+      type: {class: TimedSoundNotify, ns: , asm: Vortex}
+      data:
+        setting:
+          canTick: 0
+          notifyRange: {x: 0.47, y: 1}
+          chance: 1
+          useLOD: 0
+          LOD: 
+        soundClips:
+        - {fileID: 0}
+        volumeMultiplier: 1
+        pitchMultiplier: 1
