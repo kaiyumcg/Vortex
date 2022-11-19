@@ -3,6 +3,7 @@ using UnityEngine.Animations;
 using System.Collections.Generic;
 using System.Collections;
 using UnityExt;
+using AttributeExt;
 
 namespace Vortex
 {
@@ -17,23 +18,23 @@ namespace Vortex
         public RuntimeAnimatorController Controller { get { return _Controller; } }
         public bool IsPlaying { get { return isPlaying; } }
 
-        [SerializeField, DebugView] string _AnimationStateName;
-        [SerializeField, DebugView] float _AnimationTime;
-        [SerializeField, DebugView] float _NormalizedAnimationTime;
-        [SerializeField, DebugView] internal float transitionTime;
-        [SerializeField, DebugView] internal TransitionFlag flag;
-        [SerializeField, DebugView] internal int PlayableIDOnMixer;
-        [SerializeField, DebugView] internal bool isClipType = true;
-        [SerializeField, DebugView] internal float targetWeight = 1.0f;
-        [SerializeField, DebugView] internal bool inMixedMode = false;
-        [SerializeField, DebugView] internal bool firstTimeOffset = false;
-        [SerializeField, DebugView] internal float offSetValue;
-        [SerializeField, DebugView] RuntimeAnimatorController _Controller;
-        [SerializeField, DebugView] bool completedEvents;
-        [SerializeField, DebugView] bool isPlaying;
-        [SerializeField, DebugView] float timer;
-        [SerializeField, DebugView] int playCount;
-        [SerializeField, DebugView] float weight;
+        [SerializeField, CanNotEdit] string _AnimationStateName;
+        [SerializeField, CanNotEdit] float _AnimationTime;
+        [SerializeField, CanNotEdit] float _NormalizedAnimationTime;
+        [SerializeField, CanNotEdit] internal float transitionTime;
+        [SerializeField, CanNotEdit] internal TransitionFlag flag;
+        [SerializeField, CanNotEdit] internal int PlayableIDOnMixer;
+        [SerializeField, CanNotEdit] internal bool isClipType = true;
+        [SerializeField, CanNotEdit] internal float targetWeight = 1.0f;
+        [SerializeField, CanNotEdit] internal bool inMixedMode = false;
+        [SerializeField, CanNotEdit] internal bool firstTimeOffset = false;
+        [SerializeField, CanNotEdit] internal float offSetValue;
+        [SerializeField, CanNotEdit] RuntimeAnimatorController _Controller;
+        [SerializeField, CanNotEdit] bool completedEvents;
+        [SerializeField, CanNotEdit] bool isPlaying;
+        [SerializeField, CanNotEdit] float timer;
+        [SerializeField, CanNotEdit] int playCount;
+        [SerializeField, CanNotEdit] float weight;
 
         FAnimationClip _Clip;
         [HideInInspector] internal AnimatorControllerPlayable ControllerPlayable;

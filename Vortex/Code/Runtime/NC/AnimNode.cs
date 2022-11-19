@@ -6,10 +6,10 @@ using UnityEngine.Animations;
 using UnityEngine.Playables;
 using UnityExt;
 using Vortex;
-
+using AttributeExt;
 internal class AnimNode
 {
-    [SerializeField, DebugView] List<AnimState> animStates;
+    [SerializeField, CanNotEdit] List<AnimState> animStates;
     bool isDirty = false;
     uint layer = 0;
     AnimationLayerMixerPlayable mixer;
@@ -26,12 +26,12 @@ internal class AnimNode
         
     }
     //TODO state add korle dirty flag hoy emon ta kora
-    AnimState GetOrAddState(AnimationClip clip, ref AnimationLayerMixerPlayable Mixer, ref PlayableGraph Graph)
-    {
-        //todo jodi add kora laage then dirty flag set korte hobe and ei time e state tick korbe na
-        //todo added hoye gele then playerID on mixer update korte hobe anim state er
-        //todo finally dirty flag ta tule dite hobe
-    }
+    //AnimState GetOrAddState(AnimationClip clip, ref AnimationLayerMixerPlayable Mixer, ref PlayableGraph Graph)
+    //{
+    //    //todo jodi add kora laage then dirty flag set korte hobe and ei time e state tick korbe na
+    //    //todo added hoye gele then playerID on mixer update korte hobe anim state er
+    //    //todo finally dirty flag ta tule dite hobe
+    //}
     //set speed and other method
     internal void OnUpdateTimeScale(float timeScale)
     {

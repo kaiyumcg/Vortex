@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
+using AttributeExt;
 
 namespace Vortex
 {
     [System.Serializable]
     internal class StateList
     {
-        [SerializeField] [DebugView] List<FAnimationState> data;
+        [SerializeField] [CanNotEdit] List<FAnimationState> data;
         internal List<FAnimationState> Data { get { return data; } set { data = value; } }
 
         internal StateList()

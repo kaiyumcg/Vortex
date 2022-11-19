@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 using UnityExt;
+using AttributeExt;
 
 namespace Vortex
 {
@@ -26,12 +27,12 @@ namespace Vortex
         [SerializeField] List<RuntimeAnimatorController> preloadController;
 
         [Header("Debug section")]
-        [SerializeField] [DebugView] float animTimeScale = 1.0f;
-        [SerializeField] [DebugView] StateList _states = new StateList();
-        [DebugView] [SerializeField] FAnimationState _CurrentState;
+        [SerializeField] [CanNotEdit] float animTimeScale = 1.0f;
+        [SerializeField] [CanNotEdit] StateList _states = new StateList();
+        [CanNotEdit] [SerializeField] FAnimationState _CurrentState;
 
         Animator anim;
-        [SerializeField, DebugView] bool isReady = false;
+        [SerializeField, CanNotEdit] bool isReady = false;
         FAnimatorPlayable playable_script;
         bool isVisible = true;
         RuntimeAnimatorController defaultController;

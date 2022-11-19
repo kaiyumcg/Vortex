@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 using UnityExt;
+using AttributeExt;
 
 namespace Vortex
 {
@@ -22,8 +23,8 @@ namespace Vortex
         [SerializeField] bool debugGraph = false;
 
         [Header("Debug section")]
-        [SerializeField][DebugView] float animTimeScale = 1.0f;
-        [SerializeField, DebugView] bool isVisible = true, isPaused = false, isReady = false;
+        [SerializeField][CanNotEdit] float animTimeScale = 1.0f;
+        [SerializeField, CanNotEdit] bool isVisible = true, isPaused = false, isReady = false;
         Animator anim;
         TestPlayable playable_script;
         PlayableGraph Graph;

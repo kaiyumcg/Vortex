@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44c094923ef5cfd429a4dc8510149ebc, type: 3}
+  m_Name: Animation Sequence
+  m_EditorClassIdentifier: 
+  clip: {fileID: 1892068297169081763, guid: 019bfaab88fbf69419a127acdf89f5e7, type: 3}
+  speed: 1
+  isLoop: 0
+  skeletalNotifies:
+  - time: 0
+    chance: 1
+    useLOD: 0
+    LOD: 
+    notifyName: OnAttack2
+  - time: 0
+    chance: 1
+    useLOD: 0
+    LOD: 
+    notifyName: OnAttack2
+  - time: 0
+    chance: 1
+    useLOD: 0
+    LOD: 
+    notifyName: OnAttack2
+  skeletalNotifyStates:
+  - canTick: 0
+    notifyRange: {x: 0.36, y: 0.59}
+    chance: 1
+    useLOD: 0
+    LOD: 
+    notifyName: OnCombo1
+  soundNotifies: []
+  timedSoundNotifies: []
+  effectNotifies: []
+  timedEffectNotifies: []

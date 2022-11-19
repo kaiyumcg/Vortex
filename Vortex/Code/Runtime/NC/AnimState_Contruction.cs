@@ -23,8 +23,6 @@ public partial class AnimState
     [HideInInspector] AnimatorControllerPlayable ControllerPlayable = default;
     [HideInInspector] AnimationClipPlayable ClipPlayable = default;
     [HideInInspector] AnimNode node = null;
-    [HideInInspector] FAnimationEvent onStartEvent = null, onEndEvent = null;
-    [HideInInspector] List<FAnimationMiddleEvent> customEvents = null;
     
     private AnimState() { }
     void SetClipData(AnimationClip clip, AnimNode node)
@@ -43,8 +41,6 @@ public partial class AnimState
         this.ControllerPlayable = default;
         this.ClipPlayable = AnimationClipPlayable.Create(node.Graph, clip);
         this.node = node;
-        this.onStartEvent = this.onEndEvent = null;
-        this.customEvents = null;
         node.Mixer.AddInput(this.ClipPlayable, 0, 0.0f);
         this.playableIDOnMixer = node.Mixer.GetInputCount() - 1;
         InitState();
@@ -66,8 +62,6 @@ public partial class AnimState
         this.ControllerPlayable = AnimatorControllerPlayable.Create(node.Graph, controller);
         this.ClipPlayable = default;
         this.node = node;
-        this.onStartEvent = this.onEndEvent = null;
-        this.customEvents = null;
         node.Mixer.AddInput(this.ControllerPlayable, 0, 0.0f);
         this.playableIDOnMixer = node.Mixer.GetInputCount() - 1;
         InitState();
@@ -83,27 +77,21 @@ public partial class AnimState
         node.Mixer.SetLayerMaskFromAvatarMask(node.Layer, mask);
         node.Mixer.SetLayerAdditive(node.Layer, mode == AdditiveAnimationMode.Additive);
     }
-    internal AnimState(AnimClip clip, AnimNode node)
+    internal AnimState(AnimationSequence clip, AnimNode node)
     {
         SetClipData(clip.Clip, node);
         this.isLooping = clip.IsLoop;
         this.speed = clip.Speed;
         this.duration = clip.Clip.length / this.speed;
         this.hasEvents = true;
-        this.onStartEvent = clip.onStartEvent;
-        this.onEndEvent = clip.onEndEvent;
-        this.customEvents = clip.customEvents;
     }
-    internal AnimState(AnimClip clip, AnimNode node, AvatarMask mask, AdditiveAnimationMode mode)
+    internal AnimState(AnimationSequence clip, AnimNode node, AvatarMask mask, AdditiveAnimationMode mode)
     {
         SetClipData(clip.Clip, node);
         this.isLooping = clip.IsLoop;
         this.speed = clip.Speed;
         this.duration = clip.Clip.length / this.speed;
         this.hasEvents = true;
-        this.onStartEvent = clip.onStartEvent;
-        this.onEndEvent = clip.onEndEvent;
-        this.customEvents = clip.customEvents;
 
         this.mask = mask;
         node.Mixer.SetLayerMaskFromAvatarMask(node.Layer, mask);
