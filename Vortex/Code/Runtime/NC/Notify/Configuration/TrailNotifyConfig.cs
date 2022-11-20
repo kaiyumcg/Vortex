@@ -4,9 +4,9 @@ using System.IO.IsolatedStorage;
 using UnityEngine;
 using UnityExt;
 
-public class TrailNotify : INotifyState
+public class TrailNotifyConfig : INotifyStateConfig
 {
-    [SerializeField] NotifyStateSetting setting;
+    [SerializeField] NotifyStateBasicConfig basicSetting;
     [SerializeField] GameTrail gameTrailPrefab;
     [SerializeField] string socketName;//Transform.Find()
     [SerializeField] Vector3 positionOffset, rotationOffset;
@@ -16,19 +16,11 @@ public class TrailNotify : INotifyState
     internal Vector3 PositionOffset { get { return positionOffset; } }
     internal Vector3 RotationOffset { get { return rotationOffset; } }
     internal Vector3 Scale { get { return scale; } }
-
-    bool INotifyState.CanTick => setting.CanTick;
-    float INotifyState.StartTime => setting.StartTime;
-    float INotifyState.EndTime => setting.EndTime;
-    float INotifyState.Chance => setting.Chance;
-    bool INotifyState.UseLOD => setting.UseLOD;
-    List<int> INotifyState.LevelOfDetails => setting.LevelOfDetails;
-    void INotifyState.Reset()
-    {
-        setting.Reset();
-        gameTrailPrefab = null;
-        socketName = "";
-        positionOffset = rotationOffset = Vector3.zero;
-        scale = Vector3.one;
-    }
+    bool INotifyStateConfig.CanTick => basicSetting.CanTick;
+    float INotifyStateConfig.StartTime => basicSetting.StartTime;
+    float INotifyStateConfig.EndTime => basicSetting.EndTime;
+    float INotifyStateConfig.Chance => basicSetting.Chance;
+    bool INotifyStateConfig.UseLOD => basicSetting.UseLOD;
+    List<int> INotifyStateConfig.LevelOfDetails => basicSetting.LevelOfDetails;
+    bool INotifyStateConfig.IsSkeletal => false;
 }

@@ -23,12 +23,13 @@ MonoBehaviour:
   - id: 3
   - id: 4
   - id: 5
+  - id: 6
   references:
     version: 1
     00000000:
-      type: {class: EffectNotify, ns: , asm: Vortex}
+      type: {class: EffectNotifyConfig, ns: , asm: Vortex}
       data:
-        setting:
+        basicSetting:
           time: 0
           chance: 1
           useLOD: 0
@@ -40,18 +41,18 @@ MonoBehaviour:
         scale: {x: 1, y: 1, z: 1}
         attached: 0
     00000001:
-      type: {class: SkeletalNotify, ns: , asm: Vortex}
+      type: {class: SkeletalNotifyConfig, ns: , asm: Vortex}
       data:
         notifyName: OnAttack1
-        setting:
+        basicSetting:
           time: 0
           chance: 1
           useLOD: 0
           LOD: 
     00000002:
-      type: {class: SoundNotify, ns: , asm: Vortex}
+      type: {class: SoundNotifyConfig, ns: , asm: Vortex}
       data:
-        setting:
+        basicSetting:
           time: 0
           chance: 1
           useLOD: 0
@@ -60,11 +61,11 @@ MonoBehaviour:
         volumeMultiplier: 1
         pitchMultiplier: 1
     00000003:
-      type: {class: TimedEffectNotify, ns: , asm: Vortex}
+      type: {class: TimedEffectNotifyConfig, ns: , asm: Vortex}
       data:
-        setting:
+        basicSetting:
           canTick: 0
-          notifyRange: {x: 0.55, y: 0.95}
+          notifyRange: {x: 0, y: 0}
           chance: 1
           useLOD: 0
           LOD: 
@@ -76,25 +77,38 @@ MonoBehaviour:
         scale: {x: 1, y: 1, z: 1}
         attached: 0
     00000004:
-      type: {class: TimedSkeletalNotify, ns: , asm: Vortex}
+      type: {class: TimedSkeletalNotifyConfig, ns: , asm: Vortex}
       data:
         notifyName: OnCombo1
-        setting:
+        basicSetting:
           canTick: 0
-          notifyRange: {x: 0.48, y: 0.81}
+          notifyRange: {x: 0, y: 0}
           chance: 1
           useLOD: 0
           LOD: 
     00000005:
-      type: {class: TimedSoundNotify, ns: , asm: Vortex}
+      type: {class: TimedSoundNotifyConfig, ns: , asm: Vortex}
       data:
-        setting:
+        basicSetting:
           canTick: 0
-          notifyRange: {x: 0.47, y: 1}
+          notifyRange: {x: 0, y: 0}
           chance: 1
           useLOD: 0
           LOD: 
-        soundClips:
-        - {fileID: 0}
+        soundClips: []
         volumeMultiplier: 1
         pitchMultiplier: 1
+    00000006:
+      type: {class: TrailNotifyConfig, ns: , asm: Vortex}
+      data:
+        basicSetting:
+          canTick: 0
+          notifyRange: {x: 0, y: 0}
+          chance: 1
+          useLOD: 0
+          LOD: 
+        gameTrailPrefab: {fileID: 0}
+        socketName: 
+        positionOffset: {x: 0, y: 0, z: 0}
+        rotationOffset: {x: 0, y: 0, z: 0}
+        scale: {x: 1, y: 1, z: 1}

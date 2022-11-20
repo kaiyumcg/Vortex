@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-internal class NotifySetting
+internal class NotifyBasicConfig
 {
     [SerializeField, Range(0.0f, 1.0f)] float time = 0.0f;
     [SerializeField, Range(0.0f, 1.0f)] float chance = 1.0f;
@@ -14,17 +14,10 @@ internal class NotifySetting
     internal float Chance { get { return chance; } }
     internal bool UseLOD { get { return useLOD; } }
     internal List<int> LevelOfDetails { get { return LOD; } }
-    internal void Reset()
-    {
-        time = 0.0f;
-        chance = 1.0f;
-        useLOD = false;
-        LOD = new List<int>();
-    }
 }
 
 [System.Serializable]
-internal class NotifyStateSetting
+internal class NotifyStateBasicConfig
 {
     [SerializeField] bool canTick;
     [SerializeField, MinMaxSlider(min: 0.0f, max: 1.0f, numberWidthInInspector: 22f)] Vector2 notifyRange;
@@ -37,12 +30,4 @@ internal class NotifyStateSetting
     internal float Chance { get { return chance; } }
     internal bool UseLOD { get { return useLOD; } }
     internal List<int> LevelOfDetails { get { return LOD; } }
-    internal void Reset()
-    {
-        canTick = false;
-        notifyRange = Vector2.zero;
-        chance = 1.0f;
-        useLOD = false;
-        LOD = new List<int>();
-    }
 }

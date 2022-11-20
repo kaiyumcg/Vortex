@@ -8,22 +8,17 @@ using UnityExt;
 [CreateAssetMenu(fileName = "Animation Sequence", menuName = "Kaiyum/Vortex/Create a new animation sequence", order = 1)]
 public class AnimationSequence : ScriptableObject
 {
-    
-    
-    
-
     [SerializeField] AnimationClip clip;
     [SerializeField] float speed = 1f;
     [SerializeField] bool isLoop = false;
-    [SerializeReference, SerializeReferenceButton] List<INotify> notifies = new List<INotify>();
-    [SerializeReference, SerializeReferenceButton] List<INotifyState> notifyStates = new List<INotifyState>();
+    [SerializeReference, SerializeReferenceButton] List<INotifyConfig> notifies = new List<INotifyConfig>();
+    [SerializeReference, SerializeReferenceButton] List<INotifyStateConfig> notifyStates = new List<INotifyStateConfig>();
 
     public AnimationClip Clip { get { return clip; } }
     internal float Speed { get { return speed; } }
     internal float Duration { get { return clip.length / speed; } }
     internal bool IsLoop { get { return isLoop; } }
 
-    public void DoIt() { }
 
     //So the new scriptable system e speed kivabe control kora jabe in runtime?
 

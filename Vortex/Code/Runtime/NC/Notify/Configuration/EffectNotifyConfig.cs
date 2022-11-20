@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityExt;
 
 [System.Serializable]
-internal class EffectNotify : INotify
+internal class EffectNotifyConfig : INotifyConfig
 {
-    [SerializeField] NotifySetting setting;
+    [SerializeField] NotifyBasicConfig basicSetting;
     [SerializeField] GameParticle effectPrefab;
     [SerializeField] string socketName;//Transform.Find()
     [SerializeField] Vector3 positionOffset, rotationOffset;
@@ -18,26 +18,17 @@ internal class EffectNotify : INotify
     internal Vector3 RotationOffset { get { return rotationOffset; } }
     internal Vector3 Scale { get { return scale; } }
     internal bool Attached { get { return attached; } }
-
-    float INotify.Time => setting.Time;
-    float INotify.Chance => setting.Chance;
-    bool INotify.UseLOD => setting.UseLOD;
-    List<int> INotify.LevelOfDetails => setting.LevelOfDetails;
-    void INotify.Reset()
-    {
-        setting.Reset();
-        effectPrefab = null;
-        socketName = "";
-        positionOffset = rotationOffset = Vector3.zero;
-        scale = Vector3.one;
-        attached = false;
-    }
+    float INotifyConfig.Time => basicSetting.Time;
+    float INotifyConfig.Chance => basicSetting.Chance;
+    bool INotifyConfig.UseLOD => basicSetting.UseLOD;
+    List<int> INotifyConfig.LevelOfDetails => basicSetting.LevelOfDetails;
+    bool INotifyConfig.IsSkeletal => false;
 }
 
 [System.Serializable]
-internal class TimedEffectNotify : INotifyState
+internal class TimedEffectNotifyConfig : INotifyStateConfig
 {
-    [SerializeField] NotifyStateSetting setting;
+    [SerializeField] NotifyStateBasicConfig basicSetting;
     [SerializeField] GameParticle effectPrefab;
     [SerializeField] float cycleTime = 1.0f;
     [SerializeField] string socketName;//Transform.Find()
@@ -51,21 +42,11 @@ internal class TimedEffectNotify : INotifyState
     internal Vector3 RotationOffset { get { return rotationOffset; } }
     internal Vector3 Scale { get { return scale; } }
     internal bool Attached { get { return attached; } }
-
-    bool INotifyState.CanTick => setting.CanTick;
-    float INotifyState.StartTime => setting.StartTime;
-    float INotifyState.EndTime => setting.EndTime;
-    float INotifyState.Chance => setting.Chance;
-    bool INotifyState.UseLOD => setting.UseLOD;
-    List<int> INotifyState.LevelOfDetails => setting.LevelOfDetails;
-    void INotifyState.Reset()
-    {
-        setting.Reset();
-        effectPrefab = null;
-        cycleTime = 1.0f;
-        socketName = "";
-        positionOffset = rotationOffset = Vector3.zero;
-        scale = Vector3.one;
-        attached = false;
-    }
+    bool INotifyStateConfig.CanTick => basicSetting.CanTick;
+    float INotifyStateConfig.StartTime => basicSetting.StartTime;
+    float INotifyStateConfig.EndTime => basicSetting.EndTime;
+    float INotifyStateConfig.Chance => basicSetting.Chance;
+    bool INotifyStateConfig.UseLOD => basicSetting.UseLOD;
+    List<int> INotifyStateConfig.LevelOfDetails => basicSetting.LevelOfDetails;
+    bool INotifyStateConfig.IsSkeletal => false;
 }

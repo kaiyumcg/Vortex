@@ -23,7 +23,9 @@ public partial class AnimState
     [HideInInspector] AnimatorControllerPlayable ControllerPlayable = default;
     [HideInInspector] AnimationClipPlayable ClipPlayable = default;
     [HideInInspector] AnimNode node = null;
-    
+
+    List<RuntimeNotify> notifes = new List<RuntimeNotify>();//todo populate 
+    List<RuntimeNotifyState> notifyStates = new List<RuntimeNotifyState>();//todo populate
     private AnimState() { }
     void SetClipData(AnimationClip clip, AnimNode node)
     {
