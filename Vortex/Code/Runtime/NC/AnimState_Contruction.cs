@@ -26,6 +26,16 @@ public partial class AnimState
 
     List<RuntimeNotify> notifes = new List<RuntimeNotify>();//todo populate 
     List<RuntimeNotifyState> notifyStates = new List<RuntimeNotifyState>();//todo populate
+    //runtime notify gulo skeletal gulo baade baki gulo INotifyConfig er vitor type property dia bujhbe je konta
+    //eta use kore runtime concrete class toiri kore ekhane run korbe 
+    //need factory for that takes sequence asset's inotify's ref and return runtime data
+    //for skeletal notify, first e addIfReq() call then GetEvent, ei event ta runtime notify te set korte hobe
+
+    //so ei class ta factor ke ask kortese with config interfaces as input, 
+    //factory will give it runtime notify class references
+
+    //so onek reference create kore ke kivabe cache kora jabe?
+
     private AnimState() { }
     void SetClipData(AnimationClip clip, AnimNode node)
     {
@@ -79,20 +89,20 @@ public partial class AnimState
         node.Mixer.SetLayerMaskFromAvatarMask(node.Layer, mask);
         node.Mixer.SetLayerAdditive(node.Layer, mode == AdditiveAnimationMode.Additive);
     }
-    internal AnimState(AnimationSequence clip, AnimNode node)
+    internal AnimState(AnimationSequence clipAsset, AnimNode node)
     {
-        SetClipData(clip.Clip, node);
-        this.isLooping = clip.IsLoop;
-        this.speed = clip.Speed;
-        this.duration = clip.Clip.length / this.speed;
+        SetClipData(clipAsset.Clip, node);
+        this.isLooping = clipAsset.IsLoop;
+        this.speed = clipAsset.Speed;
+        this.duration = clipAsset.Clip.length / this.speed;
         this.hasEvents = true;
     }
-    internal AnimState(AnimationSequence clip, AnimNode node, AvatarMask mask, AdditiveAnimationMode mode)
+    internal AnimState(AnimationSequence clipAsset, AnimNode node, AvatarMask mask, AdditiveAnimationMode mode)
     {
-        SetClipData(clip.Clip, node);
-        this.isLooping = clip.IsLoop;
-        this.speed = clip.Speed;
-        this.duration = clip.Clip.length / this.speed;
+        SetClipData(clipAsset.Clip, node);
+        this.isLooping = clipAsset.IsLoop;
+        this.speed = clipAsset.Speed;
+        this.duration = clipAsset.Clip.length / this.speed;
         this.hasEvents = true;
 
         this.mask = mask;

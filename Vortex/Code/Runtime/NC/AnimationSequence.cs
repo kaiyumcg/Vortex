@@ -11,8 +11,8 @@ public class AnimationSequence : ScriptableObject
     [SerializeField] AnimationClip clip;
     [SerializeField] float speed = 1f;
     [SerializeField] bool isLoop = false;
-    [SerializeReference, SerializeReferenceButton] List<INotifyConfig> notifies = new List<INotifyConfig>();
-    [SerializeReference, SerializeReferenceButton] List<INotifyStateConfig> notifyStates = new List<INotifyStateConfig>();
+    [SerializeReference, SerializeReferenceButton] internal List<INotifyConfig> notifies = new List<INotifyConfig>();
+    [SerializeReference, SerializeReferenceButton] internal List<INotifyStateConfig> notifyStates = new List<INotifyStateConfig>();
 
     public AnimationClip Clip { get { return clip; } }
     internal float Speed { get { return speed; } }

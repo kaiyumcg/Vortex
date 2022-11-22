@@ -19,11 +19,12 @@ MonoBehaviour:
   - id: 0
   - id: 1
   - id: 2
-  notifyStates:
   - id: 3
+  notifyStates:
   - id: 4
   - id: 5
   - id: 6
+  - id: 7
   references:
     version: 1
     00000000:
@@ -61,6 +62,15 @@ MonoBehaviour:
         volumeMultiplier: 1
         pitchMultiplier: 1
     00000003:
+      type: {class: SkeletalNotifyConfig, ns: , asm: Vortex}
+      data:
+        notifyName: OnAttack1
+        basicSetting:
+          time: 0.379
+          chance: 1
+          useLOD: 0
+          LOD: 
+    00000004:
       type: {class: TimedEffectNotifyConfig, ns: , asm: Vortex}
       data:
         basicSetting:
@@ -76,7 +86,7 @@ MonoBehaviour:
         rotationOffset: {x: 0, y: 0, z: 0}
         scale: {x: 1, y: 1, z: 1}
         attached: 0
-    00000004:
+    00000005:
       type: {class: TimedSkeletalNotifyConfig, ns: , asm: Vortex}
       data:
         notifyName: OnCombo1
@@ -86,7 +96,7 @@ MonoBehaviour:
           chance: 1
           useLOD: 0
           LOD: 
-    00000005:
+    00000006:
       type: {class: TimedSoundNotifyConfig, ns: , asm: Vortex}
       data:
         basicSetting:
@@ -98,7 +108,7 @@ MonoBehaviour:
         soundClips: []
         volumeMultiplier: 1
         pitchMultiplier: 1
-    00000006:
+    00000007:
       type: {class: TrailNotifyConfig, ns: , asm: Vortex}
       data:
         basicSetting:
