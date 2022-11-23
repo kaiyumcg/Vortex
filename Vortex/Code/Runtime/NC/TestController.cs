@@ -9,7 +9,7 @@ using Vortex;
 using UnityEngine.Events;
 
 public enum PlayMode { Smooth, Sharp }
-public class TestController : MonoBehaviour, IVisibilityEventReceiver
+public class TestController : MonoBehaviour
 {
     [SerializeField] AnimationClip clip1, clip2;
     [SerializeField] RuntimeAnimatorController controller1, controller2;
@@ -30,6 +30,7 @@ public class TestController : MonoBehaviour, IVisibilityEventReceiver
     PlayableGraph Graph;
     AnimationMixerPlayable RootMixer, NormalMixer, MixingMixer;
 
+    internal int LOD { get; set; }
     internal PlayableGraph PlayGraph { get { return Graph; } }
     internal bool IsPaused { get { return isPaused; } }
     public float TimeScale
@@ -98,12 +99,12 @@ public class TestController : MonoBehaviour, IVisibilityEventReceiver
             OnComplete?.Invoke();
         }
     }
-    void IVisibilityEventReceiver.OnAppearToCamera()
+    internal void OnAppearToCamera()
     {
         isVisible = true;
         UpdateTickFlag();
     }
-    void IVisibilityEventReceiver.OnDisappearFromCamera()
+    internal void OnDisappearFromCamera()
     {
         isVisible = false;
         UpdateTickFlag();
@@ -228,29 +229,32 @@ public class TestController : MonoBehaviour, IVisibilityEventReceiver
         });
         return result;
     }
-    public void AddNotifiesIfReq(AnimationSequence animAsset)
+    public void AddNotifiesIfReq(AnimationSequence animAsset, AnimState state)
     {
-        var definedNotifyConfigs = animAsset.notifies;
-        definedNotifyConfigs.ExForEach((i) =>
+        animAsset.notifies.ExForEach((i) =>
         {
             var sk = i as ISkeletalNotifyConfig;
             if (sk != null)
             {
                 var notifyName = sk.SkeletalNotifyName;
                 var found = false;
+                UnityEvent ut_event = null;
                 eventDataRuntime.ExForEach((ev) =>
                 {
                     if (ev.eventName == notifyName)
                     {
                         found = true;
+                        ut_event = ev.unityEvent;
                     }
                 });
+                if (!found)
+                {
+                    
+                }
             }
         });
-
-        LODGroup sd = GetComponent<LODGroup>();
         
-        //todo lod from lodGroup
+        //todo read LOD from testController and pass it on to notifies
         //definedNotifyConfigs[0].
         //foreach check if it is skeletal, if true then get the name.
         //then search for this name in the list data. If not found then create one and assign an unityevent for it

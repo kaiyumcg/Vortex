@@ -24,8 +24,8 @@ public partial class AnimState
     [HideInInspector] AnimationClipPlayable ClipPlayable = default;
     [HideInInspector] AnimNode node = null;
 
-    List<RuntimeNotify> notifes = new List<RuntimeNotify>();//todo populate 
-    List<RuntimeNotifyState> notifyStates = new List<RuntimeNotifyState>();//todo populate
+    internal List<RuntimeNotify> notifes = new List<RuntimeNotify>();//todo populate 
+    internal List<RuntimeNotifyState> notifyStates = new List<RuntimeNotifyState>();//todo populate
     //runtime notify gulo skeletal gulo baade baki gulo INotifyConfig er vitor type property dia bujhbe je konta
     //eta use kore runtime concrete class toiri kore ekhane run korbe 
     //need factory for that takes sequence asset's inotify's ref and return runtime data

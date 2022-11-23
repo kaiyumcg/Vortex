@@ -1,40 +1,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using AttributeExt;
 
-public interface IVisibilityEventReceiver
+namespace Vortex
 {
-    void OnAppearToCamera();
-    void OnDisappearFromCamera();
-}
-
-public class VisibilityTag : MonoBehaviour
-{
-    IVisibilityEventReceiver receiver = null;
-    private void Awake()
+    [AddComponentMenu("Kaiyum/Vortex/VisibilityTag")]
+    public sealed class VisibilityTag : MonoBehaviour
     {
-        receiver = GetComponentInParent<IVisibilityEventReceiver>();
-    }
-    void OnBecameVisible()
-    {
-        if (receiver == null) 
+        [SerializeField] int LOD = 0;
+        [SerializeField, CanNotEdit] TestController animator;
+#if UNITY_EDITOR
+        public TestController Animator { get { return animator; } set { animator = value; } }
+#endif
+        void GetAnimIfReq()
         {
-            receiver = GetComponentInParent<IVisibilityEventReceiver>();
+            if (animator == null)
+            {
+                animator = GetComponentInParent<TestController>();
+            }
         }
-        if (receiver != null)
+        void OnBecameVisible()
         {
-            receiver.OnAppearToCamera();
+            GetAnimIfReq();
+            animator.OnAppearToCamera();
+            animator.LOD = LOD;
         }
-    }
-    void OnBecameInvisible()
-    {
-        if (receiver == null)
+        void OnBecameInvisible()
         {
-            receiver = GetComponentInParent<IVisibilityEventReceiver>();
-        }
-        if (receiver != null)
-        {
-            receiver.OnDisappearFromCamera();
+            GetAnimIfReq();
+            animator.OnDisappearFromCamera();
         }
     }
 }
