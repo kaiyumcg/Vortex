@@ -253,6 +253,13 @@ public class TestController : MonoBehaviour
                 }
             }
         });
+
+        //todo testController e LOD int[] for animation, notifies and curves. tinta list total
+        //todo jodi lod list e na thake for animation, then graph ta paused thakbe and state update run hoibe na
+        //todo jodi lod list e na thake for notifies and curves then state er update e segulor kono code i execute hobe na
+        //todo ar individual curve or notify te lod er jinis to ase config theke nia accordingly execute korbe
+
+        //todo TestController or jeta pore fAnimator hobe, seta add component korar sathe sathe joto internal skinned mesh renderer ase sob gulote visibility tag added hoye jabe
         
         //todo read LOD from testController and pass it on to notifies
         //definedNotifyConfigs[0].
