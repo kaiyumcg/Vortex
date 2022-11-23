@@ -16,11 +16,9 @@ public class TrailNotifyConfig : INotifyStateConfig
     internal Vector3 PositionOffset { get { return positionOffset; } }
     internal Vector3 RotationOffset { get { return rotationOffset; } }
     internal Vector3 Scale { get { return scale; } }
-    bool INotifyStateConfig.CanTick => basicSetting.CanTick;
     float INotifyStateConfig.StartTime => basicSetting.StartTime;
     float INotifyStateConfig.EndTime => basicSetting.EndTime;
     float INotifyStateConfig.Chance => basicSetting.Chance;
     bool INotifyStateConfig.UseLOD => basicSetting.UseLOD;
     List<int> INotifyStateConfig.LevelOfDetails => basicSetting.LevelOfDetails;
-    bool INotifyStateConfig.IsSkeletal => false;
 }

@@ -202,23 +202,55 @@ public class TestController : MonoBehaviour, IVisibilityEventReceiver
     {
 
     }
-    
 
-    public class RuntimeSkeletalEventData
+    internal class RuntimeSkeletalStateEventData
     {
-        public string eventName;
-        public UnityEvent unityEvent;
+        internal string eventName;
+        internal UnityEvent unityEventStart, unityEventTick, unityEventEnd;
+    }
+
+    internal class RuntimeSkeletalEventData
+    {
+        internal string eventName;
+        internal UnityEvent unityEvent;
     }
 
     List<RuntimeSkeletalEventData> eventDataRuntime;
     public UnityEvent GetSkeletalUnityEvent(string eventName)
     {
-        //search on the above data and return it. If none found then null return
-        return null;
+        UnityEvent result = null;
+        eventDataRuntime.ExForEach((i) =>
+        {
+            if (i.eventName == eventName)
+            {
+                result = i.unityEvent;
+            }
+        });
+        return result;
     }
     public void AddNotifiesIfReq(AnimationSequence animAsset)
     {
         var definedNotifyConfigs = animAsset.notifies;
+        definedNotifyConfigs.ExForEach((i) =>
+        {
+            var sk = i as ISkeletalNotifyConfig;
+            if (sk != null)
+            {
+                var notifyName = sk.SkeletalNotifyName;
+                var found = false;
+                eventDataRuntime.ExForEach((ev) =>
+                {
+                    if (ev.eventName == notifyName)
+                    {
+                        found = true;
+                    }
+                });
+            }
+        });
+
+        LODGroup sd = GetComponent<LODGroup>();
+        
+        //todo lod from lodGroup
         //definedNotifyConfigs[0].
         //foreach check if it is skeletal, if true then get the name.
         //then search for this name in the list data. If not found then create one and assign an unityevent for it

@@ -22,7 +22,6 @@ internal class EffectNotifyConfig : INotifyConfig
     float INotifyConfig.Chance => basicSetting.Chance;
     bool INotifyConfig.UseLOD => basicSetting.UseLOD;
     List<int> INotifyConfig.LevelOfDetails => basicSetting.LevelOfDetails;
-    bool INotifyConfig.IsSkeletal => false;
 }
 
 [System.Serializable]
@@ -42,11 +41,9 @@ internal class TimedEffectNotifyConfig : INotifyStateConfig
     internal Vector3 RotationOffset { get { return rotationOffset; } }
     internal Vector3 Scale { get { return scale; } }
     internal bool Attached { get { return attached; } }
-    bool INotifyStateConfig.CanTick => basicSetting.CanTick;
     float INotifyStateConfig.StartTime => basicSetting.StartTime;
     float INotifyStateConfig.EndTime => basicSetting.EndTime;
     float INotifyStateConfig.Chance => basicSetting.Chance;
     bool INotifyStateConfig.UseLOD => basicSetting.UseLOD;
     List<int> INotifyStateConfig.LevelOfDetails => basicSetting.LevelOfDetails;
-    bool INotifyStateConfig.IsSkeletal => false;
 }

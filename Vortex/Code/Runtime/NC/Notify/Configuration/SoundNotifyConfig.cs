@@ -17,7 +17,6 @@ internal class SoundNotifyConfig : INotifyConfig
     float INotifyConfig.Chance => basicSetting.Chance;
     bool INotifyConfig.UseLOD => basicSetting.UseLOD;
     List<int> INotifyConfig.LevelOfDetails => basicSetting.LevelOfDetails;
-    bool INotifyConfig.IsSkeletal => false;
 }
 
 [System.Serializable]
@@ -31,11 +30,9 @@ internal class TimedSoundNotifyConfig : INotifyStateConfig
     internal List<AudioClip> SoundClip { get { return soundClips; } }
     internal float VolumeMultiplier { get { return volumeMultiplier; } }
     internal float PitchMultiplier { get { return pitchMultiplier; } }
-    bool INotifyStateConfig.CanTick => basicSetting.CanTick;
     float INotifyStateConfig.StartTime => basicSetting.StartTime;
     float INotifyStateConfig.EndTime =>basicSetting.EndTime;
     float INotifyStateConfig.Chance => basicSetting.Chance;
     bool INotifyStateConfig.UseLOD => basicSetting.UseLOD;
     List<int> INotifyStateConfig.LevelOfDetails => basicSetting.LevelOfDetails;
-    bool INotifyStateConfig.IsSkeletal => false;
 }
