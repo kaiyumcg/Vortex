@@ -1,6 +1,12 @@
 # Vortex
 Animation library for unity engine built on top of Playable API.
 
+## Installation:
+* Add an entry in your manifest.json as follows:
+```C#
+"com.kaiyum.vortex": "https://github.com/kaiyumcg/Vortex.git#dev_rumman"
+```
+
 ## About
 
 Vortex is an animation library for unity engine built on top of Playable API.
