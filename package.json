@@ -7,7 +7,7 @@
   "description": "Animation library",
   "category": "Unity",
   "keywords": [
-    "UI"
+    "Animation", "Mecanim", "AnimNotify","AnimMontage","AnimComposite","AnimSequence","AnimCurve"
   ],
   "dependencies": {
 	"com.kaiyum.unityext": "https://github.com/kaiyumcg/UnityExt.git",
