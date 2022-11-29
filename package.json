@@ -1,14 +1,24 @@
 {
   "name": "com.kaiyum.vortex",
-  "author": "Md Al Kaiyum",
   "displayName": "Vortex",
   "version": "1.0.0",
-  "unity": "2018.3",
+  "unity": "2020.3.20f1",
   "description": "Animation library",
+  "licence": "MIT",
   "category": "Unity",
   "keywords": [
-    "Animation", "Mecanim", "AnimNotify","AnimMontage","AnimComposite","AnimSequence","AnimCurve"
+    "Animation",
+    "Mecanim",
+    "AnimNotify",
+    "AnimMontage",
+    "AnimComposite",
+    "AnimSequence",
+    "AnimCurve"
   ],
+  "author": {
+    "name": "Md Al Kaiyum",
+    "url": "https://github.com/kaiyumcg"
+  },
   "dependencies": {
     "com.kaiyum.unityext": "https://github.com/kaiyumcg/UnityExt.git",
     "com.unity.playablegraph-visualizer": "https://github.com/kaiyumcg/graph-visualizer.git",
