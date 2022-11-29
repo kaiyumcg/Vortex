@@ -2,7 +2,10 @@
     "name": "VortexEditor",
     "rootNamespace": "",
     "references": [
-        "Vortex"
+        "Vortex",
+        "EditorUtil",
+        "XNode",
+        "XNodeEditor"
     ],
     "includePlatforms": [
         "Editor"

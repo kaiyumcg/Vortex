@@ -7,6 +7,16 @@ Animation library for unity engine built on top of Playable API.
 "com.kaiyum.vortex": "https://github.com/kaiyumcg/Vortex.git#dev_rumman"
 ```
 
+Since unity does not support git dependencies, you need the following entries as well:
+```C#
+"com.kaiyum.attributeext" : "https://github.com/kaiyumcg/AttributeExt.git",
+"com.kaiyum.unityext": "https://github.com/kaiyumcg/UnityExt.git",
+"com.kaiyum.editorutil": "https://github.com/kaiyumcg/EditorUtil.git",
+"com.unity.playablegraph-visualizer": "https://github.com/kaiyumcg/graph-visualizer.git",
+ "com.github.siccity.xnode": "https://github.com/siccity/xNode.git"
+```
+Add them into your manifest.json file in "Packages\" directory of your unity project, if they are already not in manifest.json file.
+
 ## About
 
 Vortex is an animation library for unity engine built on top of Playable API.

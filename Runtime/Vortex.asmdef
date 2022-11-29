@@ -3,8 +3,9 @@
     "rootNamespace": "",
     "references": [
         "AttributeExt",
+        "UnityExt",
         "Unity.PlayableGraphVisualizer",
-        "UnityExt"
+        "XNode"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

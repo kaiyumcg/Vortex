@@ -10,7 +10,9 @@
     "Animation", "Mecanim", "AnimNotify","AnimMontage","AnimComposite","AnimSequence","AnimCurve"
   ],
   "dependencies": {
-	"com.kaiyum.unityext": "https://github.com/kaiyumcg/UnityExt.git",
-	"com.unity.playablegraph-visualizer": "https://github.com/kaiyumcg/graph-visualizer.git"
+    "com.kaiyum.unityext": "https://github.com/kaiyumcg/UnityExt.git",
+    "com.unity.playablegraph-visualizer": "https://github.com/kaiyumcg/graph-visualizer.git",
+    "com.kaiyum.editorutil": "https://github.com/kaiyumcg/EditorUtil.git",
+    "com.github.siccity.xnode": "https://github.com/siccity/xNode.git"
   }
 }
