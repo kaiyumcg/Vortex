@@ -2,10 +2,9 @@
     "name": "Vortex",
     "rootNamespace": "",
     "references": [
-        "Textus.SerializeReferenceUI",
+        "AttributeExt",
         "Unity.PlayableGraphVisualizer",
-        "UnityExt",
-        "AttributeExt"
+        "UnityExt"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
