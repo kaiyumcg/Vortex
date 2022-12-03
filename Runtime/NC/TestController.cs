@@ -10,17 +10,6 @@ using UnityEngine.Events;
 using Mono.Cecil.Cil;
 
 public enum PlayMode { Smooth, Sharp }
-internal class RuntimeSkeletalStateEventData
-{
-    internal string eventName;
-    internal UnityEvent unityEventStart, unityEventTick, unityEventEnd;
-}
-
-internal class ScriptNotifyEventData
-{
-    internal string eventName;
-    internal UnityEvent unityEvent;
-}
 
 public class TestController : MonoBehaviour
 {
@@ -268,15 +257,15 @@ public class TestController : MonoBehaviour
     {
         animAsset.notifies.ExForEach((i) =>
         {
-            var sk = i as IScriptNotifyConfig;
+            var sk = i as IScriptNotifyEditorData;
             if (sk != null)
             {
-                var notifyName = sk.SkeletalNotifyName;
+                var eventName = sk.EventName;
                 var found = false;
                 UnityEvent ut_event = null;
                 eventDataRuntime.ExForEach((ev) =>
                 {
-                    if (ev.eventName == notifyName)
+                    if (ev != null && ev.eventName == eventName)
                     {
                         found = true;
                         ut_event = ev.unityEvent;
@@ -284,7 +273,8 @@ public class TestController : MonoBehaviour
                 });
                 if (!found)
                 {
-                    
+                    var ev = new ScriptNotifyEventData { eventName = eventName, unityEvent = new UnityEvent() };
+                    eventDataRuntime.Add(ev);
                 }
             }
         });

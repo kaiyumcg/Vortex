@@ -6,17 +6,6 @@ using UnityEngine.Events;
 using UnityExt;
 using Vortex;
 
-internal interface IScriptNotifyConfig
-{
-    string SkeletalNotifyName { get; }
-}
-
-internal interface IScriptNotifyStateConfig
-{
-    string SkeletalNotifyName { get; }
-    bool CanTick { get; }
-}
-
 public interface INotifyEditorData
 {
     float Time { get; }
@@ -34,6 +23,16 @@ public interface INotifyStateEditorData
     List<int> LevelOfDetails { get; }
 }
 
+internal interface IScriptNotifyEditorData
+{
+    string EventName { get; }
+}
+
+internal interface IScriptNotifyStateEditorData
+{
+    string EventName { get; }
+    bool CanTick { get; }
+}
 
 public abstract class RuntimeNotify
 {
@@ -51,4 +50,16 @@ public abstract class RuntimeNotifyState
     public abstract void NotifyStart(TestController fAnimator);
     public abstract void NotifyEnd(TestController fAnimator);
     public abstract void NotifyTick(TestController fAnimator);
+}
+
+internal class ScriptNotifyStateEventData
+{
+    internal string eventName;
+    internal UnityEvent unityEventStart, unityEventTick, unityEventEnd;
+}
+
+internal class ScriptNotifyEventData
+{
+    internal string eventName;
+    internal UnityEvent unityEvent;
 }

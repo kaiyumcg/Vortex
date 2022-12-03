@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityExt;
 
 [System.Serializable]
-internal class ScriptNotifyConfig : INotifyEditorData, IScriptNotifyConfig
+internal class ScriptNotifyConfig : INotifyEditorData, IScriptNotifyEditorData
 {
     [Dropdown(typeof(AnimationNameManager), "GetSkeletalNotifyNames")]
     [SerializeField] string notifyName;
@@ -14,11 +14,11 @@ internal class ScriptNotifyConfig : INotifyEditorData, IScriptNotifyConfig
     float INotifyEditorData.Chance => basicSetting.Chance;
     bool INotifyEditorData.UseLOD => basicSetting.UseLOD;
     List<int> INotifyEditorData.LevelOfDetails => basicSetting.LevelOfDetails;
-    string IScriptNotifyConfig.SkeletalNotifyName => notifyName;
+    string IScriptNotifyEditorData.EventName => notifyName;
 }
 
 [System.Serializable]
-internal class ScriptStateNotifyConfig : INotifyStateEditorData, IScriptNotifyStateConfig
+internal class ScriptStateNotifyConfig : INotifyStateEditorData, IScriptNotifyStateEditorData
 {
     [Dropdown(typeof(AnimationNameManager), "GetSkeletalNotifyStateNames")]
     [SerializeField] string notifyName;
@@ -29,8 +29,8 @@ internal class ScriptStateNotifyConfig : INotifyStateEditorData, IScriptNotifySt
     float INotifyStateEditorData.Chance => basicSetting.Chance;
     bool INotifyStateEditorData.UseLOD => basicSetting.UseLOD;
     List<int> INotifyStateEditorData.LevelOfDetails => basicSetting.LevelOfDetails;
-    string IScriptNotifyStateConfig.SkeletalNotifyName => notifyName;
-    bool IScriptNotifyStateConfig.CanTick => canTick;
+    string IScriptNotifyStateEditorData.EventName => notifyName;
+    bool IScriptNotifyStateEditorData.CanTick => canTick;
 }
 
 internal class ScriptNotify : RuntimeNotify
