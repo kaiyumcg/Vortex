@@ -1,0 +1,89 @@
+//todo on Play()
+	//todo encapsulate playables with state since we need ID of respective clip or controller's playable in the mixer to manipulate
+	//ei clip er kono state na thakle add koro Normal Anim Node er state list e
+	//find the state of this clip of normal node
+	//find the currently playing state of normal node
+	//Call "Reduce weight to zero" method of normal node on currently playing state if any
+	//Call "Raise weight to one" method of normal node on this found or created state and set it to current state
+	//If mode is sharp then instead of lerping weight value just set it plainly
+
+//todo on AddNotifyData when using animation sequence asset()
+	//todo testController e LOD int[] for animation, notifies and curves. tinta list total
+    //todo jodi lod list e na thake for animation, then graph ta paused thakbe and state update run hoibe na
+    //todo jodi lod list e na thake for notifies and curves then state er update e segulor kono code i execute hobe na
+    //todo ar individual curve or notify te lod er jinis to ase config theke nia accordingly execute korbe
+
+    //todo TestController or jeta pore fAnimator hobe, seta add component korar sathe sathe joto internal skinned mesh renderer ase sob gulote visibility tag added hoye jabe
+        
+    //todo read LOD from testController and pass it on to notifies
+    //definedNotifyConfigs[0].
+    //foreach check if it is skeletal, if true then get the name.
+    //then search for this name in the list data. If not found then create one and assign an unityevent for it
+    //then add this newly created data to the list.
+
+
+//Visibility tag automatically added thakbe, jodi user na chay then warning dibe FAnimator je not very optimized hoise
+        //This visibility tag sets the LOD related data into FAnimator so that LOD related settings play nice
+        //Workaround for URP 14.0 LOD crossfading transition property--je eta on thakle renderer asole off hoye jay to?
+
+//Socket theke Find() method diye proper bone find kora for Notify and curve related config stuffs
+//Animation curve
+        --Material curve
+        --Morph target
+        --Script curve
+        --Custom attribute per bone
+
+//Animation Name Manager e notify thakar sathe sathe script curve names gulo o thakbe along with other types of curve names
+        --also custom attribute per bone names(where it can be used? per bone per animation per particular frame hitbox height?)
+        --This manager should be able to fetch those names from outside of Resource folder as well
+            --To go that we must be sure that it actually writes to serialized string in notify and is executed on editor only since in runtime there is no asset folder
+
+
+
+//todo in animation sequence file
+    //So the new scriptable system e speed kivabe control kora jabe in runtime?
+    //TODO a list of data--data where unity clip is the key and notify description class or whatever will be holder
+    //egulo vortex e i thakbe. so getNotify() will return from this data instead of querying from states.
+    //states o vortex central theke notify collect korbe and execute korbe. this is cuz same clip diye multiple state hote pare thats why
+
+    //so start e or anim clip add hobar time e central data te notify runtime data create hoye jabe jodi already na thake
+    //state gulo life time r start e GET korbe central theke and then tick() e notify type onusare execute korbe
+    //so asset e just name with invokation time eisob thaklo, asset e kono runtime changeable data thakbe na
+    //notify define e track soho bola thakbe. and sevabe asset e draw hobe--default track can not be deleted
+
+//todo in animNode file
+    //TODO state add korle dirty flag hoy emon ta kora
+    //AnimState GetOrAddState(AnimationClip clip, ref AnimationLayerMixerPlayable Mixer, ref PlayableGraph Graph)
+    //{
+    //    //todo jodi add kora laage then dirty flag set korte hobe and ei time e state tick korbe na
+    //    //todo added hoye gele then playerID on mixer update korte hobe anim state er
+    //    //todo finally dirty flag ta tule dite hobe
+    //}
+    //set speed and other method
+
+//todo in AnimState file
+    //Create->New Sequence->Scriptable object that has animationclip reference
+    //Clicking the sequence asset will open up ue like window with preview
+    //in the editor we can do notify track and curve
+    //if the animation has custom properties baked into from maya then it should be visible as readonly curve
+    //anything about tag? like state's tag in mecanim?
+
+    //FootIK and other IK related settings
+    //Callback apart from notifies
+    //AnimNotify, AnimNotifyState, Builtin Notify list such as Particle and Sound
+    //todo animation events
+    //todo check for negative speed
+    //Set to certain animation frame or time(in relation to pose asset?)--ekhon kintu time 0.0 te suru hoy-offset?
+    //todo delta time and time scale ki sob jaygay consider kora hoise?
+    //TODO weight jodi 0.5 er kom thake then events gulo execute hobe na
+
+//todo in AnimStation file 
+    //runtime notify gulo skeletal gulo baade baki gulo INotifyConfig er vitor type property dia bujhbe je konta
+    //eta use kore runtime concrete class toiri kore ekhane run korbe 
+    //need factory for that takes sequence asset's inotify's ref and return runtime data
+    //for skeletal notify, first e addIfReq() call then GetEvent, ei event ta runtime notify te set korte hobe
+
+    //so ei class ta factor ke ask kortese with config interfaces as input, 
+    //factory will give it runtime notify class references
+
+    //so onek reference create kore ke kivabe cache kora jabe?

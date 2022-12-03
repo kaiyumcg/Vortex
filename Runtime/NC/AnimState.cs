@@ -240,20 +240,5 @@ public partial class AnimState
             }
             node.Mixer.SetInputWeight(playableIDOnMixer, curWeight);
         }
-
-        //Create->New Sequence->Scriptable object that has animationclip reference
-        //Clicking the sequence asset will open up ue like window with preview
-        //in the editor we can do notify track and curve
-        //if the animation has custom properties baked into from maya then it should be visible as readonly curve
-        //anything about tag? like state's tag in mecanim?
-
-        //FootIK and other IK related settings
-        //Callback apart from notifies
-        //AnimNotify, AnimNotifyState, Builtin Notify list such as Particle and Sound
-        //todo animation events
-        //todo check for negative speed
-        //Set to certain animation frame or time(in relation to pose asset?)--ekhon kintu time 0.0 te suru hoy-offset?
-        //todo delta time and time scale ki sob jaygay consider kora hoise?
-        //TODO weight jodi 0.5 er kom thake then events gulo execute hobe na
     }
 }

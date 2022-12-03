@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityExt;
 
 [CreateAssetMenu(fileName = "Anim Notify Define", menuName = "Kaiyum/Vortex/Create a new notify define", order = 2)]
-internal class AnimNotifyDefine : ScriptableObject
+internal class AnimationNameManager : ScriptableObject
 {
     [SerializeField] string[] skeletalNotifies, skeletalNotifyStates;
     internal string[] SkeletalNotifies { get { return skeletalNotifies; } }
@@ -12,7 +12,7 @@ internal class AnimNotifyDefine : ScriptableObject
 
     internal static string[] GetSkeletalNotifyNames()
     {
-        var assets = Resources.LoadAll<AnimNotifyDefine>("");
+        var assets = Resources.LoadAll<AnimationNameManager>("");
         var fNames = new List<string>();
         assets.ExForEach((i) =>
         {
@@ -25,7 +25,7 @@ internal class AnimNotifyDefine : ScriptableObject
     }
     internal static string[] GetSkeletalNotifyStateNames()
     {
-        var assets = Resources.LoadAll<AnimNotifyDefine>("");
+        var assets = Resources.LoadAll<AnimationNameManager>("");
         var fNames = new List<string>();
         assets.ExForEach((i) =>
         {

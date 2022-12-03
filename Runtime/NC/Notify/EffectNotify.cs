@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityExt;
 
 [System.Serializable]
-internal class EffectNotifyConfig : INotifyConfig
+internal class EffectNotifyEditorData : INotifyEditorData
 {
     [SerializeField] NotifyBasicConfig basicSetting;
     [SerializeField] GameParticle effectPrefab;
@@ -18,14 +18,14 @@ internal class EffectNotifyConfig : INotifyConfig
     internal Vector3 RotationOffset { get { return rotationOffset; } }
     internal Vector3 Scale { get { return scale; } }
     internal bool Attached { get { return attached; } }
-    float INotifyConfig.Time => basicSetting.Time;
-    float INotifyConfig.Chance => basicSetting.Chance;
-    bool INotifyConfig.UseLOD => basicSetting.UseLOD;
-    List<int> INotifyConfig.LevelOfDetails => basicSetting.LevelOfDetails;
+    float INotifyEditorData.Time => basicSetting.Time;
+    float INotifyEditorData.Chance => basicSetting.Chance;
+    bool INotifyEditorData.UseLOD => basicSetting.UseLOD;
+    List<int> INotifyEditorData.LevelOfDetails => basicSetting.LevelOfDetails;
 }
 
 [System.Serializable]
-internal class TimedEffectNotifyConfig : INotifyStateConfig
+internal class EffectStateNotifyEditorData : INotifyStateEditorData
 {
     [SerializeField] NotifyStateBasicConfig basicSetting;
     [SerializeField] GameParticle effectPrefab;
@@ -41,9 +41,25 @@ internal class TimedEffectNotifyConfig : INotifyStateConfig
     internal Vector3 RotationOffset { get { return rotationOffset; } }
     internal Vector3 Scale { get { return scale; } }
     internal bool Attached { get { return attached; } }
-    float INotifyStateConfig.StartTime => basicSetting.StartTime;
-    float INotifyStateConfig.EndTime => basicSetting.EndTime;
-    float INotifyStateConfig.Chance => basicSetting.Chance;
-    bool INotifyStateConfig.UseLOD => basicSetting.UseLOD;
-    List<int> INotifyStateConfig.LevelOfDetails => basicSetting.LevelOfDetails;
+    float INotifyStateEditorData.StartTime => basicSetting.StartTime;
+    float INotifyStateEditorData.EndTime => basicSetting.EndTime;
+    float INotifyStateEditorData.Chance => basicSetting.Chance;
+    bool INotifyStateEditorData.UseLOD => basicSetting.UseLOD;
+    List<int> INotifyStateEditorData.LevelOfDetails => basicSetting.LevelOfDetails;
+}
+
+internal class EffectNotify : RuntimeNotify
+{
+    public override void Notify(TestController fAnimator)
+    {
+        throw new System.NotImplementedException();
+    }
+}
+
+internal class EffectNotifyState : RuntimeNotify
+{
+    public override void Notify(TestController fAnimator)
+    {
+        throw new System.NotImplementedException();
+    }
 }

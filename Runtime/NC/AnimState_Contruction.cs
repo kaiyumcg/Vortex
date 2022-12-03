@@ -26,15 +26,6 @@ public partial class AnimState
 
     internal List<RuntimeNotify> notifes = new List<RuntimeNotify>();//todo populate 
     internal List<RuntimeNotifyState> notifyStates = new List<RuntimeNotifyState>();//todo populate
-    //runtime notify gulo skeletal gulo baade baki gulo INotifyConfig er vitor type property dia bujhbe je konta
-    //eta use kore runtime concrete class toiri kore ekhane run korbe 
-    //need factory for that takes sequence asset's inotify's ref and return runtime data
-    //for skeletal notify, first e addIfReq() call then GetEvent, ei event ta runtime notify te set korte hobe
-
-    //so ei class ta factor ke ask kortese with config interfaces as input, 
-    //factory will give it runtime notify class references
-
-    //so onek reference create kore ke kivabe cache kora jabe?
 
     private AnimState() { }
     void SetClipData(AnimationClip clip, AnimNode node)
