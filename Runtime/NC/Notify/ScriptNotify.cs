@@ -2,58 +2,77 @@ using AttributeExt;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityExt;
 
 [System.Serializable]
-internal class ScriptNotifyConfig : INotifyEditorData, IScriptNotifyEditorData
+internal class ScriptNotifyEditorData : INotify, IScriptNotify
 {
     [Dropdown(typeof(AnimationNameManager), "GetSkeletalNotifyNames")]
     [SerializeField] string notifyName;
     [SerializeField] NotifyBasicConfig basicSetting;
-    float INotifyEditorData.Time => basicSetting.Time;
-    float INotifyEditorData.Chance => basicSetting.Chance;
-    bool INotifyEditorData.UseLOD => basicSetting.UseLOD;
-    List<int> INotifyEditorData.LevelOfDetails => basicSetting.LevelOfDetails;
-    string IScriptNotifyEditorData.EventName => notifyName;
+    float INotify.Time => basicSetting.Time;
+    float INotify.Chance => basicSetting.Chance;
+    bool INotify.UseLOD => basicSetting.UseLOD;
+    List<int> INotify.LevelOfDetails => basicSetting.LevelOfDetails;
+    string IScriptNotify.EventName => notifyName;
+
+    Notify INotify.CreateNotify(UnityEvent unityEvent)
+    {
+        return new ScriptNotify(this, unityEvent);
+    }
+}
+internal class ScriptNotify : Notify
+{
+    public ScriptNotify(INotify config, UnityEvent unityEvent) : base(config, unityEvent)
+    {
+    }
+
+    protected internal override void Execute(TestController anim)
+    {
+        throw new System.NotImplementedException();
+    }
 }
 
 [System.Serializable]
-internal class ScriptStateNotifyConfig : INotifyStateEditorData, IScriptNotifyStateEditorData
+internal class ScriptStateNotifyConfig : INotifyState, IScriptNotifyState
 {
     [Dropdown(typeof(AnimationNameManager), "GetSkeletalNotifyStateNames")]
     [SerializeField] string notifyName;
     [SerializeField] bool canTick = false;
     [SerializeField] NotifyStateBasicConfig basicSetting;
-    float INotifyStateEditorData.StartTime => basicSetting.StartTime;
-    float INotifyStateEditorData.EndTime => basicSetting.EndTime;
-    float INotifyStateEditorData.Chance => basicSetting.Chance;
-    bool INotifyStateEditorData.UseLOD => basicSetting.UseLOD;
-    List<int> INotifyStateEditorData.LevelOfDetails => basicSetting.LevelOfDetails;
-    string IScriptNotifyStateEditorData.EventName => notifyName;
-    bool IScriptNotifyStateEditorData.CanTick => canTick;
-}
+    float INotifyState.StartTime => basicSetting.StartTime;
+    float INotifyState.EndTime => basicSetting.EndTime;
+    float INotifyState.Chance => basicSetting.Chance;
+    bool INotifyState.UseLOD => basicSetting.UseLOD;
+    List<int> INotifyState.LevelOfDetails => basicSetting.LevelOfDetails;
+    string IScriptNotifyState.EventName => notifyName;
+    bool IScriptNotifyState.CanTick => canTick;
 
-internal class ScriptNotify : RuntimeNotify
-{
-    public override void Notify(TestController fAnimator)
+    NotifyState INotifyState.CreateNotifyState(UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent)
     {
-        throw new System.NotImplementedException();
+        return new ScriptNotifyState(this, startEvent, tickEvent, endEvent);
     }
 }
 
-internal class ScriptNotifyState : RuntimeNotifyState
+internal class ScriptNotifyState : NotifyState
 {
-    public override void NotifyEnd(TestController fAnimator)
+    public ScriptNotifyState(INotifyState config, UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent) : 
+        base(config, startEvent, tickEvent, endEvent)
+    {
+    }
+
+    protected internal override void ExecuteEnd(TestController anim)
     {
         throw new System.NotImplementedException();
     }
 
-    public override void NotifyStart(TestController fAnimator)
+    protected internal override void ExecuteStart(TestController anim)
     {
         throw new System.NotImplementedException();
     }
 
-    public override void NotifyTick(TestController fAnimator)
+    protected internal override void ExecuteTick(TestController anim)
     {
         throw new System.NotImplementedException();
     }

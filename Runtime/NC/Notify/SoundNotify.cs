@@ -2,9 +2,10 @@ using AttributeExt;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [System.Serializable]
-internal class SoundNotifyEditorData : INotifyEditorData
+internal class SoundNotifyEditorData : INotify
 {
     [SerializeField] NotifyBasicConfig basicSetting;
     [SerializeField] AudioClip soundClip;
@@ -13,14 +14,31 @@ internal class SoundNotifyEditorData : INotifyEditorData
     internal AudioClip SoundClip { get { return soundClip; } }
     internal float VolumeMultiplier { get { return volumeMultiplier; } }
     internal float PitchMultiplier { get { return pitchMultiplier; } }
-    float INotifyEditorData.Time => basicSetting.Time;
-    float INotifyEditorData.Chance => basicSetting.Chance;
-    bool INotifyEditorData.UseLOD => basicSetting.UseLOD;
-    List<int> INotifyEditorData.LevelOfDetails => basicSetting.LevelOfDetails;
+    float INotify.Time => basicSetting.Time;
+    float INotify.Chance => basicSetting.Chance;
+    bool INotify.UseLOD => basicSetting.UseLOD;
+    List<int> INotify.LevelOfDetails => basicSetting.LevelOfDetails;
+
+    Notify INotify.CreateNotify()
+    {
+        return new SoundNotify(this);
+    }
+}
+internal class SoundNotify : Notify
+{
+    public SoundNotify(INotify config) : 
+        base(config)
+    {
+    }
+
+    protected internal override void Execute(TestController anim)
+    {
+        throw new System.NotImplementedException();
+    }
 }
 
 [System.Serializable]
-internal class SoundNotifyStateEditorData : INotifyStateEditorData
+internal class SoundNotifyStateEditorData : INotifyState
 {
     [SerializeField] NotifyStateBasicConfig basicSetting;
     [Tooltip("Plays one after another looping. keep playing one if single")]
@@ -30,34 +48,35 @@ internal class SoundNotifyStateEditorData : INotifyStateEditorData
     internal List<AudioClip> SoundClip { get { return soundClips; } }
     internal float VolumeMultiplier { get { return volumeMultiplier; } }
     internal float PitchMultiplier { get { return pitchMultiplier; } }
-    float INotifyStateEditorData.StartTime => basicSetting.StartTime;
-    float INotifyStateEditorData.EndTime =>basicSetting.EndTime;
-    float INotifyStateEditorData.Chance => basicSetting.Chance;
-    bool INotifyStateEditorData.UseLOD => basicSetting.UseLOD;
-    List<int> INotifyStateEditorData.LevelOfDetails => basicSetting.LevelOfDetails;
-}
+    float INotifyState.StartTime => basicSetting.StartTime;
+    float INotifyState.EndTime =>basicSetting.EndTime;
+    float INotifyState.Chance => basicSetting.Chance;
+    bool INotifyState.UseLOD => basicSetting.UseLOD;
+    List<int> INotifyState.LevelOfDetails => basicSetting.LevelOfDetails;
 
-internal class SoundNotify : RuntimeNotify
-{
-    public override void Notify(TestController fAnimator)
+    NotifyState INotifyState.CreateNotifyState()
     {
-        throw new System.NotImplementedException();
+        return new SoundNotifyState(this);
     }
 }
-
-internal class SoundNotifyState : RuntimeNotifyState
+internal class SoundNotifyState : NotifyState
 {
-    public override void NotifyEnd(TestController fAnimator)
+    public SoundNotifyState(INotifyState config) : 
+        base(config)
+    {
+    }
+
+    protected internal override void ExecuteEnd(TestController anim)
     {
         throw new System.NotImplementedException();
     }
 
-    public override void NotifyStart(TestController fAnimator)
+    protected internal override void ExecuteStart(TestController anim)
     {
         throw new System.NotImplementedException();
     }
 
-    public override void NotifyTick(TestController fAnimator)
+    protected internal override void ExecuteTick(TestController anim)
     {
         throw new System.NotImplementedException();
     }

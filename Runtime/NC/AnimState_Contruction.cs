@@ -24,8 +24,9 @@ public partial class AnimState
     [HideInInspector] AnimationClipPlayable ClipPlayable = default;
     [HideInInspector] AnimNode node = null;
 
-    internal List<RuntimeNotify> notifes = new List<RuntimeNotify>();//todo populate 
-    internal List<RuntimeNotifyState> notifyStates = new List<RuntimeNotifyState>();//todo populate
+    internal List<Notify> notifes = new List<Notify>();
+    internal List<NotifyState> notifyStates = new List<NotifyState>();
+    internal List<VortexCurve> curves = new List<VortexCurve>();
 
     private AnimState() { }
     void SetClipData(AnimationClip clip, AnimNode node)
@@ -83,6 +84,10 @@ public partial class AnimState
     internal AnimState(AnimationSequence clipAsset, AnimNode node)
     {
         SetClipData(clipAsset.Clip, node);
+        node.anim.CreateNotifiesOnConstruction(clipAsset, this);
+        node.anim.CreateNotifyStatesOnConstruction(clipAsset, this);
+        node.anim.CreateCurveDataOnConstruction(clipAsset, this);
+
         this.isLooping = clipAsset.IsLoop;
         this.speed = clipAsset.Speed;
         this.duration = clipAsset.Clip.length / this.speed;
@@ -91,6 +96,10 @@ public partial class AnimState
     internal AnimState(AnimationSequence clipAsset, AnimNode node, AvatarMask mask, AdditiveAnimationMode mode)
     {
         SetClipData(clipAsset.Clip, node);
+        node.anim.CreateNotifiesOnConstruction(clipAsset, this);
+        node.anim.CreateNotifyStatesOnConstruction(clipAsset, this);
+        node.anim.CreateCurveDataOnConstruction(clipAsset, this);
+
         this.isLooping = clipAsset.IsLoop;
         this.speed = clipAsset.Speed;
         this.duration = clipAsset.Clip.length / this.speed;

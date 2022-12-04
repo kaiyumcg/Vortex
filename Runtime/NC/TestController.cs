@@ -7,11 +7,9 @@ using UnityExt;
 using AttributeExt;
 using Vortex;
 using UnityEngine.Events;
-using Mono.Cecil.Cil;
 
 public enum PlayMode { Smooth, Sharp }
-
-public class TestController : MonoBehaviour
+public partial class TestController : MonoBehaviour
 {
     [SerializeField] AnimationClip clip1, clip2;
     [SerializeField] RuntimeAnimatorController controller1, controller2;
@@ -199,85 +197,4 @@ public class TestController : MonoBehaviour
     {
 
     }
-
-    #region Notify
-    List<ScriptNotifyEventData> eventDataRuntime;
-    public bool AddLogicOnScriptNotify(string eventName, OnDoAnything Code) 
-    {
-        UnityEvent result = GetNotifyEvent(eventName);
-        if (result != null)
-        {
-            result.AddListener(() =>
-            {
-                Code?.Invoke();
-            });
-        }
-        return result != null;
-    }
-    public bool AddLogicOnScriptNotify(string eventName, UnityAction Code)
-    {
-        UnityEvent result = GetNotifyEvent(eventName);
-        if (result != null)
-        {
-            result.AddListener(Code);
-        }
-        return result != null;
-    }
-    public bool ClearLogicOnScriptNotify(string eventName, UnityAction Code)
-    {
-        UnityEvent result = GetNotifyEvent(eventName);
-        if (result != null)
-        {
-            result.RemoveListener(Code);
-        }
-        return result != null;
-    }
-    UnityEvent GetNotifyEvent(string eventName)
-    {
-        UnityEvent result = null;
-        eventDataRuntime.ExForEach((i) =>
-        {
-            if (i.eventName == eventName)
-            {
-                result = i.unityEvent;
-            }
-        });
-        return result;
-    }
-    public bool ClearAllLogicOnScriptNotify(string eventName)
-    {
-        UnityEvent result = GetNotifyEvent(eventName);
-        if (result != null)
-        {
-            result.RemoveAllListeners();
-        }
-        return result != null;
-    }
-    public void AddNotifiesIfReq(AnimationSequence animAsset, AnimState state)
-    {
-        animAsset.notifies.ExForEach((i) =>
-        {
-            var sk = i as IScriptNotifyEditorData;
-            if (sk != null)
-            {
-                var eventName = sk.EventName;
-                var found = false;
-                UnityEvent ut_event = null;
-                eventDataRuntime.ExForEach((ev) =>
-                {
-                    if (ev != null && ev.eventName == eventName)
-                    {
-                        found = true;
-                        ut_event = ev.unityEvent;
-                    }
-                });
-                if (!found)
-                {
-                    var ev = new ScriptNotifyEventData { eventName = eventName, unityEvent = new UnityEvent() };
-                    eventDataRuntime.Add(ev);
-                }
-            }
-        });
-    }
-    #endregion
 }

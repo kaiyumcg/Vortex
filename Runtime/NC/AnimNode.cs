@@ -15,7 +15,7 @@ internal class AnimNode
     AnimationLayerMixerPlayable mixer;
     PlayableGraph graph;
     float timeScale = 1.0f;
-    internal TestController fAnim;
+    internal TestController anim;
     internal bool IsDirty { get { return isDirty; } }
     internal uint Layer { get { return layer; } }
     internal AnimationLayerMixerPlayable Mixer { get { return mixer; } }
