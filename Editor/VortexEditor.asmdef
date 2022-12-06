@@ -3,9 +3,9 @@
     "rootNamespace": "",
     "references": [
         "Vortex",
-        "EditorUtil",
         "XNode",
-        "XNodeEditor"
+        "XNodeEditor",
+        "KEditorUtil"
     ],
     "includePlatforms": [
         "Editor"
