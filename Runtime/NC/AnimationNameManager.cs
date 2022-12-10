@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityExt;
 
-[CreateAssetMenu(fileName = "Anim Notify Define", menuName = "Kaiyum/Vortex/Create a new notify define", order = 2)]
+[CreateAssetMenu(fileName = "Anim Name Manager", menuName = "Kaiyum/Animation/Create a new name manager", order = 2)]
 internal class AnimationNameManager : ScriptableObject
 {
-    [SerializeField] string[] skeletalNotifies, skeletalNotifyStates;
+    [SerializeField] string[] skeletalNotifies, skeletalNotifyStates, curves;
     internal string[] SkeletalNotifies { get { return skeletalNotifies; } }
     internal string[] SkeletalNotifyStates { get { return skeletalNotifyStates; } }
+    internal string[] Curves { get { return curves; } }
 
-    internal static string[] GetSkeletalNotifyNames()
+    internal static string[] GetNotifyNames()
     {
         var assets = Resources.LoadAll<AnimationNameManager>("");
         var fNames = new List<string>();
@@ -23,7 +24,7 @@ internal class AnimationNameManager : ScriptableObject
         });
         return fNames.ToArray();
     }
-    internal static string[] GetSkeletalNotifyStateNames()
+    internal static string[] GetNotifyStateNames()
     {
         var assets = Resources.LoadAll<AnimationNameManager>("");
         var fNames = new List<string>();
@@ -32,6 +33,19 @@ internal class AnimationNameManager : ScriptableObject
             if (i != null && i.SkeletalNotifyStates.ExIsValid())
             {
                 fNames.ExAddRangeUniquely(i.SkeletalNotifyStates);
+            }
+        });
+        return fNames.ToArray();
+    }
+    internal static string[] GetCurveName()
+    {
+        var assets = Resources.LoadAll<AnimationNameManager>("");
+        var fNames = new List<string>();
+        assets.ExForEach((i) =>
+        {
+            if (i != null && i.Curves.ExIsValid())
+            {
+                fNames.ExAddRangeUniquely(i.Curves);
             }
         });
         return fNames.ToArray();

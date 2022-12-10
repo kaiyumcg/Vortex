@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a83a71abc489a9e439bd3ee1249656a6, type: 3}
-  m_Name: notify2
+  m_Name: Anim Notify Define
   m_EditorClassIdentifier: 
   skeletalNotifies:
-  - OnAttack1_2
-  - OnAttack2_2
-  - OnAttack3_2
+  - adasdasd
+  - aasdd
   skeletalNotifyStates:
-  - OnCombo1_2
-  - OnCombo2_2
-  - OnCombo3_2
+  - asdasdasd
+  - asdd
+  curves:
+  - EnemyStamina
+  - PlayerStamina

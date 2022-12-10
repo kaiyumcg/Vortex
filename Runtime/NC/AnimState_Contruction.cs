@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
+using UnityExt;
 using Vortex;
 
 public partial class AnimState
@@ -15,7 +16,7 @@ public partial class AnimState
     [SerializeField, CanNotEdit] float speed = 1.0f;
     [SerializeField, CanNotEdit] float duration = 0.0f;
     [SerializeField, CanNotEdit] int playableIDOnMixer = -1;
-    [SerializeField, CanNotEdit] bool isController = true, hasEvents = false, isTicking = false;
+    [SerializeField, CanNotEdit] bool isController = true, isTicking = false, hasNotifies = false, hasNotifyStates = false, hasCurves = false;
     [SerializeField, CanNotEdit] RuntimeAnimatorController Controller = null;
     [SerializeField, CanNotEdit] AnimationClip clip = null;
     [SerializeField, CanNotEdit] AvatarMask mask = null;
@@ -24,9 +25,11 @@ public partial class AnimState
     [HideInInspector] AnimationClipPlayable ClipPlayable = default;
     [HideInInspector] AnimNode node = null;
 
-    internal List<Notify> notifes = new List<Notify>();
-    internal List<NotifyState> notifyStates = new List<NotifyState>();
+    internal List<VortexNotify> notifes = new List<VortexNotify>();
+    internal List<VortexNotifyState> notifyStates = new List<VortexNotifyState>();
     internal List<VortexCurve> curves = new List<VortexCurve>();
+    OnDoAnything onCompleteNonLoopedAnimation = null;
+    int notifyLen = -1, notifyStatesLen = -1, curveLen = -1;
 
     private AnimState() { }
     void SetClipData(AnimationClip clip, AnimNode node)
@@ -38,7 +41,7 @@ public partial class AnimState
         this.normalizedAnimationTime = 0.0f;
         this.speed = 1.0f;
         this.duration = clip.length / this.speed;
-        this.isController = this.hasEvents = this.isTicking = false;
+        this.isController = this.hasNotifies = this.hasNotifyStates = this.hasCurves = this.isTicking = false;
         this.Controller = null;
         this.clip = clip;
         this.mask = null;
@@ -58,7 +61,7 @@ public partial class AnimState
         this.normalizedAnimationTime = -1.0f;
         this.speed = 1.0f;
         this.duration = -1.0f;
-        this.hasEvents = this.isTicking = false;
+        this.hasNotifies = this.hasNotifyStates = this.hasCurves = this.isTicking = false;
         this.isController = true;
         this.Controller = controller;
         this.clip = null;
@@ -84,26 +87,36 @@ public partial class AnimState
     internal AnimState(AnimationSequence clipAsset, AnimNode node)
     {
         SetClipData(clipAsset.Clip, node);
-        node.anim.CreateNotifiesOnConstruction(clipAsset, this);
-        node.anim.CreateNotifyStatesOnConstruction(clipAsset, this);
-        node.anim.CreateCurveDataOnConstruction(clipAsset, this);
+        node.anim.CreateNotifiesOnConstruction(clipAsset, ref notifes);
+        node.anim.CreateNotifyStatesOnConstruction(clipAsset, ref notifyStates);
+        node.anim.CreateCurveDataOnConstruction(clipAsset, ref curves);
 
         this.isLooping = clipAsset.IsLoop;
         this.speed = clipAsset.Speed;
         this.duration = clipAsset.Clip.length / this.speed;
-        this.hasEvents = true;
+        this.hasNotifies = notifes.ExIsValid();
+        this.hasNotifyStates = notifyStates.ExIsValid();
+        this.hasCurves = curves.ExIsValid();
+        if (hasNotifies) { this.notifyLen = notifes.Count; }
+        if (hasNotifyStates) { this.notifyStatesLen = notifyStates.Count; }
+        if (hasCurves) { this.curveLen = curves.Count; }
     }
     internal AnimState(AnimationSequence clipAsset, AnimNode node, AvatarMask mask, AdditiveAnimationMode mode)
     {
         SetClipData(clipAsset.Clip, node);
-        node.anim.CreateNotifiesOnConstruction(clipAsset, this);
-        node.anim.CreateNotifyStatesOnConstruction(clipAsset, this);
-        node.anim.CreateCurveDataOnConstruction(clipAsset, this);
+        node.anim.CreateNotifiesOnConstruction(clipAsset, ref notifes);
+        node.anim.CreateNotifyStatesOnConstruction(clipAsset, ref notifyStates);
+        node.anim.CreateCurveDataOnConstruction(clipAsset, ref curves);
 
         this.isLooping = clipAsset.IsLoop;
         this.speed = clipAsset.Speed;
         this.duration = clipAsset.Clip.length / this.speed;
-        this.hasEvents = true;
+        this.hasNotifies = notifes.ExIsValid();
+        this.hasNotifyStates = notifyStates.ExIsValid();
+        this.hasCurves = curves.ExIsValid();
+        if (hasNotifies) { this.notifyLen = notifes.Count; }
+        if (hasNotifyStates) { this.notifyStatesLen = notifyStates.Count; }
+        if (hasCurves) { this.curveLen = curves.Count; }
 
         this.mask = mask;
         node.Mixer.SetLayerMaskFromAvatarMask(node.Layer, mask);

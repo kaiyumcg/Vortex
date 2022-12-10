@@ -5,6 +5,7 @@ using UnityEngine.Animations;
 using Vortex;
 using AttributeExt;
 using UnityEngine.Playables;
+using UnityExt;
 
 internal enum AdditiveAnimationMode { Additive = 0, Override = 1 }
 internal enum WeightUpdateMode { ToZero = 0, ToOne = 1, ToValue = 2 }
@@ -64,9 +65,11 @@ public partial class AnimState
         targetWeight = -1.0f;
         targetWeightRaise = false;
         transitionTime = 0.0f;
+        ResetNotifyAndCurve();
     }
-    internal void StartSmoothly(WeightUpdateMode weightUpdateMode, float transitionTime, float targetWeight = -1.0f)
+    internal void StartSmoothly(WeightUpdateMode weightUpdateMode, float transitionTime, OnDoAnything onCompleteNonLoopedAnimation = null, float targetWeight = -1.0f)
     {
+        ResetNotifyAndCurve();
         this.isTicking = true;
         this.paused = false;
         this.pauseTime = 0.0;
@@ -75,11 +78,11 @@ public partial class AnimState
         pl.SetTime(0.0);
         pl.SetDuration(this.duration);
         pl.Play();
-        //start events TODO
         this.isWeightUpdating = true;
         this.cycleTime = 0.0f;
         this.totalRunningTime = 0.0f;
         this.normalizedAnimationTime = 0.0f;
+        this.onCompleteNonLoopedAnimation = onCompleteNonLoopedAnimation;
 
         if (weightUpdateMode == WeightUpdateMode.ToValue)
         {
@@ -91,8 +94,9 @@ public partial class AnimState
         this.targetWeight = targetWeight;
         this.transitionTime = transitionTime;
     }
-    internal void StartAtOnce(WeightUpdateMode weightUpdateMode, float targetWeight = -1.0f)
+    internal void StartAtOnce(WeightUpdateMode weightUpdateMode, OnDoAnything onCompleteNonLoopedAnimation = null, float targetWeight = -1.0f)
     {
+        ResetNotifyAndCurve();
         this.isTicking = true;
         this.paused = false;
         this.pauseTime = 0.0;
@@ -106,6 +110,7 @@ public partial class AnimState
         this.cycleTime = 0.0f;
         this.totalRunningTime = 0.0f;
         this.normalizedAnimationTime = 0.0f;
+        this.onCompleteNonLoopedAnimation = onCompleteNonLoopedAnimation;
 
         if (weightUpdateMode == WeightUpdateMode.ToValue)
         {
@@ -132,6 +137,7 @@ public partial class AnimState
     }
     internal void StopAtOnce()
     {
+        ResetNotifyAndCurve();
         this.cycleTime = 0.0f;
         this.totalRunningTime = 0.0f;
         this.normalizedAnimationTime = 0.0f;
@@ -154,6 +160,20 @@ public partial class AnimState
         pauseTime = pl.GetTime();
         pl.Pause();
         isWeightUpdating = false;
+        if (hasNotifies)
+        {
+            for (int i = 0; i < notifyLen; i++)
+            {
+                notifes[i].OnPauseNotify(node.anim);
+            }
+        }
+        if (hasNotifyStates)
+        {
+            for (int i = 0; i < notifyStatesLen; i++)
+            {
+                notifyStates[i].OnPauseNotify(node.anim);
+            }
+        }
     }
     internal void ResumeState()
     {
@@ -164,16 +184,77 @@ public partial class AnimState
         pl.SetTime(pauseTime);
         pl.Play();
         isWeightUpdating = true;
+        if (hasNotifies)
+        {
+            for (int i = 0; i < notifyLen; i++)
+            {
+                notifes[i].OnResumeNotify(node.anim);
+            }
+        }
+        if (hasNotifyStates)
+        {
+            for (int i = 0; i < notifyStatesLen; i++)
+            {
+                notifyStates[i].OnResumeNotify(node.anim);
+            }
+        }
     }
-    internal void TickState(float delta)
+    void ResetNotifyAndCurve()
+    {
+        if (hasNotifies)
+        {
+            for (int i = 0; i < notifyLen; i++)
+            {
+                notifes[i].ResetData();
+            }
+        }
+        if (hasNotifyStates)
+        {
+            for (int i = 0; i < notifyStatesLen; i++)
+            {
+                notifyStates[i].ResetData();
+            }
+        }
+        if (hasCurves)
+        {
+            for (int i = 0; i < curveLen; i++)
+            {
+                curves[i].ResetData();
+            }
+        }
+    }
+    internal void TickState(float delta, TestController fAnimator)
     {
         if (!isTicking || node.IsDirty) { return; }
         var dt = delta * node.TimeScale;
         totalRunningTime += dt;
+        var curWeight = node.Mixer.GetInputWeight(playableIDOnMixer);
 
         if (!isController)
         {
             cycleTime += dt;
+
+            if (hasNotifies)
+            {
+                for (int i = 0; i < notifyLen; i++)
+                {
+                    notifes[i].Tick(NormalizedAnimationTime, fAnimator, curWeight);
+                }
+            }
+            if (hasNotifyStates)
+            {
+                for (int i = 0; i < notifyStatesLen; i++)
+                {
+                    notifyStates[i].Tick(NormalizedAnimationTime, fAnimator, curWeight);
+                }
+            }
+            if (hasCurves)
+            {
+                for (int i = 0; i < curveLen; i++)
+                {
+                    curves[i].Tick(NormalizedAnimationTime, fAnimator, curWeight);
+                }
+            }
             if (cycleTime >= duration)
             {
                 cycleTime = 0.0f;
@@ -187,18 +268,14 @@ public partial class AnimState
                 {
                     pl.Pause();
                     isTicking = false;
+                    onCompleteNonLoopedAnimation?.Invoke();
+                    ResetNotifyAndCurve();
                 }
-                //end events TODO
-            }
-            else
-            {
-                //TODO custom events processing
             }
         }
 
         if (isWeightUpdating)
         {
-            var curWeight = node.Mixer.GetInputWeight(playableIDOnMixer);
             if (weightUpdateMode == WeightUpdateMode.ToOne)
             {
                 curWeight += dt * (1 / transitionTime);

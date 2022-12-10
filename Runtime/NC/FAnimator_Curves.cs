@@ -1,117 +1,151 @@
+using CodiceApp.EventTracking.Plastic;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UIElements;
 using UnityExt;
 
 public partial class TestController : MonoBehaviour
 {
     #region Curves
-    List<VortexCurveEventData> curveData;
-    public float GetCurveValue(string curveName)
+    List<ScriptVortexCurveEventData> curveData;
+    public bool GetCurveValue(string curveName, ref float curveValue)
     {
-        return 0;//todo
-        //UnityEvent result = GetUnityCurve(curveName);
+        var data = GetCurveData(curveName);
+        if (data == null) { return false; }
+        curveValue = data.currentValue;
+        return true;
     }
-
-    public float GetNormalizedCurveValue(string curveName)
+    public bool GetNormalizedCurveValue(string curveName, ref float curveNormalizedValue)
     {
-        return 0;//todo
-        //UnityEvent result = GetUnityCurve(curveName);
+        var data = GetCurveData(curveName);
+        if (data == null) { return false; }
+        curveNormalizedValue = data.currentNormalizedValue;
+        return true;
     }
-
     public bool AddLogicOnCurveEvaluationTick(string curveName, OnDoAnything Code)
     {
-        UnityEvent result = GetCurveEvaluationTickEvent(curveName);
-        if (result != null)
+        var data = GetCurveData(curveName);
+        if (data != null)
         {
-            result.AddListener(() =>
+            UnityEvent result = data.tickEvent;
+            if (result != null)
             {
-                Code?.Invoke();
-            });
+                result.AddListener(() =>
+                {
+                    Code?.Invoke();
+                });
+            }
+            return result != null;
         }
-        return result != null;
+        else { return false; }
     }
     public bool AddLogicOnCurveEvaluationTick(string curveName, UnityAction Code)
     {
-        UnityEvent result = GetCurveEvaluationTickEvent(curveName);
-        if (result != null)
+        var data = GetCurveData(curveName);
+        if (data != null)
         {
-            result.AddListener(Code);
+            UnityEvent result = data.tickEvent;
+            if (result != null)
+            {
+                result.AddListener(Code);
+            }
+            return result != null;
         }
-        return result != null;
+        else
+        {
+            return false;
+        }
     }
     public bool ClearLogicOnCurveEvaluationTick(string curveName, UnityAction Code)
     {
-        UnityEvent result = GetCurveEvaluationTickEvent(curveName);
-        if (result != null)
+        var data = GetCurveData(curveName);
+        if (data != null)
         {
-            result.RemoveListener(Code);
+            UnityEvent result = data.tickEvent;
+            if (result != null)
+            {
+                result.RemoveListener(Code);
+            }
+            return result != null;
         }
-        return result != null;
+        else
+        {
+            return false;
+        }
     }
-    UnityEvent GetCurveEvaluationTickEvent(string curveName)
+    ScriptVortexCurveEventData GetCurveData(string curveName)
     {
-        UnityEvent result = null;
-        if (curveData == null) { curveData = new List<VortexCurveEventData>(); }
+        ScriptVortexCurveEventData result = null;
+        if (curveData == null) { curveData = new List<ScriptVortexCurveEventData>(); }
         curveData.ExForEach((i) =>
         {
             if (i != null && i.curveName == curveName)
             {
-                result = i.tickEvent;
+                result = i;
             }
         });
         return result;
     }
-    AnimationCurve GetUnityCurve(string curveName)
+    public bool ClearAllLogicOnCurveEvaluationTick(string curveName)
     {
-        AnimationCurve result = null;
-        if (curveData == null) { curveData = new List<VortexCurveEventData>(); }
-        curveData.ExForEach((i) =>
+        var data = GetCurveData(curveName);
+        if (data != null)
         {
-            if (i != null && i.curveName == curveName)
+            UnityEvent result = data.tickEvent;
+            if (result != null)
             {
-                result = i.curve;
+                result.RemoveAllListeners();
             }
-        });
-        return result;
-    }
-    public bool ClearAllLogicOnCurveEvaluationTick(string eventName)
-    {
-        UnityEvent result = GetCurveEvaluationTickEvent(eventName);
-        if (result != null)
-        {
-            result.RemoveAllListeners();
+            return result != null;
         }
-        return result != null;
-    }
-    internal void CreateCurveDataOnConstruction(AnimationSequence animAsset, AnimState state)
-    {
-        if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptNotifyEventData>(); }
-        state.notifes = new List<Notify>();
-        animAsset.notifies.ExForEach((i) =>
+        else
         {
-            Notify notify = null;
-            var sk = i as IScriptNotify;
-            if (sk != null)
+            return false;
+        }
+    }
+
+    internal void CreateCurveDataOnConstruction(AnimationSequence animAsset, ref List<VortexCurve> curves)
+    {
+        if (curveData == null) { curveData = new List<ScriptVortexCurveEventData>(); }
+        var result = new List<VortexCurve>();
+        animAsset.curves.ExForEach((i) =>
+        {
+            VortexCurve curve = null;
+            var scriptCurve = i as IScriptVortexCurve;
+            if (scriptCurve == null)
             {
-                UnityEvent unityEvent = null;
-                var eventName = sk.EventName;
-                unityEvent = GetCurveEvaluationTickEvent(eventName);
-                if (unityEvent == null)
-                {
-                    unityEvent = new UnityEvent();
-                    var ev = new ScriptNotifyEventData { eventName = eventName, unityEvent = unityEvent };
-                    eventDataRuntime.Add(ev);
-                }
-                notify = i.CreateNotify(unityEvent);
+                curve = i.CreateCurveDataForRuntime();
             }
             else
             {
-                notify = i.CreateNotify();
+                UnityEvent curveTickEvent = null;
+                var curveName = scriptCurve.CurveName;
+                var data = GetCurveData(curveName);
+                if (data != null)
+                {
+                    curveTickEvent = data.tickEvent;
+                    if (curveTickEvent == null)
+                    {
+                        curveTickEvent = new UnityEvent();
+                        var ev = new ScriptVortexCurveEventData
+                        {
+                            curveName = curveName,
+                            tickEvent = curveTickEvent,
+                            currentTime = 0.0f,
+                            currentValue = 0.0f,
+                            currentNormalizedTime = 0.0f,
+                            currentNormalizedValue = 0.0f
+                        };
+                        curveData.Add(ev);
+                    }
+                }
+                curve = i.CreateCurveDataForRuntime(curveTickEvent, data);
             }
-            state.notifes.Add(notify);
+            result.Add(curve);
         });
+        curves = result;
     }
     #endregion
 }

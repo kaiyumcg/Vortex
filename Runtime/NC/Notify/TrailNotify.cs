@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityExt;
 
-public class TrailNotifyEditorData : INotifyState
+public class TrailNotifyEditorData : IVortexNotifyState
 {
     [SerializeField] NotifyStateBasicConfig basicSetting;
     [SerializeField] GameTrail gameTrailPrefab;
@@ -16,36 +16,38 @@ public class TrailNotifyEditorData : INotifyState
     internal Vector3 PositionOffset { get { return positionOffset; } }
     internal Vector3 RotationOffset { get { return rotationOffset; } }
     internal Vector3 Scale { get { return scale; } }
-    float INotifyState.StartTime => basicSetting.StartTime;
-    float INotifyState.EndTime => basicSetting.EndTime;
-    float INotifyState.Chance => basicSetting.Chance;
-    bool INotifyState.UseLOD => basicSetting.UseLOD;
-    List<int> INotifyState.LevelOfDetails => basicSetting.LevelOfDetails;
+    float IVortexNotifyState.StartTime => basicSetting.StartTime;
+    float IVortexNotifyState.EndTime => basicSetting.EndTime;
+    float IVortexNotifyState.Chance => basicSetting.Chance;
+    bool IVortexNotifyState.UseLOD => basicSetting.UseLOD;
+    List<int> IVortexNotifyState.LevelOfDetails => basicSetting.LevelOfDetails;
 
-    NotifyState INotifyState.CreateNotifyState()
+    float IVortexNotifyState.CutoffWeight => basicSetting.CutoffWeight;
+
+    VortexNotifyState IVortexNotifyState.CreateNotifyState()
     {
         return new TrailNotify(this);
     }
 }
 
-internal class TrailNotify : NotifyState
+internal class TrailNotify : VortexNotifyState
 {
-    public TrailNotify(INotifyState config) : 
+    public TrailNotify(IVortexNotifyState config) : 
         base(config)
     {
     }
 
-    protected internal override void ExecuteEnd(TestController anim)
+    protected override void ExecuteEnd(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }
 
-    protected internal override void ExecuteStart(TestController anim)
+    protected override void ExecuteStart(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }
 
-    protected internal override void ExecuteTick(TestController anim)
+    protected override void ExecuteTick(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }

@@ -6,73 +6,77 @@ using UnityEngine.Events;
 using UnityExt;
 
 [System.Serializable]
-internal class ScriptNotifyEditorData : INotify, IScriptNotify
+internal class ScriptNotifyEditorData : IVortexNotify, IVortexScriptNotify
 {
-    [Dropdown(typeof(AnimationNameManager), "GetSkeletalNotifyNames")]
+    [Dropdown(typeof(AnimationNameManager), "GetNotifyNames")]
     [SerializeField] string notifyName;
     [SerializeField] NotifyBasicConfig basicSetting;
-    float INotify.Time => basicSetting.Time;
-    float INotify.Chance => basicSetting.Chance;
-    bool INotify.UseLOD => basicSetting.UseLOD;
-    List<int> INotify.LevelOfDetails => basicSetting.LevelOfDetails;
-    string IScriptNotify.EventName => notifyName;
+    float IVortexNotify.Time => basicSetting.Time;
+    float IVortexNotify.Chance => basicSetting.Chance;
+    bool IVortexNotify.UseLOD => basicSetting.UseLOD;
+    List<int> IVortexNotify.LevelOfDetails => basicSetting.LevelOfDetails;
+    string IVortexScriptNotify.EventName => notifyName;
 
-    Notify INotify.CreateNotify(UnityEvent unityEvent)
+    float IVortexNotify.CutoffWeight => basicSetting.CutoffWeight;
+
+    VortexNotify IVortexNotify.CreateNotify(UnityEvent unityEvent)
     {
         return new ScriptNotify(this, unityEvent);
     }
 }
-internal class ScriptNotify : Notify
+internal class ScriptNotify : VortexNotify
 {
-    public ScriptNotify(INotify config, UnityEvent unityEvent) : base(config, unityEvent)
+    public ScriptNotify(IVortexNotify config, UnityEvent unityEvent) : base(config, unityEvent)
     {
     }
 
-    protected internal override void Execute(TestController anim)
+    protected override void OnExecuteNotify(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }
 }
 
 [System.Serializable]
-internal class ScriptStateNotifyConfig : INotifyState, IScriptNotifyState
+internal class ScriptStateNotifyConfig : IVortexNotifyState, IScriptVortexNotifyState
 {
-    [Dropdown(typeof(AnimationNameManager), "GetSkeletalNotifyStateNames")]
+    [Dropdown(typeof(AnimationNameManager), "GetNotifyStateNames")]
     [SerializeField] string notifyName;
     [SerializeField] bool canTick = false;
     [SerializeField] NotifyStateBasicConfig basicSetting;
-    float INotifyState.StartTime => basicSetting.StartTime;
-    float INotifyState.EndTime => basicSetting.EndTime;
-    float INotifyState.Chance => basicSetting.Chance;
-    bool INotifyState.UseLOD => basicSetting.UseLOD;
-    List<int> INotifyState.LevelOfDetails => basicSetting.LevelOfDetails;
-    string IScriptNotifyState.EventName => notifyName;
-    bool IScriptNotifyState.CanTick => canTick;
+    float IVortexNotifyState.StartTime => basicSetting.StartTime;
+    float IVortexNotifyState.EndTime => basicSetting.EndTime;
+    float IVortexNotifyState.Chance => basicSetting.Chance;
+    bool IVortexNotifyState.UseLOD => basicSetting.UseLOD;
+    List<int> IVortexNotifyState.LevelOfDetails => basicSetting.LevelOfDetails;
+    string IScriptVortexNotifyState.EventName => notifyName;
+    bool IScriptVortexNotifyState.CanTick => canTick;
 
-    NotifyState INotifyState.CreateNotifyState(UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent)
+    float IVortexNotifyState.CutoffWeight => basicSetting.CutoffWeight;
+
+    VortexNotifyState IVortexNotifyState.CreateNotifyState(UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent)
     {
         return new ScriptNotifyState(this, startEvent, tickEvent, endEvent);
     }
 }
 
-internal class ScriptNotifyState : NotifyState
+internal class ScriptNotifyState : VortexNotifyState
 {
-    public ScriptNotifyState(INotifyState config, UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent) : 
+    public ScriptNotifyState(IVortexNotifyState config, UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent) : 
         base(config, startEvent, tickEvent, endEvent)
     {
     }
 
-    protected internal override void ExecuteEnd(TestController anim)
+    protected override void ExecuteEnd(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }
 
-    protected internal override void ExecuteStart(TestController anim)
+    protected override void ExecuteStart(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }
 
-    protected internal override void ExecuteTick(TestController anim)
+    protected override void ExecuteTick(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }

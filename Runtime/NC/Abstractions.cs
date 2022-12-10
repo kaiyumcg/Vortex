@@ -9,120 +9,219 @@ using Vortex;
 #region VortexCurve
 public interface IVortexCurve
 {
+    bool WriteDefaultWhenNotRunning { get; }
+    float CutoffWeight { get; }
     string CurveName { get; }
     AnimationCurve Curve { get; }
     bool UseLOD { get; }
     List<int> LevelOfDetails { get; }
     VortexCurve CreateCurveDataForRuntime() { return null; }
+    VortexCurve CreateCurveDataForRuntime(UnityEvent curveTickEvent, ScriptVortexCurveEventData target) { return null; }
 }
-
 public abstract class VortexCurve
 {
-    protected IVortexCurve config;
-    protected AnimationCurve curve;
-    protected float currentNormalizedValue, currentValue;
-    internal IVortexCurve Config { get { return config; } }
-    internal AnimationCurve Curve { get { return curve; } }
-    internal float CurrentNormalizedValue { get { return currentNormalizedValue; } }
-    internal float CurrentValue { get { return currentValue; } }
-    protected internal abstract void Execute(TestController anim);
-    public VortexCurve(IVortexCurve config, AnimationCurve curve)
+    IVortexCurve config;
+    AnimationCurve curve;
+    UnityEvent curveTickEvent;
+    ScriptVortexCurveEventData target;
+    float minTime, maxTime, minValue, maxValue;
+    internal void ResetData()
+    {
+        if (config.WriteDefaultWhenNotRunning)
+        {
+            target.currentTime = target.currentNormalizedTime = target.currentValue = target.currentNormalizedValue = default;
+        }
+    }
+    internal void Tick(float normalizedTime, TestController fAnimator, float currentWeight)
+    {
+        if (currentWeight < config.CutoffWeight) { return; }
+        var lodPassed = config.UseLOD ? config.LevelOfDetails.Contains(fAnimator.LOD) : true;
+        if (!lodPassed) { return; }
+
+        target.currentTime = normalizedTime.ExRemap(0.0f, 1.0f, minTime, maxTime);
+        target.currentNormalizedTime = normalizedTime;
+        target.currentValue = curve.Evaluate(target.currentTime);
+        target.currentNormalizedValue = target.currentValue.ExRemap(minValue, maxValue, 0.0f, 1.0f);
+        curveTickEvent?.Invoke();
+    }
+    protected abstract void Execute(TestController anim);
+    public VortexCurve(IVortexCurve config, AnimationCurve curve, ScriptVortexCurveEventData target)
     {
         this.config = config;
         this.curve = curve;
+        this.curveTickEvent = null;
+        this.target = target;
+        curve.ExGetCurveUltima(ref minTime, ref maxTime, ref minValue, ref maxValue);
+    }
+    public VortexCurve(IVortexCurve config, AnimationCurve curve, ScriptVortexCurveEventData target, UnityEvent curveTickEvent)
+    {
+        this.config = config;
+        this.curve = curve;
+        this.curveTickEvent = curveTickEvent;
+        this.target = target;
+        curve.ExGetCurveUltima(ref minTime, ref maxTime, ref minValue, ref maxValue);
     }
 }
-internal class VortexCurveEventData
+public class ScriptVortexCurveEventData
 {
     internal string curveName;
-    internal AnimationCurve curve;
+    internal float currentTime, currentNormalizedTime, currentValue, currentNormalizedValue;
     internal UnityEvent tickEvent;
+}
+internal interface IScriptVortexCurve
+{
+    string CurveName { get; }
 }
 #endregion
 
 #region Notify
-public interface INotify
+public interface IVortexNotify
 {
+    float CutoffWeight { get; }
     float Time { get; }
     float Chance { get; }
     bool UseLOD { get; }
     List<int> LevelOfDetails { get; }
-    Notify CreateNotify(UnityEvent unityEvent) { return null; }
-    Notify CreateNotify() { return null; }
+    VortexNotify CreateNotify(UnityEvent unityEvent) { return null; }
+    VortexNotify CreateNotify() { return null; }
 }
-public abstract class Notify
+public abstract class VortexNotify
 {
-    protected INotify config;
-    protected UnityEvent onNotify;
-    internal INotify Config { get { return config; } }
-    internal UnityEvent OnNotify { get { return onNotify; } }
-    protected internal abstract void Execute(TestController anim);
-    public Notify(INotify config, UnityEvent unityEvent) 
+    IVortexNotify config = null;
+    UnityEvent onNotify = null;
+    bool consumed = false;
+    internal void ResetData() { consumed = false; }
+    internal void Tick(float normalizedTime, TestController fAnimator, float currentWeight)
+    {
+        if (consumed || currentWeight < config.CutoffWeight) { return; }
+        if (normalizedTime >= config.Time)
+        {
+            consumed = true;
+            var chancePassed = config.Chance >= 1.0f ? true : UnityEngine.Random.value < config.Chance;
+            var lodPassed = config.UseLOD ? config.LevelOfDetails.Contains(fAnimator.LOD) : true;
+            if (chancePassed && lodPassed)
+            {
+                onNotify?.Invoke();
+                OnExecuteNotify(fAnimator);
+            }
+        }
+    }
+    protected abstract void OnExecuteNotify(TestController fAnimator);
+    protected internal virtual void OnPauseNotify(TestController fAnimator) { }
+    protected internal virtual void OnResumeNotify(TestController fAnimator) { }
+    public VortexNotify(IVortexNotify config, UnityEvent unityEvent) 
     {
         this.config = config;
         this.onNotify = unityEvent;
+        ResetData();
     }
-    public Notify(INotify config)
+    public VortexNotify(IVortexNotify config)
     {
         this.config = config;
         this.onNotify = null;
+        ResetData();
     }
 }
-internal class ScriptNotifyEventData
+internal class ScriptVortexNotifyEventData
 {
     internal string eventName;
     internal UnityEvent unityEvent;
 }
-internal interface IScriptNotify
+internal interface IVortexScriptNotify
 {
     string EventName { get; }
 }
 #endregion
 
-
 #region NotifyState
-public interface INotifyState
+public interface IVortexNotifyState
 {
+    float CutoffWeight { get; }
     float StartTime { get; }
     float EndTime { get; }
     float Chance { get; }
     bool UseLOD { get; }
     List<int> LevelOfDetails { get; }
-    NotifyState CreateNotifyState(UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent) { return null; }
-    NotifyState CreateNotifyState() { return null; }
+    VortexNotifyState CreateNotifyState(UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent) { return null; }
+    VortexNotifyState CreateNotifyState() { return null; }
 }
-public abstract class NotifyState
+public abstract class VortexNotifyState
 {
-    protected INotifyState config;
-    protected UnityEvent onStartNotify, onEndNotify, onTickNotify;
-    internal INotifyState Config { get { return config; } }
-    internal UnityEvent OnStartNotify { get { return onStartNotify; } }
-    internal UnityEvent OnEndNotify { get { return onEndNotify; } }
-    internal UnityEvent OnTickNotify { get { return onTickNotify; } }
-    protected internal abstract void ExecuteStart(TestController anim);
-    protected internal abstract void ExecuteEnd(TestController anim);
-    protected internal abstract void ExecuteTick(TestController anim);
-    public NotifyState(INotifyState config, UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent)
+    IVortexNotifyState config;
+    UnityEvent onStartNotify, onEndNotify, onTickNotify;
+    bool stateStarted = false, stateEnded = false;
+    bool canTick = false;
+    bool lodAndChancePassed = false;
+    internal void ResetData() 
+    {
+        stateStarted = stateEnded = lodAndChancePassed = false;
+    }
+    internal void Tick(float normalizedTime, TestController fAnimator, float currentWeight)
+    {
+        if (stateEnded || currentWeight < config.CutoffWeight) { return; }
+
+        if (!stateStarted && normalizedTime >= config.StartTime)
+        {
+            var chancePassed = config.Chance >= 1.0f ? true : UnityEngine.Random.value < config.Chance;
+            var lodPassed = config.UseLOD && config.LevelOfDetails.ExIsValid() ? config.LevelOfDetails.Contains(fAnimator.LOD) : true;
+            lodAndChancePassed = chancePassed && lodPassed;
+            stateStarted = true;
+
+            if (lodAndChancePassed)
+            {
+                ExecuteStart(fAnimator);
+                onStartNotify?.Invoke();
+            }
+        }
+
+        if (!stateEnded && normalizedTime >= config.EndTime)
+        {
+            stateEnded = true;
+            if (lodAndChancePassed)
+            {
+                ExecuteEnd(fAnimator);
+                onEndNotify?.Invoke();
+            }
+        }
+
+        if (stateStarted && !stateEnded && canTick && lodAndChancePassed)
+        {
+            ExecuteTick(fAnimator);
+            onTickNotify?.Invoke();
+        }        
+    }
+    protected abstract void ExecuteStart(TestController fAnimator);
+    protected abstract void ExecuteEnd(TestController fAnimator);
+    protected abstract void ExecuteTick(TestController fAnimator);
+    protected internal virtual void OnPauseNotify(TestController fAnimator) { }
+    protected internal virtual void OnResumeNotify(TestController fAnimator) { }
+    public VortexNotifyState(IVortexNotifyState config, UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent)
     {
         this.config = config;
         this.onStartNotify = startEvent;
         this.onTickNotify = tickEvent;
         this.onEndNotify = endEvent;
+        var scriptNotifyState = config as IScriptVortexNotifyState;
+        canTick = scriptNotifyState == null ? true : scriptNotifyState.CanTick;
+        ResetData();
     }
-    public NotifyState(INotifyState config)
+    public VortexNotifyState(IVortexNotifyState config)
     {
         this.config = config;
         this.onStartNotify = null;
         this.onTickNotify = null;
         this.onEndNotify = null;
+        var scriptNotifyState = config as IScriptVortexNotifyState;
+        canTick = scriptNotifyState == null ? true : scriptNotifyState.CanTick;
+        ResetData();
     }
 }
-internal class ScriptNotifyStateEventData
+internal class ScriptVortexNotifyStateEventData
 {
     internal string eventName;
     internal UnityEvent unityEventStart, unityEventTick, unityEventEnd;
 }
-internal interface IScriptNotifyState
+internal interface IScriptVortexNotifyState
 {
     string EventName { get; }
     bool CanTick { get; }

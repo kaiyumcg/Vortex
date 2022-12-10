@@ -8,7 +8,7 @@ public enum NotifyStateType { Start = 0, Tick = 1, End = 2 }
 public partial class TestController : MonoBehaviour
 {
     #region Notify
-    List<ScriptNotifyEventData> eventDataRuntime;
+    List<ScriptVortexNotifyEventData> eventDataRuntime;
     public bool AddLogicOnScriptNotify(string eventName, OnDoAnything Code)
     {
         UnityEvent result = GetNotifyEvent(eventName);
@@ -42,7 +42,7 @@ public partial class TestController : MonoBehaviour
     UnityEvent GetNotifyEvent(string eventName)
     {
         UnityEvent result = null;
-        if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptNotifyEventData>(); }
+        if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptVortexNotifyEventData>(); }
         eventDataRuntime.ExForEach((i) =>
         {
             if (i != null && i.eventName == eventName)
@@ -61,38 +61,39 @@ public partial class TestController : MonoBehaviour
         }
         return result != null;
     }
-    internal void CreateNotifiesOnConstruction(AnimationSequence animAsset, AnimState state)
+    internal void CreateNotifiesOnConstruction(AnimationSequence animAsset, ref List<VortexNotify> notifies)
     {
-        if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptNotifyEventData>(); }
-        state.notifes = new List<Notify>();
+        if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptVortexNotifyEventData>(); }
+        var notifyList = new List<VortexNotify>();
         animAsset.notifies.ExForEach((i) =>
         {
-            Notify notify = null;
-            var sk = i as IScriptNotify;
-            if (sk != null)
+            VortexNotify notify = null;
+            var scriptNotify = i as IVortexScriptNotify;
+            if (scriptNotify == null)
+            {
+                notify = i.CreateNotify();
+            }
+            else
             {
                 UnityEvent unityEvent = null;
-                var eventName = sk.EventName;
+                var eventName = scriptNotify.EventName;
                 unityEvent = GetNotifyEvent(eventName);
                 if (unityEvent == null)
                 {
                     unityEvent = new UnityEvent();
-                    var ev = new ScriptNotifyEventData { eventName = eventName, unityEvent = unityEvent };
+                    var ev = new ScriptVortexNotifyEventData { eventName = eventName, unityEvent = unityEvent };
                     eventDataRuntime.Add(ev);
                 }
                 notify = i.CreateNotify(unityEvent);
             }
-            else
-            {
-                notify = i.CreateNotify();
-            }
-            state.notifes.Add(notify);
+            notifyList.Add(notify);
         });
+        notifies = notifyList;
     }
     #endregion
 
     #region Notify State
-    List<ScriptNotifyStateEventData> eventDataRuntimeForStates;
+    List<ScriptVortexNotifyStateEventData> eventDataRuntimeForStates;
     public bool AddLogicOnScriptNotifyState(string eventName, NotifyStateType stateType, OnDoAnything Code)
     {
         UnityEvent result = GetNotifyStateEvent(eventName, stateType);
@@ -126,7 +127,7 @@ public partial class TestController : MonoBehaviour
     UnityEvent GetNotifyStateEvent(string eventName, NotifyStateType stateType)
     {
         UnityEvent result = null;
-        if (eventDataRuntimeForStates == null) { eventDataRuntimeForStates = new List<ScriptNotifyStateEventData>(); }
+        if (eventDataRuntimeForStates == null) { eventDataRuntimeForStates = new List<ScriptVortexNotifyStateEventData>(); }
         eventDataRuntimeForStates.ExForEach((i) =>
         {
             if (i != null && i.eventName == eventName)
@@ -152,20 +153,20 @@ public partial class TestController : MonoBehaviour
             }
         }
     }
-    internal void CreateNotifyStatesOnConstruction(AnimationSequence animAsset, AnimState state)
+    internal void CreateNotifyStatesOnConstruction(AnimationSequence animAsset, ref List<VortexNotifyState> notifyStates)
     {
-        if (eventDataRuntimeForStates == null) { eventDataRuntimeForStates = new List<ScriptNotifyStateEventData>(); }
-        state.notifyStates = new List<NotifyState>();
+        if (eventDataRuntimeForStates == null) { eventDataRuntimeForStates = new List<ScriptVortexNotifyStateEventData>(); }
+        var result  = new List<VortexNotifyState>();
         animAsset.notifyStates.ExForEach((i) =>
         {
-            NotifyState notify = null;
-            var sk = i as IScriptNotifyState;
+            VortexNotifyState notify = null;
+            var sk = i as IScriptVortexNotifyState;
             if (sk != null)
             {
                 UnityEvent startEvent = null, tickEvent = null, endEvent = null;
                 var eventName = sk.EventName;
                 var found = false;
-                ScriptNotifyStateEventData evData = null;
+                ScriptVortexNotifyStateEventData evData = null;
                 eventDataRuntimeForStates.ExForEach((i) =>
                 {
                     if (i != null && i.eventName == eventName)
@@ -184,7 +185,7 @@ public partial class TestController : MonoBehaviour
                     tickEvent = sk.CanTick ? new UnityEvent() : null;
                     endEvent = new UnityEvent();
 
-                    var ev = new ScriptNotifyStateEventData
+                    var ev = new ScriptVortexNotifyStateEventData
                     {
                         eventName = eventName,
                         unityEventStart = startEvent,
@@ -199,8 +200,9 @@ public partial class TestController : MonoBehaviour
             {
                 notify = i.CreateNotifyState();
             }
-            state.notifyStates.Add(notify);
+            result.Add(notify);
         });
+        notifyStates = result;
     }
     #endregion
 }

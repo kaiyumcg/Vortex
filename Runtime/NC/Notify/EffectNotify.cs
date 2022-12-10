@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using UnityExt;
 
 [System.Serializable]
-internal class EffectNotifyEditorData : INotify
+internal class EffectNotifyEditorData : IVortexNotify
 {
     [SerializeField] NotifyBasicConfig basicSetting;
     [SerializeField] GameParticle effectPrefab;
@@ -19,30 +19,32 @@ internal class EffectNotifyEditorData : INotify
     internal Vector3 RotationOffset { get { return rotationOffset; } }
     internal Vector3 Scale { get { return scale; } }
     internal bool Attached { get { return attached; } }
-    float INotify.Time => basicSetting.Time;
-    float INotify.Chance => basicSetting.Chance;
-    bool INotify.UseLOD => basicSetting.UseLOD;
-    List<int> INotify.LevelOfDetails => basicSetting.LevelOfDetails;
+    float IVortexNotify.Time => basicSetting.Time;
+    float IVortexNotify.Chance => basicSetting.Chance;
+    bool IVortexNotify.UseLOD => basicSetting.UseLOD;
+    List<int> IVortexNotify.LevelOfDetails => basicSetting.LevelOfDetails;
 
-    Notify INotify.CreateNotify()
+    float IVortexNotify.CutoffWeight => basicSetting.CutoffWeight;
+
+    VortexNotify IVortexNotify.CreateNotify()
     {
         return new EffectNotify(this);
     }
 }
-internal class EffectNotify : Notify
+internal class EffectNotify : VortexNotify
 {
-    public EffectNotify(INotify config) : base(config)
+    public EffectNotify(IVortexNotify config) : base(config)
     {
     }
 
-    protected internal override void Execute(TestController anim)
+    protected override void OnExecuteNotify(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }
 }
 
 [System.Serializable]
-internal class EffectNotifyStateEditorData : INotifyState
+internal class EffectNotifyStateEditorData : IVortexNotifyState
 {
     [SerializeField] NotifyStateBasicConfig basicSetting;
     [SerializeField] GameParticle effectPrefab;
@@ -58,36 +60,38 @@ internal class EffectNotifyStateEditorData : INotifyState
     internal Vector3 RotationOffset { get { return rotationOffset; } }
     internal Vector3 Scale { get { return scale; } }
     internal bool Attached { get { return attached; } }
-    float INotifyState.StartTime => basicSetting.StartTime;
-    float INotifyState.EndTime => basicSetting.EndTime;
-    float INotifyState.Chance => basicSetting.Chance;
-    bool INotifyState.UseLOD => basicSetting.UseLOD;
-    List<int> INotifyState.LevelOfDetails => basicSetting.LevelOfDetails;
+    float IVortexNotifyState.StartTime => basicSetting.StartTime;
+    float IVortexNotifyState.EndTime => basicSetting.EndTime;
+    float IVortexNotifyState.Chance => basicSetting.Chance;
+    bool IVortexNotifyState.UseLOD => basicSetting.UseLOD;
+    List<int> IVortexNotifyState.LevelOfDetails => basicSetting.LevelOfDetails;
 
-    NotifyState INotifyState.CreateNotifyState()
+    float IVortexNotifyState.CutoffWeight => basicSetting.CutoffWeight;
+
+    VortexNotifyState IVortexNotifyState.CreateNotifyState()
     {
         return new EffectNotifyState(this);
     }
 }
 
-internal class EffectNotifyState : NotifyState
+internal class EffectNotifyState : VortexNotifyState
 {
-    public EffectNotifyState(INotifyState config) : 
+    public EffectNotifyState(IVortexNotifyState config) : 
         base(config)
     {
     }
 
-    protected internal override void ExecuteEnd(TestController anim)
+    protected override void ExecuteEnd(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }
 
-    protected internal override void ExecuteStart(TestController anim)
+    protected override void ExecuteStart(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }
 
-    protected internal override void ExecuteTick(TestController anim)
+    protected override void ExecuteTick(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }

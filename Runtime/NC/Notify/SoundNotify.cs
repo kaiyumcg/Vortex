@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [System.Serializable]
-internal class SoundNotifyEditorData : INotify
+internal class SoundNotifyEditorData : IVortexNotify
 {
     [SerializeField] NotifyBasicConfig basicSetting;
     [SerializeField] AudioClip soundClip;
@@ -14,31 +14,33 @@ internal class SoundNotifyEditorData : INotify
     internal AudioClip SoundClip { get { return soundClip; } }
     internal float VolumeMultiplier { get { return volumeMultiplier; } }
     internal float PitchMultiplier { get { return pitchMultiplier; } }
-    float INotify.Time => basicSetting.Time;
-    float INotify.Chance => basicSetting.Chance;
-    bool INotify.UseLOD => basicSetting.UseLOD;
-    List<int> INotify.LevelOfDetails => basicSetting.LevelOfDetails;
+    float IVortexNotify.Time => basicSetting.Time;
+    float IVortexNotify.Chance => basicSetting.Chance;
+    bool IVortexNotify.UseLOD => basicSetting.UseLOD;
+    List<int> IVortexNotify.LevelOfDetails => basicSetting.LevelOfDetails;
 
-    Notify INotify.CreateNotify()
+    float IVortexNotify.CutoffWeight => basicSetting.CutoffWeight;
+
+    VortexNotify IVortexNotify.CreateNotify()
     {
         return new SoundNotify(this);
     }
 }
-internal class SoundNotify : Notify
+internal class SoundNotify : VortexNotify
 {
-    public SoundNotify(INotify config) : 
+    public SoundNotify(IVortexNotify config) : 
         base(config)
     {
     }
 
-    protected internal override void Execute(TestController anim)
+    protected override void OnExecuteNotify(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }
 }
 
 [System.Serializable]
-internal class SoundNotifyStateEditorData : INotifyState
+internal class SoundNotifyStateEditorData : IVortexNotifyState
 {
     [SerializeField] NotifyStateBasicConfig basicSetting;
     [Tooltip("Plays one after another looping. keep playing one if single")]
@@ -48,35 +50,37 @@ internal class SoundNotifyStateEditorData : INotifyState
     internal List<AudioClip> SoundClip { get { return soundClips; } }
     internal float VolumeMultiplier { get { return volumeMultiplier; } }
     internal float PitchMultiplier { get { return pitchMultiplier; } }
-    float INotifyState.StartTime => basicSetting.StartTime;
-    float INotifyState.EndTime =>basicSetting.EndTime;
-    float INotifyState.Chance => basicSetting.Chance;
-    bool INotifyState.UseLOD => basicSetting.UseLOD;
-    List<int> INotifyState.LevelOfDetails => basicSetting.LevelOfDetails;
+    float IVortexNotifyState.StartTime => basicSetting.StartTime;
+    float IVortexNotifyState.EndTime =>basicSetting.EndTime;
+    float IVortexNotifyState.Chance => basicSetting.Chance;
+    bool IVortexNotifyState.UseLOD => basicSetting.UseLOD;
+    List<int> IVortexNotifyState.LevelOfDetails => basicSetting.LevelOfDetails;
 
-    NotifyState INotifyState.CreateNotifyState()
+    float IVortexNotifyState.CutoffWeight => basicSetting.CutoffWeight;
+
+    VortexNotifyState IVortexNotifyState.CreateNotifyState()
     {
         return new SoundNotifyState(this);
     }
 }
-internal class SoundNotifyState : NotifyState
+internal class SoundNotifyState : VortexNotifyState
 {
-    public SoundNotifyState(INotifyState config) : 
+    public SoundNotifyState(IVortexNotifyState config) : 
         base(config)
     {
     }
 
-    protected internal override void ExecuteEnd(TestController anim)
+    protected override void ExecuteEnd(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }
 
-    protected internal override void ExecuteStart(TestController anim)
+    protected override void ExecuteStart(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }
 
-    protected internal override void ExecuteTick(TestController anim)
+    protected override void ExecuteTick(TestController fAnimator)
     {
         throw new System.NotImplementedException();
     }
