@@ -142,7 +142,7 @@ public partial class TestController : MonoBehaviour
         animTimeScale = 1.0f;
         anim = GetComponent<Animator>();
         var rnds = GetComponentsInChildren<SkinnedMeshRenderer>();
-        rnds.ExForEach((i) =>
+        rnds.ExForEachSafe((i) =>
         {
             var ob = i.gameObject;
             var tag = ob.GetComponent<VisibilityTag>();

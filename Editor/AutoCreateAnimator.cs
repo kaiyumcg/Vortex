@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
 using Vortex;
+using KEditorUtil;
 
 namespace VortexEditor
 {
@@ -32,16 +33,16 @@ namespace VortexEditor
             {
                 var fbxDir = EditorUtility.OpenFolderPanel("Open FBX directory", Application.dataPath, "");
                 if (string.IsNullOrEmpty(fbxDir)) { Util.ShowError(Util.fbxDirErr); }
-                Util.LoadAnimations(fbxDir, ref clips);
+                ProjectResourceUtil.LoadAnimations(fbxDir, ref clips);
 
                 var prefabDir = EditorUtility.OpenFolderPanel("Open Prefab directory", Application.dataPath, "");
                 if (string.IsNullOrEmpty(prefabDir) || prefabDir.Contains("Asset") == false) { Util.ShowError(Util.prefabDirErr); }
-                Util.LoadPrefabs(prefabDir, ref prefabData);
+                ProjectResourceUtil.LoadPrefabs(prefabDir, ref prefabData);
 
                 var saveDir = EditorUtility.SaveFilePanel("Save Asset", Application.dataPath, "", "controller");
                 if (string.IsNullOrEmpty(saveDir) || saveDir.Contains("Asset") == false) { Util.ShowError(Util.saveDirErr); }
                 //Debug.Log("savedir: "+saveDir);
-                var controller = AnimatorController.CreateAnimatorControllerAtPath(Util.AssetsRelativePath(saveDir));
+                var controller = AnimatorController.CreateAnimatorControllerAtPath(EdUtil.AssetsRelativePath(saveDir));
                 if (controller == null) { Util.ShowError(Util.conCreateErr); }
                 if (clips != null && clips.Count > 0)
                 {

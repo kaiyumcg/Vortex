@@ -1,4 +1,3 @@
-using CodiceApp.EventTracking.Plastic;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -79,7 +78,7 @@ public partial class TestController : MonoBehaviour
     {
         ScriptVortexCurveEventData result = null;
         if (curveData == null) { curveData = new List<ScriptVortexCurveEventData>(); }
-        curveData.ExForEach((i) =>
+        curveData.ExForEachSafe((i) =>
         {
             if (i != null && i.curveName == curveName)
             {
@@ -110,7 +109,7 @@ public partial class TestController : MonoBehaviour
     {
         if (curveData == null) { curveData = new List<ScriptVortexCurveEventData>(); }
         var result = new List<VortexCurve>();
-        animAsset.curves.ExForEach((i) =>
+        animAsset.curves.ExForEachSafe((i) =>
         {
             VortexCurve curve = null;
             var scriptCurve = i as IScriptVortexCurve;

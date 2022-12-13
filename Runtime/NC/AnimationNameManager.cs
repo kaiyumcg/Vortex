@@ -4,48 +4,54 @@ using UnityEngine;
 using UnityExt;
 
 [CreateAssetMenu(fileName = "Anim Name Manager", menuName = "Kaiyum/Animation/Create a new name manager", order = 2)]
-internal class AnimationNameManager : ScriptableObject
+public class AnimationNameManager : ScriptableObject
 {
-    [SerializeField] string[] skeletalNotifies, skeletalNotifyStates, curves;
-    internal string[] SkeletalNotifies { get { return skeletalNotifies; } }
-    internal string[] SkeletalNotifyStates { get { return skeletalNotifyStates; } }
-    internal string[] Curves { get { return curves; } }
+    [SerializeField] string[] scriptNotifyNames, scriptNotifyStateNames, curves;
+
+    static List<AnimationNameManager> GetManagersFromProject()
+    {
+        var result = new List<AnimationNameManager>();
+#if UNITY_EDITOR
+        result.AddRange(KEditorUtil.ProjectResourceUtil.LoadAssetsFromAssetFolder<AnimationNameManager>());
+#endif
+        return result;
+    }
 
     internal static string[] GetNotifyNames()
     {
-        var assets = Resources.LoadAll<AnimationNameManager>("");
+        var assets = GetManagersFromProject();
         var fNames = new List<string>();
-        assets.ExForEach((i) =>
+        assets.ExForEachSafe((i) =>
         {
-            if (i != null && i.SkeletalNotifies.ExIsValid())
+            if (i != null && i.scriptNotifyNames.ExIsValid())
             {
-                fNames.ExAddRangeUniquely(i.SkeletalNotifies);
+                fNames.ExAddRangeUniquely(i.scriptNotifyNames);
             }
         });
         return fNames.ToArray();
     }
     internal static string[] GetNotifyStateNames()
     {
-        var assets = Resources.LoadAll<AnimationNameManager>("");
+        var assets = GetManagersFromProject();
         var fNames = new List<string>();
-        assets.ExForEach((i) =>
+        assets.ExForEachSafe((i) =>
         {
-            if (i != null && i.SkeletalNotifyStates.ExIsValid())
+            if (i != null && i.scriptNotifyStateNames.ExIsValid())
             {
-                fNames.ExAddRangeUniquely(i.SkeletalNotifyStates);
+                fNames.ExAddRangeUniquely(i.scriptNotifyStateNames);
             }
         });
         return fNames.ToArray();
     }
     internal static string[] GetCurveName()
     {
-        var assets = Resources.LoadAll<AnimationNameManager>("");
+        var assets = GetManagersFromProject();
         var fNames = new List<string>();
-        assets.ExForEach((i) =>
+        assets.ExForEachSafe((i) =>
         {
-            if (i != null && i.Curves.ExIsValid())
+            if (i != null && i.curves.ExIsValid())
             {
-                fNames.ExAddRangeUniquely(i.Curves);
+                fNames.ExAddRangeUniquely(i.curves);
             }
         });
         return fNames.ToArray();

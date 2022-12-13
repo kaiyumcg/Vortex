@@ -43,7 +43,7 @@ public partial class TestController : MonoBehaviour
     {
         UnityEvent result = null;
         if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptVortexNotifyEventData>(); }
-        eventDataRuntime.ExForEach((i) =>
+        eventDataRuntime.ExForEachSafe((i) =>
         {
             if (i != null && i.eventName == eventName)
             {
@@ -65,7 +65,7 @@ public partial class TestController : MonoBehaviour
     {
         if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptVortexNotifyEventData>(); }
         var notifyList = new List<VortexNotify>();
-        animAsset.notifies.ExForEach((i) =>
+        animAsset.notifies.ExForEachSafe((i) =>
         {
             VortexNotify notify = null;
             var scriptNotify = i as IVortexScriptNotify;
@@ -128,7 +128,7 @@ public partial class TestController : MonoBehaviour
     {
         UnityEvent result = null;
         if (eventDataRuntimeForStates == null) { eventDataRuntimeForStates = new List<ScriptVortexNotifyStateEventData>(); }
-        eventDataRuntimeForStates.ExForEach((i) =>
+        eventDataRuntimeForStates.ExForEachSafe((i) =>
         {
             if (i != null && i.eventName == eventName)
             {
@@ -157,7 +157,7 @@ public partial class TestController : MonoBehaviour
     {
         if (eventDataRuntimeForStates == null) { eventDataRuntimeForStates = new List<ScriptVortexNotifyStateEventData>(); }
         var result  = new List<VortexNotifyState>();
-        animAsset.notifyStates.ExForEach((i) =>
+        animAsset.notifyStates.ExForEachSafe((i) =>
         {
             VortexNotifyState notify = null;
             var sk = i as IScriptVortexNotifyState;
@@ -167,7 +167,7 @@ public partial class TestController : MonoBehaviour
                 var eventName = sk.EventName;
                 var found = false;
                 ScriptVortexNotifyStateEventData evData = null;
-                eventDataRuntimeForStates.ExForEach((i) =>
+                eventDataRuntimeForStates.ExForEachSafe((i) =>
                 {
                     if (i != null && i.eventName == eventName)
                     {

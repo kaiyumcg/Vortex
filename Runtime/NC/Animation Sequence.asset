@@ -15,30 +15,15 @@ MonoBehaviour:
   clip: {fileID: 0}
   speed: 1
   isLoop: 0
-  notifies: []
+  notifies:
+  - rid: 4961984112875536385
   notifyStates:
-  - rid: 4961984068065165312
+  - rid: 4961984112875536384
   curves:
   - rid: 4961984068065165313
   references:
     version: 2
     RefIds:
-    - rid: 4961984068065165312
-      type: {class: EffectNotifyStateEditorData, ns: , asm: Vortex}
-      data:
-        basicSetting:
-          notifyRange: {x: 0, y: 0}
-          chance: 1
-          useLOD: 0
-          LOD: 
-          cutoffWeight: 0
-        effectPrefab: {fileID: 0}
-        cycleTime: 1
-        socketName: 
-        positionOffset: {x: 0, y: 0, z: 0}
-        rotationOffset: {x: 0, y: 0, z: 0}
-        scale: {x: 1, y: 1, z: 1}
-        attached: 0
     - rid: 4961984068065165313
       type: {class: ScriptCurveEditorData, ns: , asm: Vortex}
       data:
@@ -54,3 +39,24 @@ MonoBehaviour:
           LOD: 
           cutoffWeight: 0.5
           writeDefaultValuesWhenInvalid: 0
+    - rid: 4961984112875536384
+      type: {class: ScriptStateNotifyConfig, ns: , asm: Vortex}
+      data:
+        notifyName: ContinueHitting
+        canTick: 0
+        basicSetting:
+          notifyRange: {x: 0, y: 0}
+          chance: 1
+          useLOD: 0
+          LOD: 
+          cutoffWeight: 0.5
+    - rid: 4961984112875536385
+      type: {class: ScriptNotifyEditorData, ns: , asm: Vortex}
+      data:
+        notifyName: OnMinimumDamage1
+        basicSetting:
+          time: 0
+          chance: 1
+          useLOD: 0
+          LOD: 
+          cutoffWeight: 0.5
