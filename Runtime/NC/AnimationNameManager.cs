@@ -8,16 +8,8 @@ public class AnimationNameManager : ScriptableObject
 {
     [SerializeField] string[] scriptNotifyNames, scriptNotifyStateNames, curves;
 
-    static List<AnimationNameManager> GetManagersFromProject()
-    {
-        var result = new List<AnimationNameManager>();
-#if UNITY_EDITOR
-        result.AddRange(KEditorUtil.ProjectResourceUtil.LoadAssetsFromAssetFolder<AnimationNameManager>());
-#endif
-        return result;
-    }
-
-    internal static string[] GetNotifyNames()
+    #region CallByEditorAttribute
+    static string[] GetNotifyNames()
     {
         var assets = GetManagersFromProject();
         var fNames = new List<string>();
@@ -30,7 +22,7 @@ public class AnimationNameManager : ScriptableObject
         });
         return fNames.ToArray();
     }
-    internal static string[] GetNotifyStateNames()
+    static string[] GetNotifyStateNames()
     {
         var assets = GetManagersFromProject();
         var fNames = new List<string>();
@@ -43,7 +35,7 @@ public class AnimationNameManager : ScriptableObject
         });
         return fNames.ToArray();
     }
-    internal static string[] GetCurveName()
+    static string[] GetCurveName()
     {
         var assets = GetManagersFromProject();
         var fNames = new List<string>();
@@ -56,4 +48,13 @@ public class AnimationNameManager : ScriptableObject
         });
         return fNames.ToArray();
     }
+    static List<AnimationNameManager> GetManagersFromProject()
+    {
+        var result = new List<AnimationNameManager>();
+#if UNITY_EDITOR
+        result.AddRange(KEditorUtil.ProjectResourceUtil.LoadAssetsFromAssetFolder<AnimationNameManager>());
+#endif
+        return result;
+    }
+    #endregion
 }

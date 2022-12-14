@@ -105,7 +105,6 @@ public partial class AnimState
         pl.SetTime(0.0);
         pl.SetDuration(this.duration);
         pl.Play();
-        //start events TODO
         this.isWeightUpdating = false;
         this.cycleTime = 0.0f;
         this.totalRunningTime = 0.0f;
@@ -164,7 +163,7 @@ public partial class AnimState
         {
             for (int i = 0; i < notifyLen; i++)
             {
-                notifes[i].OnPauseNotify(node.anim);
+                notifies[i].OnPauseNotify(node.anim);
             }
         }
         if (hasNotifyStates)
@@ -188,7 +187,7 @@ public partial class AnimState
         {
             for (int i = 0; i < notifyLen; i++)
             {
-                notifes[i].OnResumeNotify(node.anim);
+                notifies[i].OnResumeNotify(node.anim);
             }
         }
         if (hasNotifyStates)
@@ -205,7 +204,7 @@ public partial class AnimState
         {
             for (int i = 0; i < notifyLen; i++)
             {
-                notifes[i].ResetData();
+                notifies[i].ResetData();
             }
         }
         if (hasNotifyStates)
@@ -238,7 +237,7 @@ public partial class AnimState
             {
                 for (int i = 0; i < notifyLen; i++)
                 {
-                    notifes[i].Tick(NormalizedAnimationTime, fAnimator, curWeight);
+                    notifies[i].Tick(NormalizedAnimationTime, fAnimator, curWeight);
                 }
             }
             if (hasNotifyStates)

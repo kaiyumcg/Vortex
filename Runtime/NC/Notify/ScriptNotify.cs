@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using UnityExt;
 
 [System.Serializable]
-internal class ScriptNotifyEditorData : IVortexNotify, IVortexScriptNotify
+internal class ScriptNotifyEditorData : IVortexNotify, IScriptVortexNotify
 {
     [Dropdown(typeof(AnimationNameManager), "GetNotifyNames")]
     [SerializeField] string notifyName;
@@ -15,7 +15,7 @@ internal class ScriptNotifyEditorData : IVortexNotify, IVortexScriptNotify
     float IVortexNotify.Chance => basicSetting.Chance;
     bool IVortexNotify.UseLOD => basicSetting.UseLOD;
     List<int> IVortexNotify.LevelOfDetails => basicSetting.LevelOfDetails;
-    string IVortexScriptNotify.EventName => notifyName;
+    string IScriptVortexNotify.EventName => notifyName;
 
     float IVortexNotify.CutoffWeight => basicSetting.CutoffWeight;
 
@@ -28,11 +28,6 @@ internal class ScriptNotify : VortexNotify
 {
     public ScriptNotify(IVortexNotify config, UnityEvent unityEvent) : base(config, unityEvent)
     {
-    }
-
-    protected override void OnExecuteNotify(TestController fAnimator)
-    {
-        throw new System.NotImplementedException();
     }
 }
 
@@ -64,20 +59,5 @@ internal class ScriptNotifyState : VortexNotifyState
     public ScriptNotifyState(IVortexNotifyState config, UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent) : 
         base(config, startEvent, tickEvent, endEvent)
     {
-    }
-
-    protected override void ExecuteEnd(TestController fAnimator)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    protected override void ExecuteStart(TestController fAnimator)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    protected override void ExecuteTick(TestController fAnimator)
-    {
-        throw new System.NotImplementedException();
     }
 }

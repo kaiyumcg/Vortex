@@ -11,9 +11,13 @@ public class AnimationSequence : ScriptableObject
     [SerializeField] AnimationClip clip;
     [SerializeField] float speed = 1f;
     [SerializeField] bool isLoop = false;
-    [SerializeReference, SerializeReferenceButton] internal List<IVortexNotify> notifies = new List<IVortexNotify>();
-    [SerializeReference, SerializeReferenceButton] internal List<IVortexNotifyState> notifyStates = new List<IVortexNotifyState>();
-    [SerializeReference, SerializeReferenceButton] internal List<IVortexCurve> curves = new List<IVortexCurve>();
+    [SerializeReference, SerializeReferenceButton] List<IVortexNotify> notifies = new List<IVortexNotify>();
+    [SerializeReference, SerializeReferenceButton] List<IVortexNotifyState> notifyStates = new List<IVortexNotifyState>();
+    [SerializeReference, SerializeReferenceButton] List<IVortexCurve> curves = new List<IVortexCurve>();
+
+    internal List<IVortexNotify> Notifies { get { return notifies; } }
+    internal List<IVortexNotifyState> NotifyStates { get { return notifyStates; } }
+    internal List<IVortexCurve> Curves { get { return curves; } }
 
     internal AnimationClip Clip { get { return clip; } }
     internal float Speed { get { return speed; } }

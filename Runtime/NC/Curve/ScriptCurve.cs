@@ -34,9 +34,4 @@ internal class ScriptCurve : VortexCurve
     public ScriptCurve(IVortexCurve config, AnimationCurve curve, ScriptVortexCurveEventData target, UnityEvent curveTickEvent) : base(config, curve, target, curveTickEvent)
     {
     }
-
-    protected override void Execute(TestController anim)
-    {
-        throw new System.NotImplementedException();
-    }
 }

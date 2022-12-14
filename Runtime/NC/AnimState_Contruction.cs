@@ -25,9 +25,9 @@ public partial class AnimState
     [HideInInspector] AnimationClipPlayable ClipPlayable = default;
     [HideInInspector] AnimNode node = null;
 
-    internal List<VortexNotify> notifes = new List<VortexNotify>();
-    internal List<VortexNotifyState> notifyStates = new List<VortexNotifyState>();
-    internal List<VortexCurve> curves = new List<VortexCurve>();
+    List<VortexNotify> notifies = new List<VortexNotify>();
+    List<VortexNotifyState> notifyStates = new List<VortexNotifyState>();
+    List<VortexCurve> curves = new List<VortexCurve>();
     OnDoAnything onCompleteNonLoopedAnimation = null;
     int notifyLen = -1, notifyStatesLen = -1, curveLen = -1;
 
@@ -87,34 +87,34 @@ public partial class AnimState
     internal AnimState(AnimationSequence clipAsset, AnimNode node)
     {
         SetClipData(clipAsset.Clip, node);
-        node.anim.CreateNotifiesOnConstruction(clipAsset, ref notifes);
+        node.anim.CreateNotifiesOnConstruction(clipAsset, ref notifies);
         node.anim.CreateNotifyStatesOnConstruction(clipAsset, ref notifyStates);
         node.anim.CreateCurveDataOnConstruction(clipAsset, ref curves);
 
         this.isLooping = clipAsset.IsLoop;
         this.speed = clipAsset.Speed;
         this.duration = clipAsset.Clip.length / this.speed;
-        this.hasNotifies = notifes.ExIsValid();
+        this.hasNotifies = notifies.ExIsValid();
         this.hasNotifyStates = notifyStates.ExIsValid();
         this.hasCurves = curves.ExIsValid();
-        if (hasNotifies) { this.notifyLen = notifes.Count; }
+        if (hasNotifies) { this.notifyLen = notifies.Count; }
         if (hasNotifyStates) { this.notifyStatesLen = notifyStates.Count; }
         if (hasCurves) { this.curveLen = curves.Count; }
     }
     internal AnimState(AnimationSequence clipAsset, AnimNode node, AvatarMask mask, AdditiveAnimationMode mode)
     {
         SetClipData(clipAsset.Clip, node);
-        node.anim.CreateNotifiesOnConstruction(clipAsset, ref notifes);
+        node.anim.CreateNotifiesOnConstruction(clipAsset, ref notifies);
         node.anim.CreateNotifyStatesOnConstruction(clipAsset, ref notifyStates);
         node.anim.CreateCurveDataOnConstruction(clipAsset, ref curves);
 
         this.isLooping = clipAsset.IsLoop;
         this.speed = clipAsset.Speed;
         this.duration = clipAsset.Clip.length / this.speed;
-        this.hasNotifies = notifes.ExIsValid();
+        this.hasNotifies = notifies.ExIsValid();
         this.hasNotifyStates = notifyStates.ExIsValid();
         this.hasCurves = curves.ExIsValid();
-        if (hasNotifies) { this.notifyLen = notifes.Count; }
+        if (hasNotifies) { this.notifyLen = notifies.Count; }
         if (hasNotifyStates) { this.notifyStatesLen = notifyStates.Count; }
         if (hasCurves) { this.curveLen = curves.Count; }
 

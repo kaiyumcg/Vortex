@@ -17,6 +17,7 @@ MonoBehaviour:
   isLoop: 0
   notifies:
   - rid: 4961984112875536385
+  - rid: 655789736312700928
   notifyStates:
   - rid: 4961984112875536384
   curves:
@@ -24,10 +25,20 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 655789736312700928
+      type: {class: ScriptNotifyEditorData, ns: , asm: Vortex}
+      data:
+        notifyName: OnMinimumDamage1
+        basicSetting:
+          time: 0
+          chance: 1
+          useLOD: 0
+          LOD: 
+          cutoffWeight: 0.5
     - rid: 4961984068065165313
       type: {class: ScriptCurveEditorData, ns: , asm: Vortex}
       data:
-        curveName: EnemyStamina
+        curveName: EnemyStamina1
         basicSetting:
           unityCurve:
             serializedVersion: 2

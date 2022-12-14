@@ -25,12 +25,18 @@ public partial class TestController : MonoBehaviour
     [Header("Debug section")]
     [SerializeField][CanNotEdit] float animTimeScale = 1.0f;
     [SerializeField, CanNotEdit] bool isVisible = true, isPaused = false, isReady = false;
+    [SerializeField, CanNotEdit] List<ScriptVortexCurveEventData> scriptCurveData;
     Animator anim;
     TestPlayable playable_script;
     PlayableGraph Graph;
+    int lod = 0;
     AnimationMixerPlayable RootMixer, NormalMixer, MixingMixer;
+    List<ScriptVortexNotifyEventData> eventDataRuntime;
+    List<ScriptVortexNotifyStateEventData> eventDataRuntimeForStates;
+    readonly internal List<VisibilityTag> animVTags = new();
+    readonly internal List<SkinnedMeshRenderer> animRenderers = new();
 
-    internal int LOD { get; set; }
+    internal int LOD { get { return lod; } }
     internal PlayableGraph PlayGraph { get { return Graph; } }
     internal bool IsPaused { get { return isPaused; } }
     public float TimeScale
@@ -99,15 +105,24 @@ public partial class TestController : MonoBehaviour
             OnComplete?.Invoke();
         }
     }
-    internal void OnAppearToCamera()
+    internal void UpdateVisibilityRelatedData(VisibilityTag vTag)
     {
-        isVisible = true;
-        UpdateTickFlag();
-    }
-    internal void OnDisappearFromCamera()
-    {
-        isVisible = false;
-        UpdateTickFlag();
+        StartCoroutine(VisibilityUPD());
+        IEnumerator VisibilityUPD()
+        {
+            yield return null;
+            var anyVisible = false;
+            animVTags.ExForEachSafe((i) =>
+            {
+                if (i.Visible)
+                {
+                    anyVisible = true;
+                    lod = i.LOD;
+                }
+            });
+            isVisible = anyVisible;
+            UpdateTickFlag();
+        }
     }
     void OnEnable()
     {
@@ -135,20 +150,16 @@ public partial class TestController : MonoBehaviour
     }
     void Awake()
     {
+        var aTags = GetComponentsInChildren<VisibilityTag>(true);
+        animVTags.AddRange(aTags);
+        var rnds = GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        animRenderers.AddRange(rnds);
         isReady = false;
         var rootObj = transform.GetRoot();
         var rootName = rootObj == null ? "" : rootObj.name;
         var ObjectName = "FAnimator_" + gameObject.name + "_" + rootName + "_hash" + this.GetHashCode();
         animTimeScale = 1.0f;
         anim = GetComponent<Animator>();
-        var rnds = GetComponentsInChildren<SkinnedMeshRenderer>();
-        rnds.ExForEachSafe((i) =>
-        {
-            var ob = i.gameObject;
-            var tag = ob.GetComponent<VisibilityTag>();
-            if (tag == null) { tag = ob.AddComponent<VisibilityTag>(); }
-        });
-
         isVisible = true;
         isPaused = false;
         if (Graph.IsValid()) { Graph.Destroy(); }

@@ -8,7 +8,6 @@ using UnityExt;
 public partial class TestController : MonoBehaviour
 {
     #region Curves
-    List<ScriptVortexCurveEventData> curveData;
     public bool GetCurveValue(string curveName, ref float curveValue)
     {
         var data = GetCurveData(curveName);
@@ -77,10 +76,10 @@ public partial class TestController : MonoBehaviour
     ScriptVortexCurveEventData GetCurveData(string curveName)
     {
         ScriptVortexCurveEventData result = null;
-        if (curveData == null) { curveData = new List<ScriptVortexCurveEventData>(); }
-        curveData.ExForEachSafe((i) =>
+        if (scriptCurveData == null) { scriptCurveData = new List<ScriptVortexCurveEventData>(); }
+        scriptCurveData.ExForEachSafe((i) =>
         {
-            if (i != null && i.curveName == curveName)
+            if (i.curveName == curveName)
             {
                 result = i;
             }
@@ -104,12 +103,11 @@ public partial class TestController : MonoBehaviour
             return false;
         }
     }
-
     internal void CreateCurveDataOnConstruction(AnimationSequence animAsset, ref List<VortexCurve> curves)
     {
-        if (curveData == null) { curveData = new List<ScriptVortexCurveEventData>(); }
+        if (scriptCurveData == null) { scriptCurveData = new List<ScriptVortexCurveEventData>(); }
         var result = new List<VortexCurve>();
-        animAsset.curves.ExForEachSafe((i) =>
+        animAsset.Curves.ExForEachSafe((i) =>
         {
             VortexCurve curve = null;
             var scriptCurve = i as IScriptVortexCurve;
@@ -137,7 +135,7 @@ public partial class TestController : MonoBehaviour
                             currentNormalizedTime = 0.0f,
                             currentNormalizedValue = 0.0f
                         };
-                        curveData.Add(ev);
+                        scriptCurveData.Add(ev);
                     }
                 }
                 curve = i.CreateCurveDataForRuntime(curveTickEvent, data);

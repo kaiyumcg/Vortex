@@ -1,7 +1,7 @@
+//Create tests for vortex
 //Create new notify script so that user can define their notify behaviour 
         --In script template we will create both constructor but one commented so that she/he can learn when to use events or not
 
-//Name manager should fetch names outside of resource folder in the project asset folder as well
 //todo on Play()
 	//todo encapsulate playables with state since we need ID of respective clip or controller's playable in the mixer to manipulate
 	//ei clip er kono state na thakle add koro Normal Anim Node er state list e

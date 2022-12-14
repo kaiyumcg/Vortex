@@ -8,7 +8,6 @@ public enum NotifyStateType { Start = 0, Tick = 1, End = 2 }
 public partial class TestController : MonoBehaviour
 {
     #region Notify
-    List<ScriptVortexNotifyEventData> eventDataRuntime;
     public bool AddLogicOnScriptNotify(string eventName, OnDoAnything Code)
     {
         UnityEvent result = GetNotifyEvent(eventName);
@@ -45,7 +44,7 @@ public partial class TestController : MonoBehaviour
         if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptVortexNotifyEventData>(); }
         eventDataRuntime.ExForEachSafe((i) =>
         {
-            if (i != null && i.eventName == eventName)
+            if (i.eventName == eventName)
             {
                 result = i.unityEvent;
             }
@@ -65,10 +64,10 @@ public partial class TestController : MonoBehaviour
     {
         if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptVortexNotifyEventData>(); }
         var notifyList = new List<VortexNotify>();
-        animAsset.notifies.ExForEachSafe((i) =>
+        animAsset.Notifies.ExForEachSafe((i) =>
         {
             VortexNotify notify = null;
-            var scriptNotify = i as IVortexScriptNotify;
+            var scriptNotify = i as IScriptVortexNotify;
             if (scriptNotify == null)
             {
                 notify = i.CreateNotify();
@@ -93,7 +92,6 @@ public partial class TestController : MonoBehaviour
     #endregion
 
     #region Notify State
-    List<ScriptVortexNotifyStateEventData> eventDataRuntimeForStates;
     public bool AddLogicOnScriptNotifyState(string eventName, NotifyStateType stateType, OnDoAnything Code)
     {
         UnityEvent result = GetNotifyStateEvent(eventName, stateType);
@@ -130,7 +128,7 @@ public partial class TestController : MonoBehaviour
         if (eventDataRuntimeForStates == null) { eventDataRuntimeForStates = new List<ScriptVortexNotifyStateEventData>(); }
         eventDataRuntimeForStates.ExForEachSafe((i) =>
         {
-            if (i != null && i.eventName == eventName)
+            if (i.eventName == eventName)
             {
                 if (stateType == NotifyStateType.Start) { result = i.unityEventStart; }
                 else if (stateType == NotifyStateType.Tick) { result = i.unityEventTick; }
@@ -157,7 +155,7 @@ public partial class TestController : MonoBehaviour
     {
         if (eventDataRuntimeForStates == null) { eventDataRuntimeForStates = new List<ScriptVortexNotifyStateEventData>(); }
         var result  = new List<VortexNotifyState>();
-        animAsset.notifyStates.ExForEachSafe((i) =>
+        animAsset.NotifyStates.ExForEachSafe((i) =>
         {
             VortexNotifyState notify = null;
             var sk = i as IScriptVortexNotifyState;
@@ -169,7 +167,7 @@ public partial class TestController : MonoBehaviour
                 ScriptVortexNotifyStateEventData evData = null;
                 eventDataRuntimeForStates.ExForEachSafe((i) =>
                 {
-                    if (i != null && i.eventName == eventName)
+                    if (i.eventName == eventName)
                     {
                         evData = i;
                         found = true;

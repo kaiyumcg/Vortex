@@ -43,8 +43,9 @@ public abstract class VortexCurve
         target.currentValue = curve.Evaluate(target.currentTime);
         target.currentNormalizedValue = target.currentValue.ExRemap(minValue, maxValue, 0.0f, 1.0f);
         curveTickEvent?.Invoke();
+        OnTick(fAnimator);
     }
-    protected abstract void Execute(TestController anim);
+    protected virtual void OnTick(TestController anim) { }
     public VortexCurve(IVortexCurve config, AnimationCurve curve, ScriptVortexCurveEventData target)
     {
         this.config = config;
@@ -66,6 +67,7 @@ public class ScriptVortexCurveEventData
 {
     internal string curveName;
     internal float currentTime, currentNormalizedTime, currentValue, currentNormalizedValue;
+    [HideInInspector]
     internal UnityEvent tickEvent;
 }
 internal interface IScriptVortexCurve
@@ -106,7 +108,7 @@ public abstract class VortexNotify
             }
         }
     }
-    protected abstract void OnExecuteNotify(TestController fAnimator);
+    protected virtual void OnExecuteNotify(TestController fAnimator) { }
     protected internal virtual void OnPauseNotify(TestController fAnimator) { }
     protected internal virtual void OnResumeNotify(TestController fAnimator) { }
     public VortexNotify(IVortexNotify config, UnityEvent unityEvent) 
@@ -127,7 +129,7 @@ internal class ScriptVortexNotifyEventData
     internal string eventName;
     internal UnityEvent unityEvent;
 }
-internal interface IVortexScriptNotify
+internal interface IScriptVortexNotify
 {
     string EventName { get; }
 }
@@ -169,8 +171,8 @@ public abstract class VortexNotifyState
 
             if (lodAndChancePassed)
             {
-                ExecuteStart(fAnimator);
                 onStartNotify?.Invoke();
+                ExecuteStart(fAnimator);   
             }
         }
 
@@ -179,20 +181,20 @@ public abstract class VortexNotifyState
             stateEnded = true;
             if (lodAndChancePassed)
             {
-                ExecuteEnd(fAnimator);
                 onEndNotify?.Invoke();
+                ExecuteEnd(fAnimator);
             }
         }
 
         if (stateStarted && !stateEnded && canTick && lodAndChancePassed)
         {
-            ExecuteTick(fAnimator);
             onTickNotify?.Invoke();
+            ExecuteTick(fAnimator);
         }        
     }
-    protected abstract void ExecuteStart(TestController fAnimator);
-    protected abstract void ExecuteEnd(TestController fAnimator);
-    protected abstract void ExecuteTick(TestController fAnimator);
+    protected virtual void ExecuteStart(TestController fAnimator) { }
+    protected virtual void ExecuteEnd(TestController fAnimator) { }
+    protected virtual void ExecuteTick(TestController fAnimator) { }
     protected internal virtual void OnPauseNotify(TestController fAnimator) { }
     protected internal virtual void OnResumeNotify(TestController fAnimator) { }
     public VortexNotifyState(IVortexNotifyState config, UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent)
