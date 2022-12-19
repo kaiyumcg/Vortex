@@ -5,7 +5,7 @@ using UnityEngine;
 using Vortex;
 using UnityExt;
 
-[CreateAssetMenu(fileName = "Animation Sequence", menuName = "Kaiyum/Vortex/Create a new animation sequence", order = 1)]
+[CreateAssetMenu(fileName = "Animation Sequence", menuName = "Kaiyum/Animation/Create a new animation sequence", order = 1)]
 public class AnimationSequence : ScriptableObject
 {
     [SerializeField] AnimationClip clip;
