@@ -1,4 +1,4 @@
-using AttributeExt;
+using AttributeExt2;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,17 +9,17 @@ using Vortex;
 
 public partial class AnimState
 {
-    [SerializeField, CanNotEdit] string stateName = "INVALID";
-    [SerializeField, CanNotEdit] bool isLooping = false;
-    [SerializeField, CanNotEdit] float totalRunningTime = 0.0f, cycleTime = 0.0f;
-    [SerializeField, CanNotEdit] float normalizedAnimationTime = 0.0f;
-    [SerializeField, CanNotEdit] float speed = 1.0f;
-    [SerializeField, CanNotEdit] float duration = 0.0f;
-    [SerializeField, CanNotEdit] int playableIDOnMixer = -1;
-    [SerializeField, CanNotEdit] bool isController = true, isTicking = false, hasNotifies = false, hasNotifyStates = false, hasCurves = false;
-    [SerializeField, CanNotEdit] RuntimeAnimatorController Controller = null;
-    [SerializeField, CanNotEdit] AnimationClip clip = null;
-    [SerializeField, CanNotEdit] AvatarMask mask = null;
+    [SerializeField, ReadOnly] string stateName = "INVALID";
+    [SerializeField, ReadOnly] bool isLooping = false;
+    [SerializeField, ReadOnly] float totalRunningTime = 0.0f, cycleTime = 0.0f;
+    [SerializeField, ReadOnly] float normalizedAnimationTime = 0.0f;
+    [SerializeField, ReadOnly] float speed = 1.0f;
+    [SerializeField, ReadOnly] float duration = 0.0f;
+    [SerializeField, ReadOnly] int playableIDOnMixer = -1;
+    [SerializeField, ReadOnly] bool isController = true, isTicking = false, hasNotifies = false, hasNotifyStates = false, hasCurves = false;
+    [SerializeField, ReadOnly] RuntimeAnimatorController Controller = null;
+    [SerializeField, ReadOnly] AnimationClip clip = null;
+    [SerializeField, ReadOnly] AvatarMask mask = null;
 
     [HideInInspector] AnimatorControllerPlayable ControllerPlayable = default;
     [HideInInspector] AnimationClipPlayable ClipPlayable = default;

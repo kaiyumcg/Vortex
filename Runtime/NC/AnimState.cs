@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
 using Vortex;
-using AttributeExt;
+using AttributeExt2;
 using UnityEngine.Playables;
 using UnityExt;
 

@@ -5,10 +5,10 @@ using UnityEngine.Animations;
 using UnityEngine.Playables;
 using UnityExt;
 using Vortex;
-using AttributeExt;
+using AttributeExt2;
 internal class AnimNode
 {
-    [SerializeField, CanNotEdit] List<AnimState> animStates;
+    [SerializeField, ReadOnly] List<AnimState> animStates;
     bool isDirty = false;
     uint layer = 0;
     AnimationLayerMixerPlayable mixer;

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityExt;
-using AttributeExt;
+using AttributeExt2;
 
 namespace Vortex
 {

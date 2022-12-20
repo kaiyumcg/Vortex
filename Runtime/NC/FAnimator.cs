@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 using UnityExt;
-using AttributeExt;
+using AttributeExt2;
 using Vortex;
 using UnityEngine.Events;
 
@@ -23,9 +23,9 @@ public partial class TestController : MonoBehaviour
     [SerializeField] bool debugGraph = false;
 
     [Header("Debug section")]
-    [SerializeField][CanNotEdit] float animTimeScale = 1.0f;
-    [SerializeField, CanNotEdit] bool isVisible = true, isPaused = false, isReady = false;
-    [SerializeField, CanNotEdit] List<ScriptVortexCurveEventData> scriptCurveData;
+    [SerializeField][ReadOnly] float animTimeScale = 1.0f;
+    [SerializeField, ReadOnly] bool isVisible = true, isPaused = false, isReady = false;
+    [SerializeField, ReadOnly] List<ScriptVortexCurveEventData> scriptCurveData;
     Animator anim;
     TestPlayable playable_script;
     PlayableGraph Graph;

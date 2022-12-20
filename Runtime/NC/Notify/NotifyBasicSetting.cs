@@ -1,4 +1,4 @@
-using AttributeExt;
+using AttributeExt2;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,7 +21,7 @@ internal class NotifyBasicConfig
 [System.Serializable]
 internal class NotifyStateBasicConfig
 {
-    [SerializeField, MinMaxSlider(min: 0.0f, max: 1.0f, numberWidthInInspector: 22f)] Vector2 notifyRange;
+    [SerializeField, MinMaxSlider(minValue: 0.0f, maxValue: 1.0f)] Vector2 notifyRange;
     [SerializeField, Range(0.0f, 1.0f)] float chance = 1.0f;
     [SerializeField] bool useLOD = false;
     [SerializeField] List<int> LOD;
