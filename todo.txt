@@ -1,4 +1,17 @@
-//Create tests for vortex
+---Unreal Engine like anim interface?(i.e. certain things must be implemented)
+	---Baking vertex animation to shader in import setting
+			--and shader graph subgraph files for all RPs(BiRP, URP, HDRP etc)
+	---Import constraints setting ta ki jinis in model importer
+	---animated properties import curve etc in model animation import option ta study
+	---just as animation clip can be montage type-emon ki sound e o kora jay ki na
+	---Ragdoll related method and editor support(s) on FAnimator?
+	---Puppermaster like partial physical animation?
+
+
+----socket find at curve, notify etc so that we search by name
+
+
+	//Create tests for vortex
 //Create new notify script so that user can define their notify behaviour 
         --In script template we will create both constructor but one commented so that she/he can learn when to use events or not
 

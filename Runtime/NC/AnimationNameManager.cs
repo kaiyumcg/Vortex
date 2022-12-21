@@ -1,60 +1,88 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityExt;
 
-[CreateAssetMenu(fileName = "Anim Name Manager", menuName = "Kaiyum/Animation/Create a new name manager", order = 2)]
-public class AnimationNameManager : ScriptableObject
+namespace Vortex
 {
-    [SerializeField] string[] scriptNotifyNames, scriptNotifyStateNames, curves;
+    [CreateAssetMenu(fileName = "Anim Name Manager", menuName = "Kaiyum/Animation/Create a new name manager", order = 2)]
+    public class AnimationNameManager : ScriptableObject
+    {
+        [SerializeField] string[] scriptNotifyNames, scriptNotifyStateNames, curves, mecanimSignals, mecanimStateSignals;
 
-    #region CallByEditorAttribute
-    static string[] GetNotifyNames()
-    {
-        var assets = GetManagersFromProject();
-        var fNames = new List<string>();
-        assets.ExForEachSafe((i) =>
+        #region CallByEditorAttribute
+        static string[] GetNotifyNames()
         {
-            if (i != null && i.scriptNotifyNames.ExIsValid())
+            var assets = GetManagersFromProject();
+            var fNames = new List<string>();
+            assets.ExForEachSafe((i) =>
             {
-                fNames.ExAddRangeUniquely(i.scriptNotifyNames);
-            }
-        });
-        return fNames.ToArray();
-    }
-    static string[] GetNotifyStateNames()
-    {
-        var assets = GetManagersFromProject();
-        var fNames = new List<string>();
-        assets.ExForEachSafe((i) =>
+                if (i != null && i.scriptNotifyNames.ExIsValid())
+                {
+                    fNames.ExAddRangeUniquely(i.scriptNotifyNames);
+                }
+            });
+            return fNames.ToArray();
+        }
+        static string[] GetNotifyStateNames()
         {
-            if (i != null && i.scriptNotifyStateNames.ExIsValid())
+            var assets = GetManagersFromProject();
+            var fNames = new List<string>();
+            assets.ExForEachSafe((i) =>
             {
-                fNames.ExAddRangeUniquely(i.scriptNotifyStateNames);
-            }
-        });
-        return fNames.ToArray();
-    }
-    static string[] GetCurveName()
-    {
-        var assets = GetManagersFromProject();
-        var fNames = new List<string>();
-        assets.ExForEachSafe((i) =>
+                if (i != null && i.scriptNotifyStateNames.ExIsValid())
+                {
+                    fNames.ExAddRangeUniquely(i.scriptNotifyStateNames);
+                }
+            });
+            return fNames.ToArray();
+        }
+        static string[] GetCurveName()
         {
-            if (i != null && i.curves.ExIsValid())
+            var assets = GetManagersFromProject();
+            var fNames = new List<string>();
+            assets.ExForEachSafe((i) =>
             {
-                fNames.ExAddRangeUniquely(i.curves);
-            }
-        });
-        return fNames.ToArray();
-    }
-    static List<AnimationNameManager> GetManagersFromProject()
-    {
-        var result = new List<AnimationNameManager>();
+                if (i != null && i.curves.ExIsValid())
+                {
+                    fNames.ExAddRangeUniquely(i.curves);
+                }
+            });
+            return fNames.ToArray();
+        }
+        static string[] GetMecanimSignalName()
+        {
+            var assets = GetManagersFromProject();
+            var fNames = new List<string>();
+            assets.ExForEachSafe((i) =>
+            {
+                if (i != null && i.mecanimSignals.ExIsValid())
+                {
+                    fNames.ExAddRangeUniquely(i.mecanimSignals);
+                }
+            });
+            return fNames.ToArray();
+        }
+        static string[] GetMecanimStateSignalName()
+        {
+            var assets = GetManagersFromProject();
+            var fNames = new List<string>();
+            assets.ExForEachSafe((i) =>
+            {
+                if (i != null && i.mecanimStateSignals.ExIsValid())
+                {
+                    fNames.ExAddRangeUniquely(i.mecanimStateSignals);
+                }
+            });
+            return fNames.ToArray();
+        }
+        static List<AnimationNameManager> GetManagersFromProject()
+        {
+            var result = new List<AnimationNameManager>();
 #if UNITY_EDITOR
-        result.AddRange(KEditorUtil.ProjectResourceUtil.LoadAssetsFromAssetFolder<AnimationNameManager>());
+            result.AddRange(KEditorUtil.ProjectResourceUtil.LoadAssetsFromAssetFolder<AnimationNameManager>());
 #endif
-        return result;
+            return result;
+        }
+        #endregion
     }
-    #endregion
 }

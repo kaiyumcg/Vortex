@@ -27,7 +27,7 @@ namespace Vortex
             {
                 var mrn = visibility.GetComponent<MeshRenderer>();
                 var smrn = visibility.GetComponent<SkinnedMeshRenderer>();
-                var con = visibility.GetComponentInParent<TestController>();
+                var con = visibility.GetComponentInParent<VAnimator>();
                 if (mrn == null && smrn == null)
                 {
                     EditorGUILayout.HelpBox("Visibility tag script should only be attached to Mesh Renderer or Skinned Mesh Renderer!", MessageType.Error);
@@ -43,7 +43,7 @@ namespace Vortex
 
             if (animator.objectReferenceValue == null)
             {
-                visibility.Animator = visibility.GetComponentInParent<TestController>();
+                visibility.Animator = visibility.GetComponentInParent<VAnimator>();
                 RecordChange();
             }
             if (error)

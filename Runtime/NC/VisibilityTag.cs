@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using AttributeExt2;
 
@@ -9,10 +7,10 @@ namespace Vortex
     public sealed class VisibilityTag : MonoBehaviour
     {
         [SerializeField] int lod = 0;
-        [SerializeField, ReadOnly] TestController animator;
+        [SerializeField, ReadOnly] VAnimator animator;
         [SerializeField, ReadOnly] bool visible = true;
 #if UNITY_EDITOR
-        public TestController Animator { get { return animator; } set { animator = value; } }
+        public VAnimator Animator { get { return animator; } set { animator = value; } }
 #endif
         internal int LOD { get { return lod; } }
         internal bool Visible { get { return visible; } set { visible = value; } }
@@ -20,7 +18,7 @@ namespace Vortex
         {
             if (animator == null)
             {
-                animator = GetComponentInParent<TestController>();
+                animator = GetComponentInParent<VAnimator>();
             }
         }
         void OnBecameVisible()
