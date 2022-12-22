@@ -9,7 +9,7 @@ namespace Vortex
     public partial class VAnimator : MonoBehaviour
     {
         #region Notify
-        public bool AddLogicOnScriptNotify(string eventName, OnDoAnything Code)
+        internal bool AddLogicOnScriptNotify(string eventName, OnDoAnything Code)
         {
             UnityEvent result = GetNotifyEvent(eventName);
             if (result != null)
@@ -18,24 +18,6 @@ namespace Vortex
                 {
                     Code?.Invoke();
                 });
-            }
-            return result != null;
-        }
-        public bool AddLogicOnScriptNotify(string eventName, UnityAction Code)
-        {
-            UnityEvent result = GetNotifyEvent(eventName);
-            if (result != null)
-            {
-                result.AddListener(Code);
-            }
-            return result != null;
-        }
-        public bool ClearLogicOnScriptNotify(string eventName, UnityAction Code)
-        {
-            UnityEvent result = GetNotifyEvent(eventName);
-            if (result != null)
-            {
-                result.RemoveListener(Code);
             }
             return result != null;
         }
@@ -52,7 +34,7 @@ namespace Vortex
             });
             return result;
         }
-        public bool ClearAllLogicOnScriptNotify(string eventName)
+        internal bool ClearLogicOnScriptNotify(string eventName)
         {
             UnityEvent result = GetNotifyEvent(eventName);
             if (result != null)
@@ -93,7 +75,7 @@ namespace Vortex
         #endregion
 
         #region Notify State
-        public bool AddLogicOnScriptNotifyState(string eventName, NotifyStateType stateType, OnDoAnything Code)
+        internal bool AddLogicOnScriptNotifyState(string eventName, NotifyStateType stateType, OnDoAnything Code)
         {
             UnityEvent result = GetNotifyStateEvent(eventName, stateType);
             if (result != null)
@@ -102,24 +84,6 @@ namespace Vortex
                 {
                     Code?.Invoke();
                 });
-            }
-            return result != null;
-        }
-        public bool AddLogicOnScriptNotifyState(string eventName, NotifyStateType stateType, UnityAction Code)
-        {
-            UnityEvent result = GetNotifyStateEvent(eventName, stateType);
-            if (result != null)
-            {
-                result.AddListener(Code);
-            }
-            return result != null;
-        }
-        public bool ClearLogicOnScriptNotifyState(string eventName, NotifyStateType stateType, UnityAction Code)
-        {
-            UnityEvent result = GetNotifyStateEvent(eventName, stateType);
-            if (result != null)
-            {
-                result.RemoveListener(Code);
             }
             return result != null;
         }
@@ -138,7 +102,7 @@ namespace Vortex
             });
             return result;
         }
-        public void ClearAllLogicOnScriptNotifyState(string eventName)
+        internal void ClearLogicOnScriptNotifyState(string eventName)
         {
             ClearIt(eventName, NotifyStateType.Start);
             ClearIt(eventName, NotifyStateType.Tick);

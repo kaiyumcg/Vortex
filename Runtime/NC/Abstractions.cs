@@ -1,3 +1,4 @@
+using AttributeExt2;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -5,7 +6,39 @@ using UnityExt;
 
 namespace Vortex
 {
+    public interface IAnimDecorationDesc
+    {
+        void Bind(VAnimator vAnimator);
+        void Clear(VAnimator vAnimator);
+    }
+
     #region VortexCurve
+    [System.Serializable]
+    public sealed class ScriptCurveDescription : IAnimDecorationDesc
+    {
+        [Dropdown(typeof(AnimationNameManager), "GetCurveName")]
+        [SerializeField] string curveName;
+        [SerializeField] UnityEvent m_CurveEvaluationTick;
+        public bool GetCurveValue(VAnimator animator, ref float curveValue)
+        {
+            return animator.GetCurveValue(curveName, ref curveValue);
+        }
+        public bool GetNormalizedCurveValue(VAnimator animator, ref float curveNormalizedValue)
+        {
+            return animator.GetNormalizedCurveValue(curveName, ref curveNormalizedValue);
+        }
+        public void Bind(VAnimator vAnimator)
+        {
+            vAnimator.AddLogicOnCurveEvaluationTick(curveName, () =>
+            {
+                m_CurveEvaluationTick?.Invoke();
+            });
+        }
+        public void Clear(VAnimator vAnimator)
+        {
+            vAnimator.ClearLogicOnCurveEvaluationTick(curveName);
+        }
+    }
     public interface IVortexCurve
     {
         bool WriteDefaultWhenNotRunning { get; }
@@ -76,6 +109,25 @@ namespace Vortex
     #endregion
 
     #region Notify
+    [System.Serializable]
+    public sealed class ScriptNotifyDescription : IAnimDecorationDesc
+    {
+        [Dropdown(typeof(AnimationNameManager), "GetNotifyNames")]
+        [SerializeField] string notifyName;
+        [SerializeField] UnityEvent m_Event;
+        public void Bind(VAnimator vAnimator)
+        {
+            vAnimator.AddLogicOnScriptNotify(notifyName, () =>
+            {
+                m_Event?.Invoke();
+            });
+        }
+        public void Clear(VAnimator vAnimator)
+        {
+            vAnimator.ClearLogicOnScriptNotify(notifyName);
+        }
+    }
+
     public interface IVortexNotify
     {
         float CutoffWeight { get; }
@@ -135,6 +187,32 @@ namespace Vortex
     #endregion
 
     #region NotifyState
+    [System.Serializable]
+    public sealed class ScriptNotifyStateDescription : IAnimDecorationDesc
+    {
+        [Dropdown(typeof(AnimationNameManager), "GetNotifyStateNames")]
+        [SerializeField] string notifyName;
+        [SerializeField] UnityEvent m_Start, m_Tick, m_End;
+        public void Bind(VAnimator vAnimator)
+        {
+            vAnimator.AddLogicOnScriptNotifyState(notifyName, NotifyStateType.Start, () =>
+            {
+                m_Start?.Invoke();
+            });
+            vAnimator.AddLogicOnScriptNotifyState(notifyName, NotifyStateType.Tick, () =>
+            {
+                m_Tick?.Invoke();
+            });
+            vAnimator.AddLogicOnScriptNotifyState(notifyName, NotifyStateType.End, () =>
+            {
+                m_End?.Invoke();
+            });
+        }
+        public void Clear(VAnimator vAnimator)
+        {
+            vAnimator.ClearLogicOnScriptNotifyState(notifyName);
+        }
+    }
     public interface IVortexNotifyState
     {
         float CutoffWeight { get; }

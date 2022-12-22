@@ -5,6 +5,7 @@ using UnityEngine.Animations;
 using UnityEngine.Playables;
 using UnityExt;
 using AttributeExt2;
+using UnityEngine.Events;
 
 namespace Vortex
 {
@@ -17,6 +18,9 @@ namespace Vortex
 
         [SerializeField] List<AnimationClip> preloadedClips;
         [SerializeField] List<RuntimeAnimatorController> preloadedControllers;
+        [SerializeField] List<ScriptNotifyDescription> scriptNotifies;
+        [SerializeField] List<ScriptNotifyStateDescription> scriptNotifyStates;
+        [SerializeField] List<ScriptCurveDescription> scriptCurves;
 
         [SerializeField] FAnimatorUpdateMode updateMode;
         [SerializeField] DirectorUpdateMode timeMode = DirectorUpdateMode.GameTime;

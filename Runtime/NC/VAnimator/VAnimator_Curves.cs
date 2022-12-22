@@ -8,21 +8,21 @@ namespace Vortex
     public partial class VAnimator : MonoBehaviour
     {
         #region Curves
-        public bool GetCurveValue(string curveName, ref float curveValue)
+        internal bool GetCurveValue(string curveName, ref float curveValue)
         {
             var data = GetCurveData(curveName);
             if (data == null) { return false; }
             curveValue = data.currentValue;
             return true;
         }
-        public bool GetNormalizedCurveValue(string curveName, ref float curveNormalizedValue)
+        internal bool GetNormalizedCurveValue(string curveName, ref float curveNormalizedValue)
         {
             var data = GetCurveData(curveName);
             if (data == null) { return false; }
             curveNormalizedValue = data.currentNormalizedValue;
             return true;
         }
-        public bool AddLogicOnCurveEvaluationTick(string curveName, OnDoAnything Code)
+        internal bool AddLogicOnCurveEvaluationTick(string curveName, OnDoAnything Code)
         {
             var data = GetCurveData(curveName);
             if (data != null)
@@ -39,40 +39,6 @@ namespace Vortex
             }
             else { return false; }
         }
-        public bool AddLogicOnCurveEvaluationTick(string curveName, UnityAction Code)
-        {
-            var data = GetCurveData(curveName);
-            if (data != null)
-            {
-                UnityEvent result = data.tickEvent;
-                if (result != null)
-                {
-                    result.AddListener(Code);
-                }
-                return result != null;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        public bool ClearLogicOnCurveEvaluationTick(string curveName, UnityAction Code)
-        {
-            var data = GetCurveData(curveName);
-            if (data != null)
-            {
-                UnityEvent result = data.tickEvent;
-                if (result != null)
-                {
-                    result.RemoveListener(Code);
-                }
-                return result != null;
-            }
-            else
-            {
-                return false;
-            }
-        }
         ScriptVortexCurveEventData GetCurveData(string curveName)
         {
             ScriptVortexCurveEventData result = null;
@@ -86,7 +52,7 @@ namespace Vortex
             });
             return result;
         }
-        public bool ClearAllLogicOnCurveEvaluationTick(string curveName)
+        internal bool ClearLogicOnCurveEvaluationTick(string curveName)
         {
             var data = GetCurveData(curveName);
             if (data != null)
