@@ -6,7 +6,7 @@ using AttributeExt2;
 namespace Vortex
 {
     [System.Serializable]
-    public class MecanimSignalEventName
+    public class MecanimSignalHandle
     {
         [Dropdown(typeof(AnimationNameManager), "GetMecanimSignalName")]
         [SerializeField] string eventName = "";
@@ -14,7 +14,7 @@ namespace Vortex
     }
     public interface IMecanimSignalReciever
     {
-        MecanimSignalEventName Event { get { return new MecanimSignalEventName(); } }
+        MecanimSignalHandle Event { get; }
         void OnMecanimEvent() { }
         void OnMecanimEvent(string eventName) { }
     }

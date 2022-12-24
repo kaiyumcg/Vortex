@@ -4,9 +4,10 @@ using UnityExt;
 
 namespace Vortex
 {
-    public class TrailNotifyEditorData : IVortexNotifyState
+    [System.Serializable]
+    public sealed class TrailNotify : INotifyStateEditorData
     {
-        [SerializeField] NotifyStateBasicConfig basicSetting;
+        [SerializeField] NotifyStateBasicEditorData basicSetting;
         [SerializeField] GameTrail gameTrailPrefab;
         [SerializeField] string socketName;
         [SerializeField] Vector3 positionOffset, rotationOffset;
@@ -16,23 +17,23 @@ namespace Vortex
         internal Vector3 PositionOffset { get { return positionOffset; } }
         internal Vector3 RotationOffset { get { return rotationOffset; } }
         internal Vector3 Scale { get { return scale; } }
-        float IVortexNotifyState.StartTime => basicSetting.StartTime;
-        float IVortexNotifyState.EndTime => basicSetting.EndTime;
-        float IVortexNotifyState.Chance => basicSetting.Chance;
-        bool IVortexNotifyState.UseLOD => basicSetting.UseLOD;
-        List<int> IVortexNotifyState.LevelOfDetails => basicSetting.LevelOfDetails;
+        float INotifyStateEditorData.StartTime => basicSetting.StartTime;
+        float INotifyStateEditorData.EndTime => basicSetting.EndTime;
+        float INotifyStateEditorData.Chance => basicSetting.Chance;
+        bool INotifyStateEditorData.UseLOD => basicSetting.UseLOD;
+        List<int> INotifyStateEditorData.LevelOfDetails => basicSetting.LevelOfDetails;
 
-        float IVortexNotifyState.CutoffWeight => basicSetting.CutoffWeight;
+        float INotifyStateEditorData.CutoffWeight => basicSetting.CutoffWeight;
 
-        VortexNotifyState IVortexNotifyState.CreateNotifyState()
+        NotifyStateRuntime INotifyStateEditorData.CreateNotifyState()
         {
-            return new TrailNotify(this);
+            return new TrailNotifyRuntime(this);
         }
     }
 
-    internal class TrailNotify : VortexNotifyState
+    internal sealed class TrailNotifyRuntime : NotifyStateRuntime
     {
-        public TrailNotify(IVortexNotifyState config) :
+        public TrailNotifyRuntime(INotifyStateEditorData config) :
             base(config)
         {
         }

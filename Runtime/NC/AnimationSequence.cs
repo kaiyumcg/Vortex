@@ -10,13 +10,13 @@ namespace Vortex
         [SerializeField] AnimationClip clip;
         [SerializeField] float speed = 1f;
         [SerializeField] bool isLoop = false;
-        [SerializeReference, SerializeReferenceButton] List<IVortexNotify> notifies = new List<IVortexNotify>();
-        [SerializeReference, SerializeReferenceButton] List<IVortexNotifyState> notifyStates = new List<IVortexNotifyState>();
-        [SerializeReference, SerializeReferenceButton] List<IVortexCurve> curves = new List<IVortexCurve>();
+        [SerializeReference, SerializeReferenceButton] List<INotifyEditorData> notifies = new List<INotifyEditorData>();
+        [SerializeReference, SerializeReferenceButton] List<INotifyStateEditorData> notifyStates = new List<INotifyStateEditorData>();
+        [SerializeReference, SerializeReferenceButton] List<ICurveEditorData> curves = new List<ICurveEditorData>();
 
-        internal List<IVortexNotify> Notifies { get { return notifies; } }
-        internal List<IVortexNotifyState> NotifyStates { get { return notifyStates; } }
-        internal List<IVortexCurve> Curves { get { return curves; } }
+        internal List<INotifyEditorData> Notifies { get { return notifies; } }
+        internal List<INotifyStateEditorData> NotifyStates { get { return notifyStates; } }
+        internal List<ICurveEditorData> Curves { get { return curves; } }
 
         internal AnimationClip Clip { get { return clip; } }
         internal float Speed { get { return speed; } }

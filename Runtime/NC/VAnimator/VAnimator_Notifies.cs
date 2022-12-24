@@ -5,7 +5,7 @@ using UnityExt;
 
 namespace Vortex
 {
-    public enum NotifyStateType { Start = 0, Tick = 1, End = 2 }
+    [RequireComponent(typeof(Animator))]
     public partial class VAnimator : MonoBehaviour
     {
         #region Notify
@@ -24,7 +24,7 @@ namespace Vortex
         UnityEvent GetNotifyEvent(string eventName)
         {
             UnityEvent result = null;
-            if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptVortexNotifyEventData>(); }
+            if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptNotifyEventData>(); }
             eventDataRuntime.ExForEachSafe((i) =>
             {
                 if (i.eventName == eventName)
@@ -43,14 +43,14 @@ namespace Vortex
             }
             return result != null;
         }
-        internal void CreateNotifiesOnConstruction(AnimationSequence animAsset, ref List<VortexNotify> notifies)
+        internal void CreateNotifiesOnConstruction(AnimationSequence animAsset, ref List<NotifyRuntime> notifies)
         {
-            if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptVortexNotifyEventData>(); }
-            var notifyList = new List<VortexNotify>();
-            animAsset.Notifies.ExForEachSafe((i) =>
+            if (eventDataRuntime == null) { eventDataRuntime = new List<ScriptNotifyEventData>(); }
+            var notifyList = new List<NotifyRuntime>();
+            animAsset.Notifies.ExForEachSafe((OnDoAnything<INotifyEditorData>)((i) =>
             {
-                VortexNotify notify = null;
-                var scriptNotify = i as IScriptVortexNotify;
+                NotifyRuntime notify = null;
+                var scriptNotify = i as IScriptNotify;
                 if (scriptNotify == null)
                 {
                     notify = i.CreateNotify();
@@ -63,13 +63,13 @@ namespace Vortex
                     if (unityEvent == null)
                     {
                         unityEvent = new UnityEvent();
-                        var ev = new ScriptVortexNotifyEventData { eventName = eventName, unityEvent = unityEvent };
+                        var ev = new ScriptNotifyEventData { eventName = eventName, unityEvent = unityEvent };
                         eventDataRuntime.Add(ev);
                     }
                     notify = i.CreateNotify(unityEvent);
                 }
                 notifyList.Add(notify);
-            });
+            }));
             notifies = notifyList;
         }
         #endregion
@@ -90,7 +90,7 @@ namespace Vortex
         UnityEvent GetNotifyStateEvent(string eventName, NotifyStateType stateType)
         {
             UnityEvent result = null;
-            if (eventDataRuntimeForStates == null) { eventDataRuntimeForStates = new List<ScriptVortexNotifyStateEventData>(); }
+            if (eventDataRuntimeForStates == null) { eventDataRuntimeForStates = new List<ScriptNotifyStateEventData>(); }
             eventDataRuntimeForStates.ExForEachSafe((i) =>
             {
                 if (i.eventName == eventName)
@@ -116,20 +116,20 @@ namespace Vortex
                 }
             }
         }
-        internal void CreateNotifyStatesOnConstruction(AnimationSequence animAsset, ref List<VortexNotifyState> notifyStates)
+        internal void CreateNotifyStatesOnConstruction(AnimationSequence animAsset, ref List<NotifyStateRuntime> notifyStates)
         {
-            if (eventDataRuntimeForStates == null) { eventDataRuntimeForStates = new List<ScriptVortexNotifyStateEventData>(); }
-            var result = new List<VortexNotifyState>();
-            animAsset.NotifyStates.ExForEachSafe((i) =>
+            if (eventDataRuntimeForStates == null) { eventDataRuntimeForStates = new List<ScriptNotifyStateEventData>(); }
+            var result = new List<NotifyStateRuntime>();
+            animAsset.NotifyStates.ExForEachSafe((OnDoAnything<INotifyStateEditorData>)((i) =>
             {
-                VortexNotifyState notify = null;
-                var sk = i as IScriptVortexNotifyState;
+                NotifyStateRuntime notify = null;
+                var sk = i as IScriptNotifyState;
                 if (sk != null)
                 {
                     UnityEvent startEvent = null, tickEvent = null, endEvent = null;
                     var eventName = sk.EventName;
                     var found = false;
-                    ScriptVortexNotifyStateEventData evData = null;
+                    ScriptNotifyStateEventData evData = null;
                     eventDataRuntimeForStates.ExForEachSafe((i) =>
                     {
                         if (i.eventName == eventName)
@@ -147,8 +147,7 @@ namespace Vortex
                         startEvent = new UnityEvent();
                         tickEvent = sk.CanTick ? new UnityEvent() : null;
                         endEvent = new UnityEvent();
-
-                        var ev = new ScriptVortexNotifyStateEventData
+                        var ev = new ScriptNotifyStateEventData
                         {
                             eventName = eventName,
                             unityEventStart = startEvent,
@@ -164,7 +163,7 @@ namespace Vortex
                     notify = i.CreateNotifyState();
                 }
                 result.Add(notify);
-            });
+            }));
             notifyStates = result;
         }
         #endregion

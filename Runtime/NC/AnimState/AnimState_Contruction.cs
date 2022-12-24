@@ -25,9 +25,9 @@ namespace Vortex
         [HideInInspector] AnimationClipPlayable ClipPlayable = default;
         [HideInInspector] AnimNode node = null;
 
-        List<VortexNotify> notifies = new List<VortexNotify>();
-        List<VortexNotifyState> notifyStates = new List<VortexNotifyState>();
-        List<VortexCurve> curves = new List<VortexCurve>();
+        List<NotifyRuntime> notifies = new List<NotifyRuntime>();
+        List<NotifyStateRuntime> notifyStates = new List<NotifyStateRuntime>();
+        List<CurveRuntime> curves = new List<CurveRuntime>();
         OnDoAnything onCompleteNonLoopedAnimation = null;
         int notifyLen = -1, notifyStatesLen = -1, curveLen = -1;
 

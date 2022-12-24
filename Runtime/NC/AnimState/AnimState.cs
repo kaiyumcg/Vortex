@@ -3,8 +3,6 @@ using UnityExt;
 
 namespace Vortex
 {
-    internal enum AdditiveAnimationMode { Additive = 0, Override = 1 }
-    internal enum WeightUpdateMode { ToZero = 0, ToOne = 1, ToValue = 2 }
     public partial class AnimState
     {
         bool paused = false;

@@ -1,3 +1,5 @@
+
+
 ---Unreal Engine like anim interface?(i.e. certain things must be implemented)
 	---Baking vertex animation to shader in import setting
 			--and shader graph subgraph files for all RPs(BiRP, URP, HDRP etc)
@@ -7,9 +9,13 @@
 	---Ragdoll related method and editor support(s) on FAnimator?
 	---Puppermaster like partial physical animation?
 
+---For material curve, we need a list of skinned mesh renderer in VAnimator
+---For instanced property we need to have intuitive editor system.serializable classes to set material property block
+        ---URP, standart and possibly HDRP support too
 
 ----socket find at curve, notify etc so that we search by name
-
+    ---Has a key value paired string vs transform so that notify and curves can simply fetch by name and get the socket
+----Everywhere there is/are debug log error or exception, egulo sob "Unity_editor" or "Development_Build" define e compile hobe
 
 	//Create tests for vortex
 //Create new notify script so that user can define their notify behaviour 

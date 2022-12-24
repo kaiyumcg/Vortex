@@ -5,6 +5,7 @@ using UnityExt;
 
 namespace Vortex
 {
+    [RequireComponent(typeof(Animator))]
     public partial class VAnimator : MonoBehaviour
     {
         #region Curves
@@ -39,10 +40,10 @@ namespace Vortex
             }
             else { return false; }
         }
-        ScriptVortexCurveEventData GetCurveData(string curveName)
+        ScriptCurveEventData GetCurveData(string curveName)
         {
-            ScriptVortexCurveEventData result = null;
-            if (scriptCurveData == null) { scriptCurveData = new List<ScriptVortexCurveEventData>(); }
+            ScriptCurveEventData result = null;
+            if (scriptCurveData == null) { scriptCurveData = new List<ScriptCurveEventData>(); }
             scriptCurveData.ExForEachSafe((i) =>
             {
                 if (i.curveName == curveName)
@@ -69,14 +70,14 @@ namespace Vortex
                 return false;
             }
         }
-        internal void CreateCurveDataOnConstruction(AnimationSequence animAsset, ref List<VortexCurve> curves)
+        internal void CreateCurveDataOnConstruction(AnimationSequence animAsset, ref List<CurveRuntime> curves)
         {
-            if (scriptCurveData == null) { scriptCurveData = new List<ScriptVortexCurveEventData>(); }
-            var result = new List<VortexCurve>();
-            animAsset.Curves.ExForEachSafe((i) =>
+            if (scriptCurveData == null) { scriptCurveData = new List<ScriptCurveEventData>(); }
+            var result = new List<CurveRuntime>();
+            animAsset.Curves.ExForEachSafe((OnDoAnything<ICurveEditorData>)((i) =>
             {
-                VortexCurve curve = null;
-                var scriptCurve = i as IScriptVortexCurve;
+                CurveRuntime curve = null;
+                var scriptCurve = i as IScriptCurve;
                 if (scriptCurve == null)
                 {
                     curve = i.CreateCurveDataForRuntime();
@@ -92,7 +93,7 @@ namespace Vortex
                         if (curveTickEvent == null)
                         {
                             curveTickEvent = new UnityEvent();
-                            var ev = new ScriptVortexCurveEventData
+                            var ev = new ScriptCurveEventData
                             {
                                 curveName = curveName,
                                 tickEvent = curveTickEvent,
@@ -107,7 +108,7 @@ namespace Vortex
                     curve = i.CreateCurveDataForRuntime(curveTickEvent, data);
                 }
                 result.Add(curve);
-            });
+            }));
             curves = result;
         }
         #endregion

@@ -9,40 +9,50 @@ using UnityEngine.Events;
 
 namespace Vortex
 {
-    public enum PlayMode { Smooth, Sharp }
+    [AddComponentMenu("Kaiyum/Animation/VAnimator")]
+    [RequireComponent(typeof(Animator))]
+    [DisallowMultipleComponent]
+    [DefaultExecutionOrder(-100)]
     public partial class VAnimator : MonoBehaviour
     {
         [SerializeField] AnimationClip clip1, clip2;
         [SerializeField] RuntimeAnimatorController controller1, controller2;
         [SerializeField] Transform targetBone;
-
+       
         [SerializeField] List<AnimationClip> preloadedClips;
         [SerializeField] List<RuntimeAnimatorController> preloadedControllers;
-        [SerializeField] List<ScriptNotifyDescription> scriptNotifies;
-        [SerializeField] List<ScriptNotifyStateDescription> scriptNotifyStates;
-        [SerializeField] List<ScriptCurveDescription> scriptCurves;
+        [SerializeField] List<NotifyHandle> scriptNotifies;
+        [SerializeField] List<NotifyStateHandle> scriptNotifyStates;
+        [SerializeField] List<ScriptCurveHandle> scriptCurves;
 
         [SerializeField] FAnimatorUpdateMode updateMode;
         [SerializeField] DirectorUpdateMode timeMode = DirectorUpdateMode.GameTime;
-        [SerializeField] bool debugGraph = false;
+        [SerializeField] bool useLOD = false;
+        [SerializeField] bool debug = false;
 
         [Header("Debug section")]
-        [SerializeField] [ReadOnly] float animTimeScale = 1.0f;
-        [SerializeField, ReadOnly] bool isVisible = true, isPaused = false, isReady = false;
-        [SerializeField, ReadOnly] List<ScriptVortexCurveEventData> scriptCurveData;
+        [SerializeField] [ReadOnly, ShowIf(nameof(debug))] float animTimeScale = 1.0f;
+        [SerializeField, ReadOnly, ShowIf(nameof(debug))] bool isVisible = true, isPaused = false, isReady = false;
+        [SerializeField, ReadOnly, ShowIf(nameof(debug))] List<ScriptCurveEventData> scriptCurveData;
+        [SerializeField, ReadOnly, ShowIf(nameof(debug))] List<ScriptNotifyEventData> eventDataRuntime;
+        [SerializeField, ReadOnly, ShowIf(nameof(debug))] List<ScriptNotifyStateEventData> eventDataRuntimeForStates;
         Animator anim;
         VPlayable playable_script;
         PlayableGraph Graph;
         int lod = 0;
         AnimationMixerPlayable RootMixer, NormalMixer, MixingMixer;
-        List<ScriptVortexNotifyEventData> eventDataRuntime;
-        List<ScriptVortexNotifyStateEventData> eventDataRuntimeForStates;
         readonly internal List<VisibilityTag> animVTags = new();
         readonly internal List<SkinnedMeshRenderer> animRenderers = new();
 
         internal int LOD { get { return lod; } }
         internal PlayableGraph PlayGraph { get { return Graph; } }
         internal bool IsPaused { get { return isPaused; } }
+#if UNITY_EDITOR
+        public
+#else
+        internal
+#endif
+            bool UseLOD { get { return useLOD; } }
         public float TimeScale
         {
             get
@@ -111,17 +121,29 @@ namespace Vortex
         }
         internal void UpdateVisibilityRelatedData(VisibilityTag vTag)
         {
+            SetData();
             StartCoroutine(VisibilityUPD());
             IEnumerator VisibilityUPD()
             {
                 yield return null;
+                SetData();
+            }
+            void SetData()
+            {
                 var anyVisible = false;
                 animVTags.ExForEachSafe((i) =>
                 {
-                    if (i.Visible)
+                    if (useLOD)
+                    {
+                        if (i.Visible && i.LOD >= 0)
+                        {
+                            anyVisible = true;
+                            lod = i.LOD;
+                        }
+                    }
+                    else if (i.Visible)
                     {
                         anyVisible = true;
-                        lod = i.LOD;
                     }
                 });
                 isVisible = anyVisible;
@@ -199,7 +221,7 @@ namespace Vortex
         }
         void Update()
         {
-            if (isReady && debugGraph && Graph.IsValid())
+            if (isReady && debug && Graph.IsValid())
             {
                 GraphVisualizerClient.Show(Graph);
             }
