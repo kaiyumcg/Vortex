@@ -9,7 +9,7 @@ namespace Vortex
     {
         bool WriteDefaultWhenNotRunning { get; }
         float CutoffWeight { get; }
-        string CurveName { get; }
+        ScriptCurveAsset CurveAsset { get; }
         AnimationCurve Curve { get; }
         bool UseLOD { get; }
         List<int> LevelOfDetails { get; }

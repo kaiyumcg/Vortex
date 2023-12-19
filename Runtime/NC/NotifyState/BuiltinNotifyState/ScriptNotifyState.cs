@@ -9,8 +9,7 @@ namespace Vortex
     [System.Serializable]
     internal sealed class ScriptNotifyState : INotifyStateEditorData, IScriptNotifyState
     {
-        [Dropdown(typeof(AnimationNameManager), "GetNotifyStateNames")]
-        [SerializeField] string notifyName;
+        [SerializeField] ScriptNotifyStateAsset stateNotify;
         [SerializeField] bool canTick = false;
         [SerializeField] NotifyStateBasicEditorData basicSetting;
         float INotifyStateEditorData.StartTime => basicSetting.StartTime;
@@ -18,7 +17,7 @@ namespace Vortex
         float INotifyStateEditorData.Chance => basicSetting.Chance;
         bool INotifyStateEditorData.UseLOD => basicSetting.UseLOD;
         List<int> INotifyStateEditorData.LevelOfDetails => basicSetting.LevelOfDetails;
-        string IScriptNotifyState.EventName => notifyName;
+        ScriptNotifyStateAsset IScriptNotifyState.StateNotify => stateNotify;
         bool IScriptNotifyState.CanTick => canTick;
 
         float INotifyStateEditorData.CutoffWeight => basicSetting.CutoffWeight;

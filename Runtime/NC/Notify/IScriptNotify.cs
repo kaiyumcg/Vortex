@@ -6,6 +6,6 @@ namespace Vortex
 {
     internal interface IScriptNotify
     {
-        string EventName { get; }
+        ScriptNotifyAsset ScriptNotify { get; }
     }
 }

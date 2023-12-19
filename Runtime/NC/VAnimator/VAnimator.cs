@@ -15,10 +15,6 @@ namespace Vortex
     [DefaultExecutionOrder(-100)]
     public partial class VAnimator : MonoBehaviour
     {
-        [SerializeField] AnimationClip clip1, clip2;
-        [SerializeField] RuntimeAnimatorController controller1, controller2;
-        [SerializeField] Transform targetBone;
-       
         [SerializeField] List<AnimationClip> preloadedClips;
         [SerializeField] List<RuntimeAnimatorController> preloadedControllers;
         [SerializeField] List<NotifyHandle> scriptNotifies;
@@ -28,10 +24,15 @@ namespace Vortex
         [SerializeField] FAnimatorUpdateMode updateMode;
         [SerializeField] DirectorUpdateMode timeMode = DirectorUpdateMode.GameTime;
         [SerializeField] bool useLOD = false;
+
+        [SerializeField] bool useRewind = false;
+        [SerializeField, ShowIf(EConditionOperator.And, nameof(useRewind))] bool overrideRewindGlobalSetting = false;
+        [SerializeField, ShowIf(EConditionOperator.And, nameof(useRewind), nameof(overrideRewindGlobalSetting))] float rewindFPS = 60f;
+
         [SerializeField] bool debug = false;
 
         [Header("Debug section")]
-        [SerializeField] [ReadOnly, ShowIf(nameof(debug))] float animTimeScale = 1.0f;
+        [SerializeField, ReadOnly, ShowIf(nameof(debug))] float animTimeScale = 1.0f;
         [SerializeField, ReadOnly, ShowIf(nameof(debug))] bool isVisible = true, isPaused = false, isReady = false;
         [SerializeField, ReadOnly, ShowIf(nameof(debug))] List<ScriptCurveEventData> scriptCurveData;
         [SerializeField, ReadOnly, ShowIf(nameof(debug))] List<ScriptNotifyEventData> eventDataRuntime;
@@ -39,11 +40,15 @@ namespace Vortex
         Animator anim;
         VPlayable playable_script;
         PlayableGraph Graph;
-        int lod = 0;
+        int lod = 0, tagLen = 0;
+        Coroutine tagHandle = null;
         AnimationMixerPlayable RootMixer, NormalMixer, MixingMixer;
         readonly internal List<VisibilityTag> animVTags = new();
         readonly internal List<SkinnedMeshRenderer> animRenderers = new();
 
+        internal bool UseRewind => useRewind;
+        internal bool OverrideRewindGlobalSetting => overrideRewindGlobalSetting;
+        internal float RewindFPS => rewindFPS;
         internal int LOD { get { return lod; } }
         internal PlayableGraph PlayGraph { get { return Graph; } }
         internal bool IsPaused { get { return isPaused; } }
@@ -82,30 +87,7 @@ namespace Vortex
             }
         }
         public bool IsReady { get { return isReady; } }
-        public void PauseAnimation()
-        {
-            StartWhenReady(() => { Pause(); });
-            void Pause()
-            {
-                if (Graph.IsValid())
-                {
-                    Graph.Stop();
-                }
-                isPaused = true;
-            }
-        }
-        public void ResumeAnimation()
-        {
-            StartWhenReady(() => { Resume(); });
-            void Resume()
-            {
-                if (Graph.IsValid())
-                {
-                    Graph.Play();
-                }
-                isPaused = false;
-            }
-        }
+        
         void StartWhenReady(OnDoAnything onComplete)
         {
             if (isReady) { onComplete?.Invoke(); }
@@ -119,10 +101,11 @@ namespace Vortex
                 OnComplete?.Invoke();
             }
         }
-        internal void UpdateVisibilityRelatedData(VisibilityTag vTag)
+        internal void UpdateVisibilityRelatedData()
         {
             SetData();
-            StartCoroutine(VisibilityUPD());
+            if (tagHandle != null) { StopCoroutine(tagHandle); }
+            tagHandle = StartCoroutine(VisibilityUPD());
             IEnumerator VisibilityUPD()
             {
                 yield return null;
@@ -131,21 +114,19 @@ namespace Vortex
             void SetData()
             {
                 var anyVisible = false;
-                animVTags.ExForEachSafe((i) =>
+                for (int i = 0; i < tagLen; i++)
                 {
-                    if (useLOD)
+                    var t = animVTags[i];
+                    if (useLOD && t.Visible && t.LOD >= 0)
                     {
-                        if (i.Visible && i.LOD >= 0)
-                        {
-                            anyVisible = true;
-                            lod = i.LOD;
-                        }
+                        anyVisible = true;
+                        lod = t.LOD;
                     }
-                    else if (i.Visible)
+                    else if (!useLOD && t.Visible)
                     {
                         anyVisible = true;
                     }
-                });
+                }
                 isVisible = anyVisible;
                 UpdateTickFlag();
             }
@@ -178,6 +159,7 @@ namespace Vortex
         {
             var aTags = GetComponentsInChildren<VisibilityTag>(true);
             animVTags.AddRange(aTags);
+            tagLen = animVTags.Count;
             var rnds = GetComponentsInChildren<SkinnedMeshRenderer>(true);
             animRenderers.AddRange(rnds);
             isReady = false;
@@ -225,14 +207,6 @@ namespace Vortex
             {
                 GraphVisualizerClient.Show(Graph);
             }
-        }
-        public void Play(AnimationClip clip, PlayMode mode = PlayMode.Smooth)
-        {
-
-        }
-        public void Play(RuntimeAnimatorController controller, PlayMode mode = PlayMode.Smooth)
-        {
-
         }
     }
 }

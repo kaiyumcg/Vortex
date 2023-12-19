@@ -9,8 +9,7 @@ namespace Vortex
     [System.Serializable]
     public sealed class ScriptCurveHandle : IScriptHandleForCurveAndNotify
     {
-        [Dropdown(typeof(AnimationNameManager), "GetCurveName")]
-        [SerializeField] string curveName;
+        [SerializeField] ScriptCurveAsset curveAsset;
         [SerializeField] UnityEvent m_CurveEvaluationTick;
         VAnimator vAnimator;
         public bool GetCurveValue(ref float curveValue)
@@ -21,7 +20,7 @@ namespace Vortex
                 throw new System.Exception("Script curve handle is used before bind() call");
             }
 #endif
-            return vAnimator.GetCurveValue(curveName, ref curveValue);
+            return vAnimator.GetCurveValue(curveAsset, ref curveValue);
         }
         public bool GetNormalizedCurveValue(ref float curveNormalizedValue)
         {
@@ -31,12 +30,12 @@ namespace Vortex
                 throw new System.Exception("Script curve handle is used before bind() call");
             }
 #endif
-            return vAnimator.GetNormalizedCurveValue(curveName, ref curveNormalizedValue);
+            return vAnimator.GetNormalizedCurveValue(curveAsset, ref curveNormalizedValue);
         }
         public void Bind(VAnimator vAnimator)
         {
             this.vAnimator = vAnimator;
-            this.vAnimator.AddLogicOnCurveEvaluationTick(curveName, () =>
+            this.vAnimator.AddLogicOnCurveEvaluationTick(curveAsset, () =>
             {
                 m_CurveEvaluationTick?.Invoke();
             });
@@ -49,7 +48,7 @@ namespace Vortex
                 throw new System.Exception("Script curve handle is used before bind() call");
             }
 #endif
-            vAnimator.ClearLogicOnCurveEvaluationTick(curveName);
+            vAnimator.ClearLogicOnCurveEvaluationTick(curveAsset);
         }
     }
 }

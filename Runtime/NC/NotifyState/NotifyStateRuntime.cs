@@ -6,18 +6,23 @@ using UnityExt;
 
 namespace Vortex
 {
-    public abstract class NotifyStateRuntime
+    public abstract class NotifyStateRuntime : IAnimationAttachment
     {
         INotifyStateEditorData config;
         UnityEvent onStartNotify, onEndNotify, onTickNotify;
         bool stateStarted = false, stateEnded = false;
         bool canTick = false;
         bool lodAndChancePassed = false;
-        internal void ResetData()
+        protected virtual void ExecuteStart(VAnimator fAnimator) { }
+        protected virtual void ExecuteEnd(VAnimator fAnimator) { }
+        protected virtual void ExecuteTick(VAnimator fAnimator) { }
+        protected virtual void OnPauseNotify(VAnimator fAnimator) { }
+        protected virtual void OnResumeNotify(VAnimator fAnimator) { }
+        void IAnimationAttachment.ResetData()
         {
             stateStarted = stateEnded = lodAndChancePassed = false;
         }
-        internal void Tick(float normalizedTime, VAnimator fAnimator, float currentWeight)
+        void IAnimationAttachment.Tick(float normalizedTime, VAnimator fAnimator, float currentWeight)
         {
             if (stateEnded || currentWeight < config.CutoffWeight) { return; }
 
@@ -51,11 +56,14 @@ namespace Vortex
                 ExecuteTick(fAnimator);
             }
         }
-        protected virtual void ExecuteStart(VAnimator fAnimator) { }
-        protected virtual void ExecuteEnd(VAnimator fAnimator) { }
-        protected virtual void ExecuteTick(VAnimator fAnimator) { }
-        protected internal virtual void OnPauseNotify(VAnimator fAnimator) { }
-        protected internal virtual void OnResumeNotify(VAnimator fAnimator) { }
+        void IAnimationAttachment.OnPauseNotify(VAnimator fAnimator)
+        {
+            OnPauseNotify(fAnimator);
+        }
+        void IAnimationAttachment.OnResumeNotify(VAnimator fAnimator)
+        {
+            OnResumeNotify(fAnimator);
+        }
         public NotifyStateRuntime(INotifyStateEditorData config, UnityEvent startEvent, UnityEvent tickEvent, UnityEvent endEvent)
         {
             this.config = config;
@@ -64,7 +72,7 @@ namespace Vortex
             this.onEndNotify = endEvent;
             var scriptNotifyState = config as IScriptNotifyState;
             canTick = scriptNotifyState == null ? true : scriptNotifyState.CanTick;
-            ResetData();
+            ((IAnimationAttachment)this).ResetData();
         }
         public NotifyStateRuntime(INotifyStateEditorData config)
         {
@@ -74,7 +82,7 @@ namespace Vortex
             this.onEndNotify = null;
             var scriptNotifyState = config as IScriptNotifyState;
             canTick = scriptNotifyState == null ? true : scriptNotifyState.CanTick;
-            ResetData();
+            ((IAnimationAttachment)this).ResetData();
         }
     }
 }

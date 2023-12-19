@@ -7,23 +7,15 @@ namespace Vortex
 {
     internal class ScriptCurveEditorData : ICurveEditorData, IScriptCurve
     {
-        [Dropdown(typeof(AnimationNameManager), "GetCurveName")]
-        [SerializeField] string curveName;
+        [SerializeField] ScriptCurveAsset curve;
         [SerializeField] CurveBasicEditorData basicSetting;
         bool ICurveEditorData.WriteDefaultWhenNotRunning => basicSetting.WriteDefaultValuesWhenInvalid;
-
         float ICurveEditorData.CutoffWeight => basicSetting.CutoffWeight;
-
-        string ICurveEditorData.CurveName => curveName;
-
-        string IScriptCurve.CurveName => curveName;
-
+        ScriptCurveAsset ICurveEditorData.CurveAsset => curve;
+        ScriptCurveAsset IScriptCurve.CurveAsset => curve;
         AnimationCurve ICurveEditorData.Curve => basicSetting.UnityCurve;
-
         bool ICurveEditorData.UseLOD => basicSetting.UseLOD;
-
         List<int> ICurveEditorData.LevelOfDetails => basicSetting.LevelOfDetails;
-
         CurveRuntime ICurveEditorData.CreateCurveDataForRuntime(UnityEvent curveTickEvent, ScriptCurveEventData target)
         {
             return new ScriptCurve(this, basicSetting.UnityCurve, target, curveTickEvent);

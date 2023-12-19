@@ -11,24 +11,26 @@ namespace Vortex
     {
         [SerializeField, ReadOnly] List<AnimState> animStates;
         bool isDirty = false;
+        bool hasAvatarMask = false;
         uint layer = 0;
-        AnimationLayerMixerPlayable mixer;
+        AnimationMixerPlayable normalMixer;
+        AnimationLayerMixerPlayable layerMixer;
         PlayableGraph graph;
-        float timeScale = 1.0f;
         internal VAnimator anim;
         internal bool IsDirty { get { return isDirty; } }
         internal uint Layer { get { return layer; } }
-        internal AnimationLayerMixerPlayable Mixer { get { return mixer; } }
+        internal AnimationMixerPlayable Mixer { get { return normalMixer; } }
+        internal AnimationLayerMixerPlayable LayerMixer { get { return layerMixer; } }
         internal PlayableGraph Graph { get { return graph; } }
-        internal float TimeScale { get { return timeScale; } }
+        internal bool HasAvatarMask { get { return hasAvatarMask; } }
 
         internal void OnAddState()
         {
-
+            
         }
         internal void OnUpdateTimeScale(float timeScale)
         {
-            animStates.ExForEach_NoCheck((i) => { i.OnUpdateTimeScale(); });
+            animStates.ExForEach_NoCheck((i) => { i.OnUpdateTimeScale(timeScale); });
         }
         internal void Pause()
         {
@@ -37,6 +39,14 @@ namespace Vortex
         internal void Resume()
         {
             animStates.ExForEach_NoCheck((i) => { i.ResumeState(); });
+        }
+        internal void SetAvatarMask(AvatarMask mask)
+        {
+            layerMixer.SetLayerMaskFromAvatarMask(layer, mask);
+        }
+        internal void SetLayerAdditiveness(bool isAdditive)
+        {
+            layerMixer.SetLayerAdditive(layer, isAdditive);
         }
     }
 }

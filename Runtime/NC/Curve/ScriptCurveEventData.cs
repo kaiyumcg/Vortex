@@ -8,7 +8,7 @@ namespace Vortex
     public sealed class ScriptCurveEventData
     {
         [SerializeField]
-        internal string curveName;
+        internal ScriptCurveAsset curveAsset;
         [SerializeField]
         internal float currentTime, currentNormalizedTime, currentValue, currentNormalizedValue;
         [HideInInspector]

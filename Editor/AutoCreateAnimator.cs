@@ -42,7 +42,7 @@ namespace VortexEditor
                 var saveDir = EditorUtility.SaveFilePanel("Save Asset", Application.dataPath, "", "controller");
                 if (string.IsNullOrEmpty(saveDir) || saveDir.Contains("Asset") == false) { Util.ShowError(Util.saveDirErr); }
                 //Debug.Log("savedir: "+saveDir);
-                var controller = AnimatorController.CreateAnimatorControllerAtPath(EdUtil.AssetsRelativePath(saveDir));
+                var controller = AnimatorController.CreateAnimatorControllerAtPath(EdUtil.ExAssetsRelativePath(saveDir));
                 if (controller == null) { Util.ShowError(Util.conCreateErr); }
                 if (clips != null && clips.Count > 0)
                 {

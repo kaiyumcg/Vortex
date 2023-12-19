@@ -8,7 +8,7 @@ namespace Vortex
     internal sealed class ScriptNotifyStateEventData
     {
         [SerializeField]
-        internal string eventName;
+        internal ScriptNotifyStateAsset stateNotify;
         [HideInInspector]
         internal UnityEvent unityEventStart, unityEventTick, unityEventEnd;
     }

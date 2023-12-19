@@ -23,22 +23,22 @@ namespace Vortex
         void OnBecameVisible()
         {
             UpdateData(awake : false);
-            vAnimator.UpdateVisibilityRelatedData(this);
+            vAnimator.UpdateVisibilityRelatedData();
             visible = true;
         }
         void OnBecameInvisible()
         {
             UpdateData(awake : false);
-            vAnimator.UpdateVisibilityRelatedData(this);
+            vAnimator.UpdateVisibilityRelatedData();
             visible = false;
         }
         void UpdateData(bool awake)
         {
             UpdateRefIfReq();
-            if (vAnimator.UseLOD && awake && !ReferenceEquals(target, null))
+            if (awake && vAnimator.UseLOD)
             {
                 var groups = vAnimator.GetComponentsInChildren<LODGroup>();
-                groups.ExForEachSafe((group) =>
+                groups.ExForEach_NoCheck((group) =>
                 {
                     var lods = group.GetLODs();
                     lods.ExForEach((lod, lodIndex) =>

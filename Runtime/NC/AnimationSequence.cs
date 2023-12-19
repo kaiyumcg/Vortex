@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Vortex
 {
-    [CreateAssetMenu(fileName = "Animation Sequence", menuName = "Kaiyum/Animation/Create a new animation sequence", order = 1)]
+    [CreateAssetMenu(fileName = "Animation Sequence", menuName = "Kaiyum/Animation/Animation sequence", order = 1)]
     public class AnimationSequence : ScriptableObject
     {
         [SerializeField] AnimationClip clip;

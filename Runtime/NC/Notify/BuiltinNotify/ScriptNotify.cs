@@ -8,14 +8,13 @@ namespace Vortex
     [System.Serializable]
     internal sealed class ScriptNotify : INotifyEditorData, IScriptNotify
     {
-        [Dropdown(typeof(AnimationNameManager), "GetNotifyNames")]
-        [SerializeField] string notifyName;
+        [SerializeField] ScriptNotifyAsset notify;
         [SerializeField] NotifyBasicEditorData basicSetting;
         float INotifyEditorData.Time => basicSetting.Time;
         float INotifyEditorData.Chance => basicSetting.Chance;
         bool INotifyEditorData.UseLOD => basicSetting.UseLOD;
         List<int> INotifyEditorData.LevelOfDetails => basicSetting.LevelOfDetails;
-        string IScriptNotify.EventName => notifyName;
+        ScriptNotifyAsset IScriptNotify.ScriptNotify => notify;
 
         float INotifyEditorData.CutoffWeight => basicSetting.CutoffWeight;
 

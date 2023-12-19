@@ -9,14 +9,13 @@ namespace Vortex
     [System.Serializable]
     public sealed class NotifyHandle : IScriptHandleForCurveAndNotify
     {
-        [Dropdown(typeof(AnimationNameManager), "GetNotifyNames")]
-        [SerializeField] string notifyName;
+        [SerializeField] ScriptNotifyAsset notify;
         [SerializeField] UnityEvent m_Event;
         VAnimator vAnimator;
         public void Bind(VAnimator vAnimator)
         {
             this.vAnimator = vAnimator;
-            vAnimator.AddLogicOnScriptNotify(notifyName, () =>
+            vAnimator.AddLogicOnScriptNotify(notify, () =>
             {
                 m_Event?.Invoke();
             });
@@ -29,7 +28,7 @@ namespace Vortex
                 throw new System.Exception("Script notify handle is used before bind() call");
             }
 #endif
-            vAnimator.ClearLogicOnScriptNotify(notifyName);
+            vAnimator.ClearLogicOnScriptNotify(notify);
         }
     }
 }

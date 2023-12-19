@@ -6,21 +6,25 @@ using UnityExt;
 
 namespace Vortex
 {
-    public abstract class CurveRuntime
+    public abstract class CurveRuntime : IAnimationAttachment
     {
         ICurveEditorData config;
         AnimationCurve curve;
         UnityEvent curveTickEvent;
         ScriptCurveEventData target;
         float minTime, maxTime, minValue, maxValue;
-        internal void ResetData()
+        protected virtual void OnTick(VAnimator anim) { }
+        protected virtual void OnPauseNotify(VAnimator fAnimator) { }
+        protected virtual void OnResumeNotify(VAnimator fAnimator) { }
+        void IAnimationAttachment.ResetData()
         {
             if (config.WriteDefaultWhenNotRunning)
             {
                 target.currentTime = target.currentNormalizedTime = target.currentValue = target.currentNormalizedValue = default;
             }
         }
-        internal void Tick(float normalizedTime, VAnimator fAnimator, float currentWeight)
+
+        void IAnimationAttachment.Tick(float normalizedTime, VAnimator fAnimator, float currentWeight)
         {
             if (currentWeight < config.CutoffWeight) { return; }
             var lodPassed = config.UseLOD ? config.LevelOfDetails.Contains(fAnimator.LOD) : true;
@@ -33,7 +37,17 @@ namespace Vortex
             curveTickEvent?.Invoke();
             OnTick(fAnimator);
         }
-        protected virtual void OnTick(VAnimator anim) { }
+
+        void IAnimationAttachment.OnPauseNotify(VAnimator fAnimator)
+        {
+            OnPauseNotify(fAnimator);
+        }
+
+        void IAnimationAttachment.OnResumeNotify(VAnimator fAnimator)
+        {
+            OnResumeNotify(fAnimator);
+        }
+
         public CurveRuntime(ICurveEditorData config, AnimationCurve curve, ScriptCurveEventData target)
         {
             this.config = config;
@@ -41,6 +55,7 @@ namespace Vortex
             this.curveTickEvent = null;
             this.target = target;
             curve.ExGetCurveUltima(ref minTime, ref maxTime, ref minValue, ref maxValue);
+            ((IAnimationAttachment)this).ResetData();
         }
         public CurveRuntime(ICurveEditorData config, AnimationCurve curve, ScriptCurveEventData target, UnityEvent curveTickEvent)
         {
@@ -49,6 +64,7 @@ namespace Vortex
             this.curveTickEvent = curveTickEvent;
             this.target = target;
             curve.ExGetCurveUltima(ref minTime, ref maxTime, ref minValue, ref maxValue);
+            ((IAnimationAttachment)this).ResetData();
         }
     }
 }

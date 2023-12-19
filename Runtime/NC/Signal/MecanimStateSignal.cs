@@ -5,29 +5,18 @@ using AttributeExt2;
 
 namespace Vortex
 {
-    [System.Serializable]
-    public class MecanimStateSignalHandle
-    {
-        [Dropdown(typeof(AnimationNameManager), "GetMecanimStateSignalName")]
-        [SerializeField] string eventName = "";
-        public string EName { get { return eventName; } }
-    }
-
     public interface IMecanimStateSignalReciever
     {
-        MecanimStateSignalHandle Event { get; }
-        void OnMecanimEventStart() { }
-        void OnMecanimEventEnd() { }
-        void OnMecanimEventUpdate() { }
-        void OnMecanimEventStart(string eventName) { }
-        void OnMecanimEventEnd(string eventName) { }
-        void OnMecanimEventUpdate(string eventName) { }
+        void OnMecanimEventStart(SignalStateAsset signal) { }
+        void OnMecanimEventEnd(SignalStateAsset signal) { }
+        void OnMecanimEventUpdate(SignalStateAsset signal) { }
     }
+
     public class MecanimStateSignal : StateMachineBehaviour
     {
-        [Dropdown(typeof(AnimationNameManager), "GetMecanimStateSignalName")]
-        [SerializeField] string eventName = "";
-        [SerializeField, MinMaxSlider(minValue: 0.0f, maxValue: 1.0f)] Vector2 signal = new Vector2(0.2f, 0.6f);
+        [InfoBox("Create signal by 'Create>Kaiyum->Animation' menu")]
+        [SerializeField] SignalStateAsset signal;
+        [SerializeField, MinMaxSlider(minValue: 0.0f, maxValue: 1.0f)] Vector2 signalRange = new Vector2(0.2f, 0.6f);
 
         [SerializeField] bool canInvokeUpdateOnReciever = false;
         [SerializeField] bool parentRecievers = false;
@@ -46,51 +35,39 @@ namespace Vortex
             if (parentRecievers)
             {
                 var rcvs = animator.GetComponentsInParent<IMecanimStateSignalReciever>(disabledParentGameobjects);
-                if (rcvs.ExIsValid()) { receivers.ExAddRangeUniquely(rcvs); }
+                if (rcvs.ExIsValid()) { receivers.ExAddRangeUniquelyCustomClass(rcvs); }
             }
             if (childRecievers)
             {
                 var rcvs = animator.GetComponentsInChildren<IMecanimStateSignalReciever>(disabledChildGameobjects);
-                if (rcvs.ExIsValid()) { receivers.ExAddRangeUniquely(rcvs); }
+                if (rcvs.ExIsValid()) { receivers.ExAddRangeUniquelyCustomClass(rcvs); }
             }
         }
         override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             if (stateEnded) { return; }
 
-            if (!stateStarted && stateInfo.normalizedTime >= signal.x)
+            if (!stateStarted && stateInfo.normalizedTime >= signalRange.x)
             {
                 stateStarted = true;
                 receivers.ExForEach_NoCheck((i) =>
                 {
-                    if (i.Event.EName == eventName)
-                    {
-                        i.OnMecanimEventStart();
-                    }
-                    i.OnMecanimEventStart(eventName);
+                    i.OnMecanimEventStart(signal);
                 });
             }
-            if (!stateEnded && stateInfo.normalizedTime >= signal.y)
+            if (!stateEnded && stateInfo.normalizedTime >= signalRange.y)
             {
                 stateEnded = true;
                 receivers.ExForEach_NoCheck((i) =>
                 {
-                    if (i.Event.EName == eventName)
-                    {
-                        i.OnMecanimEventEnd();
-                    }
-                    i.OnMecanimEventEnd(eventName);
+                    i.OnMecanimEventEnd(signal);
                 });
             }
             if (stateStarted && !stateEnded && canInvokeUpdateOnReciever)
             {
                 receivers.ExForEach_NoCheck((i) =>
                 {
-                    if (i.Event.EName == eventName)
-                    {
-                        i.OnMecanimEventUpdate();
-                    }
-                    i.OnMecanimEventUpdate(eventName);
+                    i.OnMecanimEventUpdate(signal);
                 });
             }
         }

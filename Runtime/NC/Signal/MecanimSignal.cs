@@ -5,24 +5,15 @@ using AttributeExt2;
 
 namespace Vortex
 {
-    [System.Serializable]
-    public class MecanimSignalHandle
-    {
-        [Dropdown(typeof(AnimationNameManager), "GetMecanimSignalName")]
-        [SerializeField] string eventName = "";
-        public string EName { get { return eventName; } }
-    }
     public interface IMecanimSignalReciever
     {
-        MecanimSignalHandle Event { get; }
-        void OnMecanimEvent() { }
-        void OnMecanimEvent(string eventName) { }
+        void OnMecanimEvent(SignalAsset signal);
     }
     public class MecanimSignal : StateMachineBehaviour
     {
         bool called = false;
-        [Dropdown(typeof(AnimationNameManager), "GetMecanimSignalName")]
-        [SerializeField] string eventName = "";
+        [InfoBox("Create signal by 'Create>Kaiyum->Animation' menu")]
+        [SerializeField] SignalAsset signal;
         [SerializeField, Range(0.0f, 1.0f)] float signalTime = 0.7f;
 
         [SerializeField] bool parentRecievers = false;
@@ -40,12 +31,12 @@ namespace Vortex
             if (parentRecievers)
             {
                 var rcvs = animator.GetComponentsInParent<IMecanimSignalReciever>(disabledParentGameobjects);
-                if (rcvs.ExIsValid()) { receivers.ExAddRangeUniquely(rcvs); }
+                if (rcvs.ExIsValid()) { receivers.ExAddRangeUniquelyCustomClass(rcvs); }
             }
             if (childRecievers)
             {
                 var rcvs = animator.GetComponentsInChildren<IMecanimSignalReciever>(disabledChildGameobjects);
-                if (rcvs.ExIsValid()) { receivers.ExAddRangeUniquely(rcvs); }
+                if (rcvs.ExIsValid()) { receivers.ExAddRangeUniquelyCustomClass(rcvs); }
             }
         }
         override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -55,11 +46,7 @@ namespace Vortex
                 called = true;
                 receivers.ExForEach_NoCheck((i) =>
                 {
-                    if (i.Event.EName == eventName)
-                    {
-                        i.OnMecanimEvent();
-                    }
-                    i.OnMecanimEvent(eventName);
+                    i.OnMecanimEvent(signal);
                 });
             }
         }

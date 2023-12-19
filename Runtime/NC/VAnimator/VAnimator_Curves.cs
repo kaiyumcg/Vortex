@@ -9,23 +9,23 @@ namespace Vortex
     public partial class VAnimator : MonoBehaviour
     {
         #region Curves
-        internal bool GetCurveValue(string curveName, ref float curveValue)
+        internal bool GetCurveValue(ScriptCurveAsset curveAsset, ref float curveValue)
         {
-            var data = GetCurveData(curveName);
+            var data = GetCurveData(curveAsset);
             if (data == null) { return false; }
             curveValue = data.currentValue;
             return true;
         }
-        internal bool GetNormalizedCurveValue(string curveName, ref float curveNormalizedValue)
+        internal bool GetNormalizedCurveValue(ScriptCurveAsset curveAsset, ref float curveNormalizedValue)
         {
-            var data = GetCurveData(curveName);
+            var data = GetCurveData(curveAsset);
             if (data == null) { return false; }
             curveNormalizedValue = data.currentNormalizedValue;
             return true;
         }
-        internal bool AddLogicOnCurveEvaluationTick(string curveName, OnDoAnything Code)
+        internal bool AddLogicOnCurveEvaluationTick(ScriptCurveAsset curveAsset, OnDoAnything Code)
         {
-            var data = GetCurveData(curveName);
+            var data = GetCurveData(curveAsset);
             if (data != null)
             {
                 UnityEvent result = data.tickEvent;
@@ -40,22 +40,22 @@ namespace Vortex
             }
             else { return false; }
         }
-        ScriptCurveEventData GetCurveData(string curveName)
+        ScriptCurveEventData GetCurveData(ScriptCurveAsset curveAsset)
         {
             ScriptCurveEventData result = null;
             if (scriptCurveData == null) { scriptCurveData = new List<ScriptCurveEventData>(); }
-            scriptCurveData.ExForEachSafe((i) =>
+            scriptCurveData.ExForEachSafeCustomClass((i) =>
             {
-                if (i.curveName == curveName)
+                if (i.curveAsset == curveAsset)
                 {
                     result = i;
                 }
             });
             return result;
         }
-        internal bool ClearLogicOnCurveEvaluationTick(string curveName)
+        internal bool ClearLogicOnCurveEvaluationTick(ScriptCurveAsset curveAsset)
         {
-            var data = GetCurveData(curveName);
+            var data = GetCurveData(curveAsset);
             if (data != null)
             {
                 UnityEvent result = data.tickEvent;
@@ -70,11 +70,11 @@ namespace Vortex
                 return false;
             }
         }
-        internal void CreateCurveDataOnConstruction(AnimationSequence animAsset, ref List<CurveRuntime> curves)
+        internal void CreateCurveDataOnConstruction(AnimationSequence animAsset, ref List<IAnimationAttachment> curves)
         {
             if (scriptCurveData == null) { scriptCurveData = new List<ScriptCurveEventData>(); }
-            var result = new List<CurveRuntime>();
-            animAsset.Curves.ExForEachSafe((OnDoAnything<ICurveEditorData>)((i) =>
+            var result = new List<IAnimationAttachment>();
+            animAsset.Curves.ExForEachSafeCustomClass((OnDoAnything<ICurveEditorData>)((i) =>
             {
                 CurveRuntime curve = null;
                 var scriptCurve = i as IScriptCurve;
@@ -85,7 +85,7 @@ namespace Vortex
                 else
                 {
                     UnityEvent curveTickEvent = null;
-                    var curveName = scriptCurve.CurveName;
+                    var curveName = scriptCurve.CurveAsset;
                     var data = GetCurveData(curveName);
                     if (data != null)
                     {
@@ -95,7 +95,7 @@ namespace Vortex
                             curveTickEvent = new UnityEvent();
                             var ev = new ScriptCurveEventData
                             {
-                                curveName = curveName,
+                                curveAsset = curveName,
                                 tickEvent = curveTickEvent,
                                 currentTime = 0.0f,
                                 currentValue = 0.0f,

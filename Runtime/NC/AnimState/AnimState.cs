@@ -1,3 +1,4 @@
+using UnityEngine;
 using UnityEngine.Playables;
 using UnityExt;
 
@@ -5,14 +6,7 @@ namespace Vortex
 {
     public partial class AnimState
     {
-        bool paused = false;
-        double pauseTime = 0.0;
-        float targetWeight = -1.0f;
-        bool targetWeightRaise = false;
-        bool isWeightUpdating = false;
-        WeightUpdateMode weightUpdateMode;
-        float transitionTime = 0.0f;
-        public float NormalizedAnimationTime { get { return cycleTime / duration; } }
+        public float NormalizedAnimationTime { get { return normalizedAnimationTime; } }
         public float TotalRunningTime { get { return totalRunningTime; } }
         public float CycleTime { get { return cycleTime; } }
         internal void SetSpeed(float speed)
@@ -21,150 +15,38 @@ namespace Vortex
             if (!isController)
             {
                 this.duration = clip.length / speed;
-                var pl = GetPlayable();
-                pl.SetDuration(this.duration);
+                playable.SetDuration(this.duration);
             }
             ApplySpeedToAnimation();
         }
-        internal void OnUpdateTimeScale()
+        internal void OnUpdateTimeScale(float timeScale)
         {
+            this.timeScale = timeScale;
             ApplySpeedToAnimation();
         }
         void ApplySpeedToAnimation()
         {
-            var pl = GetPlayable();
-            pl.SetSpeed(speed * node.TimeScale);
+            playable.SetSpeed(speed * timeScale);
         }
         internal void SetLoop(bool isLooping)
         {
             if (!isController) { this.isLooping = isLooping; }
         }
+        internal void SetDirty(bool isDirty) { this.isDirty = isDirty; }
         internal void SetID(int id) { this.playableIDOnMixer = id; }
-        Playable GetPlayable()
-        {
-            if (isController)
-            {
-                return ControllerPlayable;
-            }
-            else
-            {
-                return ClipPlayable;
-            }
-        }
-        void InitState()
-        {
-            paused = false;
-            pauseTime = 0.0;
-            isWeightUpdating = false;
-            targetWeight = -1.0f;
-            targetWeightRaise = false;
-            transitionTime = 0.0f;
-            ResetNotifyAndCurve();
-        }
-        internal void StartSmoothly(WeightUpdateMode weightUpdateMode, float transitionTime, OnDoAnything onCompleteNonLoopedAnimation = null, float targetWeight = -1.0f)
-        {
-            ResetNotifyAndCurve();
-            this.isTicking = true;
-            this.paused = false;
-            this.pauseTime = 0.0;
-            ApplySpeedToAnimation();
-            var pl = GetPlayable();
-            pl.SetTime(0.0);
-            pl.SetDuration(this.duration);
-            pl.Play();
-            this.isWeightUpdating = true;
-            this.cycleTime = 0.0f;
-            this.totalRunningTime = 0.0f;
-            this.normalizedAnimationTime = 0.0f;
-            this.onCompleteNonLoopedAnimation = onCompleteNonLoopedAnimation;
-
-            if (weightUpdateMode == WeightUpdateMode.ToValue)
-            {
-                var curValue = node.Mixer.GetInputWeight(playableIDOnMixer);
-                this.targetWeightRaise = curValue <= targetWeight;
-            }
-
-            this.weightUpdateMode = weightUpdateMode;
-            this.targetWeight = targetWeight;
-            this.transitionTime = transitionTime;
-        }
-        internal void StartAtOnce(WeightUpdateMode weightUpdateMode, OnDoAnything onCompleteNonLoopedAnimation = null, float targetWeight = -1.0f)
-        {
-            ResetNotifyAndCurve();
-            this.isTicking = true;
-            this.paused = false;
-            this.pauseTime = 0.0;
-            ApplySpeedToAnimation();
-            var pl = GetPlayable();
-            pl.SetTime(0.0);
-            pl.SetDuration(this.duration);
-            pl.Play();
-            this.isWeightUpdating = false;
-            this.cycleTime = 0.0f;
-            this.totalRunningTime = 0.0f;
-            this.normalizedAnimationTime = 0.0f;
-            this.onCompleteNonLoopedAnimation = onCompleteNonLoopedAnimation;
-
-            if (weightUpdateMode == WeightUpdateMode.ToValue)
-            {
-                node.Mixer.SetInputWeight(playableIDOnMixer, targetWeight);
-            }
-            else
-            {
-                node.Mixer.SetInputWeight(playableIDOnMixer, 1.0f);
-            }
-        }
-        internal void StopSmoothly(float transitionTime)
-        {
-            this.cycleTime = 0.0f;
-            this.totalRunningTime = 0.0f;
-            this.normalizedAnimationTime = 0.0f;
-            this.isWeightUpdating = true;
-            this.transitionTime = transitionTime;
-            if (paused)
-            {
-                isTicking = true;
-            }
-
-            this.weightUpdateMode = WeightUpdateMode.ToZero;
-        }
-        internal void StopAtOnce()
-        {
-            ResetNotifyAndCurve();
-            this.cycleTime = 0.0f;
-            this.totalRunningTime = 0.0f;
-            this.normalizedAnimationTime = 0.0f;
-            this.isWeightUpdating = false;
-            this.transitionTime = -1.0f;
-            this.isTicking = false;
-
-            var pl = GetPlayable();
-            node.Mixer.SetInputWeight(playableIDOnMixer, 0.0f);
-            pl.Pause();
-            this.paused = false;
-            this.pauseTime = 0.0;
-        }
         internal void PauseState()
         {
             if (!isTicking) { return; }
             paused = true;
             isTicking = false;
-            var pl = GetPlayable();
-            pauseTime = pl.GetTime();
-            pl.Pause();
+            pauseTime = playable.GetTime();
+            playable.Pause();
             isWeightUpdating = false;
-            if (hasNotifies)
+            if (hasAttachments)
             {
-                for (int i = 0; i < notifyLen; i++)
+                for (int i = 0; i < attachmentLen; i++)
                 {
-                    notifies[i].OnPauseNotify(node.anim);
-                }
-            }
-            if (hasNotifyStates)
-            {
-                for (int i = 0; i < notifyStatesLen; i++)
-                {
-                    notifyStates[i].OnPauseNotify(node.anim);
+                    attachments[i].OnPauseNotify(vanim);
                 }
             }
         }
@@ -173,101 +55,118 @@ namespace Vortex
             if (!paused) { return; }
             paused = false;
             isTicking = true;
-            var pl = GetPlayable();
-            pl.SetTime(pauseTime);
-            pl.Play();
+            playable.SetTime(pauseTime);
+            playable.Play();
             isWeightUpdating = true;
-            if (hasNotifies)
+            if (hasAttachments)
             {
-                for (int i = 0; i < notifyLen; i++)
+                for (int i = 0; i < attachmentLen; i++)
                 {
-                    notifies[i].OnResumeNotify(node.anim);
-                }
-            }
-            if (hasNotifyStates)
-            {
-                for (int i = 0; i < notifyStatesLen; i++)
-                {
-                    notifyStates[i].OnResumeNotify(node.anim);
+                    attachments[i].OnResumeNotify(vanim);
                 }
             }
         }
-        void ResetNotifyAndCurve()
+        void ResetAttachmentData()
         {
-            if (hasNotifies)
+            if (hasAttachments)
             {
-                for (int i = 0; i < notifyLen; i++)
+                for (int i = 0; i < attachmentLen; i++)
                 {
-                    notifies[i].ResetData();
-                }
-            }
-            if (hasNotifyStates)
-            {
-                for (int i = 0; i < notifyStatesLen; i++)
-                {
-                    notifyStates[i].ResetData();
-                }
-            }
-            if (hasCurves)
-            {
-                for (int i = 0; i < curveLen; i++)
-                {
-                    curves[i].ResetData();
+                    attachments[i].ResetData();
                 }
             }
         }
-        internal void TickState(float delta, VAnimator fAnimator)
+        internal void TickState(float delta)
         {
-            if (!isTicking || node.IsDirty) { return; }
-            var dt = delta * node.TimeScale;
+            if (!isTicking || isDirty) { return; }
+            var dt = delta * timeScale;
             totalRunningTime += dt;
-            var curWeight = node.Mixer.GetInputWeight(playableIDOnMixer);
+            var curWeight = hasAvatarMask ? layerMixer.GetInputWeight(playableIDOnMixer) : normalMixer.GetInputWeight(playableIDOnMixer);
 
             if (!isController)
             {
                 cycleTime += dt;
-
-                if (hasNotifies)
+                
+                if (hasAttachments)
                 {
-                    for (int i = 0; i < notifyLen; i++)
+                    for (int i = 0; i < attachmentLen; i++)
                     {
-                        notifies[i].Tick(NormalizedAnimationTime, fAnimator, curWeight);
-                    }
-                }
-                if (hasNotifyStates)
-                {
-                    for (int i = 0; i < notifyStatesLen; i++)
-                    {
-                        notifyStates[i].Tick(NormalizedAnimationTime, fAnimator, curWeight);
-                    }
-                }
-                if (hasCurves)
-                {
-                    for (int i = 0; i < curveLen; i++)
-                    {
-                        curves[i].Tick(NormalizedAnimationTime, fAnimator, curWeight);
+                        attachments[i].Tick(NormalizedAnimationTime, vanim, curWeight);
                     }
                 }
                 if (cycleTime >= duration)
                 {
                     cycleTime = 0.0f;
-                    var pl = GetPlayable();
                     if (isLooping)
                     {
-                        pl.SetTime(0.0);
-                        pl.Play();
+                        playable.SetTime(0.0);
+                        playable.Play();
                     }
                     else
                     {
-                        pl.Pause();
+                        playable.Pause();
                         isTicking = false;
                         onCompleteNonLoopedAnimation?.Invoke();
-                        ResetNotifyAndCurve();
+                        onCompleteNonLoopedAnimation = null;
+                        if (hasAttachments)
+                        {
+                            ResetAttachmentData();
+                        }
                     }
                 }
+                normalizedAnimationTime = cycleTime / duration;
             }
 
-            if (isWeightUpdating)
+            if (isPartOfBlendTree)
+            {
+                float targetValue = 0.0f;
+                if (mode == BlendTreeMode.TwoD)
+                {
+                    if (position == BlendPosition.First) { targetValue = blendFunc2D.Invoke().x; }
+                    else { targetValue = blendFunc2D.Invoke().y; }
+                }
+                else if (mode == BlendTreeMode.ThreeD)
+                {
+                    if (position == BlendPosition.First) { targetValue = blendFunc3D.Invoke().x; }
+                    else if (position == BlendPosition.Second) { targetValue = blendFunc3D.Invoke().y; }
+                    else { targetValue = blendFunc3D.Invoke().z; }
+                }
+                else if (mode == BlendTreeMode.FourD)
+                {
+                    if (position == BlendPosition.First) { targetValue = blendFunc4D.Invoke().x; }
+                    else if (position == BlendPosition.Second) { targetValue = blendFunc4D.Invoke().y; }
+                    else if (position == BlendPosition.Third) { targetValue = blendFunc4D.Invoke().z; }
+                    else { targetValue = blendFunc4D.Invoke().w; }
+                }
+
+                var shouldRaise = curWeight <= targetValue;
+                var tTime = 0.05f;
+                curWeight += dt * (1 / tTime) * (shouldRaise ? 1.0f : -1.0f);
+                if (shouldRaise)
+                {
+                    if (curWeight >= targetValue)
+                    {
+                        curWeight = targetValue;
+                    }
+                }
+                else
+                {
+                    if (curWeight <= targetValue)
+                    {
+                        curWeight = targetValue;
+                    }
+                }
+
+                if (hasAvatarMask)
+                {
+                    layerMixer.SetInputWeight(playableIDOnMixer, curWeight);
+                }
+                else
+                {
+                    normalMixer.SetInputWeight(playableIDOnMixer, curWeight);
+                }
+            }
+            else if(isWeightUpdating)
             {
                 if (weightUpdateMode == WeightUpdateMode.ToOne)
                 {
@@ -290,7 +189,7 @@ namespace Vortex
                 }
                 else if (weightUpdateMode == WeightUpdateMode.ToValue)
                 {
-                    curWeight = curWeight + dt * (1 / transitionTime) * (targetWeightRaise ? 1.0f : -1.0f);
+                    curWeight += dt * (1 / transitionTime) * (targetWeightRaise ? 1.0f : -1.0f);
                     if (targetWeightRaise)
                     {
                         if (curWeight >= targetWeight)
@@ -308,7 +207,15 @@ namespace Vortex
                         }
                     }
                 }
-                node.Mixer.SetInputWeight(playableIDOnMixer, curWeight);
+
+                if (hasAvatarMask)
+                {
+                    layerMixer.SetInputWeight(playableIDOnMixer, curWeight);
+                }
+                else
+                {
+                    normalMixer.SetInputWeight(playableIDOnMixer, curWeight);
+                }
             }
         }
     }

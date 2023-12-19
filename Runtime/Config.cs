@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace Vortex
 {
-    internal interface IScriptCurve
+    internal static class Config
     {
-        ScriptCurveAsset CurveAsset { get; }
+
     }
 }

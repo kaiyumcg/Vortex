@@ -6,7 +6,7 @@ namespace Vortex
 {
     internal interface IScriptNotifyState
     {
-        string EventName { get; }
+        ScriptNotifyStateAsset StateNotify { get; }
         bool CanTick { get; }
     }
 }

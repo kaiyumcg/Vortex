@@ -5,13 +5,27 @@ using UnityEngine.Events;
 
 namespace Vortex
 {
-    public abstract class NotifyRuntime
+    internal interface IAnimationAttachment
+    {
+        internal void ResetData();
+        internal void Tick(float normalizedTime, VAnimator fAnimator, float currentWeight);
+        internal void OnPauseNotify(VAnimator fAnimator);
+        internal void OnResumeNotify(VAnimator fAnimator);
+    }
+
+    public abstract class NotifyRuntime : IAnimationAttachment
     {
         INotifyEditorData config = null;
         UnityEvent onNotify = null;
         bool consumed = false;
-        internal void ResetData() { consumed = false; }
-        internal void Tick(float normalizedTime, VAnimator fAnimator, float currentWeight)
+        protected virtual void OnExecuteNotify(VAnimator fAnimator) { }
+        protected virtual void OnPauseNotify(VAnimator fAnimator) { }
+        protected virtual void OnResumeNotify(VAnimator fAnimator) { }
+        void IAnimationAttachment.ResetData()
+        {
+            consumed = false;
+        }
+        void IAnimationAttachment.Tick(float normalizedTime, VAnimator fAnimator, float currentWeight)
         {
             if (consumed || currentWeight < config.CutoffWeight) { return; }
             if (normalizedTime >= config.Time)
@@ -26,20 +40,25 @@ namespace Vortex
                 }
             }
         }
-        protected virtual void OnExecuteNotify(VAnimator fAnimator) { }
-        protected internal virtual void OnPauseNotify(VAnimator fAnimator) { }
-        protected internal virtual void OnResumeNotify(VAnimator fAnimator) { }
+        void IAnimationAttachment.OnPauseNotify(VAnimator fAnimator)
+        {
+            OnPauseNotify(fAnimator);
+        }
+        void IAnimationAttachment.OnResumeNotify(VAnimator fAnimator)
+        {
+            OnResumeNotify(fAnimator);
+        }
         public NotifyRuntime(INotifyEditorData config, UnityEvent unityEvent)
         {
             this.config = config;
             this.onNotify = unityEvent;
-            ResetData();
+            ((IAnimationAttachment)this).ResetData();
         }
         public NotifyRuntime(INotifyEditorData config)
         {
             this.config = config;
             this.onNotify = null;
-            ResetData();
+            ((IAnimationAttachment)this).ResetData();
         }
     }
 }
